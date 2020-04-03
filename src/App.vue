@@ -95,8 +95,8 @@ export default {
 .just-c-sta{justify-content: start;}
 .just-c-ct{justify-content: center;}
 .f1{flex:1;}
-.one-hide{overflow: hidden; white-space: nowrap; text-overflow: ellipsis;}
-.two-hide{display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; text-overflow: ellipsis;}
+.one-hide{display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:1; overflow:hidden; text-overflow:ellipsis;}
+.two-hide{display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; text-overflow:ellipsis;}
 
 .van-radio__label{color:inherit!important;}
 .van-list__loading{width:100%;}
@@ -105,5 +105,5 @@ export default {
 .van-tabs__nav--card .van-tab{border:none!important;}
 
 .fixed-submit{position:fixed!important; z-index:1; right:0; bottom:2rem; border-radius:0.1rem 0 0 0.1rem; width:2rem;}
-.com-btn-y{display:inline-block; background:#FF9C00; border-radius:0.06rem; height:0.4rem; line-height:0.4rem; padding:0 0.12rem; color:#ffffff; font-size:0.26rem;}
+.com-btn-y{display:inline-block; background:#FF9C00; border-radius:0.06rem; line-height:1; padding:0.08rem 0.12rem; color:#ffffff; font-size:0.24rem;}
 </style>

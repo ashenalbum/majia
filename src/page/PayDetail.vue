@@ -32,7 +32,7 @@
             <div class="seller shadow df df-r ai-c just-c-bet" @click="showSeller=true">
                 <div class="df df-r ai-c">
                     <img src="~@/assets/test.png" class="icon" />
-                    <span class="name c_33 fs_30 van-ellipsis">阿斯顿发送到发送到发送到发的</span>
+                    <span class="name c_33 fs_30 one-hide">阿斯顿发送到发送到发送到发的</span>
                 </div>
                 <van-button size="mini" color="#FF9C00">关注</van-button>
             </div>

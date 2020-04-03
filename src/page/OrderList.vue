@@ -19,11 +19,11 @@
                     <img src="~@/assets/test.png" class="img" />
                     <div class="detail">
                         <div class="df df-r ai-c just-c-bet">
-                            <div class="van-ellipsis fs_32">一叶子面膜 限时抢购</div>
+                            <div class="one-hide fs_32">一叶子面膜 限时抢购</div>
                             <span class="fs_26">￥99.8</span>
                         </div>
                         <div class="mt-20 df df-r ai-c just-c-bet c_ashen fs_24">
-                            <div class="van-ellipsis labels">
+                            <div class="one-hide labels">
                                 <span>组合套装</span>
                             </div>
                             <span class="fs_26">×1</span>

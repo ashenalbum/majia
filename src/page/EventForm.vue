@@ -32,21 +32,13 @@
             <van-field label="原价" required placeholder="请输入原价" type="number" input-align="right" class="form-input" />
             <van-field label="活动价格" required placeholder="请输入活动价格" type="number" input-align="right" class="form-input" />
             <div class="guige">
-                <div class="df df-r ai-c just-c-bet">
-                    <div class="title fs_32 c_33"><span class="c_red"> *</span>产品规格</div>            
-                    <van-button icon="plus" size="small" color="#FF9B00" @click="showGuige=true"></van-button>
+                <div class="guige-label df df-r ai-c just-c-bet">
+                    <div class="title fs_32 c_33 fs_14px">产品规格</div>           
+                    <van-button icon="plus" size="mini" color="#FF9B00" @click="showGuige=true"></van-button>
                 </div>
-                <div class="guige-li c_ashen mt-30">
-                    <div class="li df df-r ai-c">
+                <div class="guige-li c_ashen">
+                    <div v-for="(item,index) in []" :key="index" class="li df df-r ai-c">
                         <div class=" van-ellipsis f1">规格名/黑色  原价/129  活动价/69  库存/120</div>
-                        <van-icon name="clear" size="0.4rem" color="#D1D6E5" class="close"/>
-                    </div>
-                    <div class="li df df-r ai-c">
-                        <div class=" van-ellipsis f1">规格名/黑色  原价/129  活动价/69  库存/120</div>
-                        <van-icon name="clear" size="0.4rem" color="#D1D6E5" class="close"/>
-                    </div>
-                    <div class="li df df-r ai-c">
-                        <div class=" van-ellipsis f1">规格名/黑色  原价/129 规格名/黑色  原价/129  活动价/69  库存/120</div>
                         <van-icon name="clear" size="0.4rem" color="#D1D6E5" class="close"/>
                     </div>
                 </div>
@@ -212,16 +204,16 @@
                         <div v-if="tishiType=='starttime'" class="t-indent">活动上线后，活动价开始时间，未开始之前，产品价格为原价。</div>
                         <div v-else-if="tishiType=='endtime'" class="t-indent" >活动上线后，活动价结束时间，结束之后，产品价格恢复为原价。</div>
                         <div v-else-if="tishiType=='paytxt'" class="df df-r ai-c">
-                            <img src="~@/assets/test.png" class="img" />
-                            <p class="t-indent">活动上线后，活动价结束时间，结束之后，产品价格恢复为原价。</p>
+                            <img src="~@/assets/event/btn_txt.png" class="img" />
+                            <p class="t-indent f1">按钮提示文字</p>
                         </div>
                         <div v-else-if="tishiType=='danmu'" class="df df-r ai-c">
-                            <img src="~@/assets/test.png" class="img" />
-                            <p class="t-indent">活动的实时数据以滚动的形式，展示在活动头图的位置</p>
+                            <img src="~@/assets/event/danmu.png" class="img" />
+                            <p class="t-indent f1">活动的实时数据以滚动的形式，展示在活动头图的位置</p>
                         </div>
                         <div v-else-if="tishiType=='huzhu'" class="df df-r ai-c">
-                            <img src="~@/assets/test.png" class="img" />
-                            <p class="t-indent">以广告的形式，将其他商家的活动投放在活动详情页中。开启互助后，会给予引流，引流所产生的利润，</p>
+                            <img src="~@/assets/event/huzhu.png" class="img" />
+                            <p class="t-indent f1">以广告的形式，将其他商家的活动投放在活动详情页中。开启互助后，会给予引流，引流所产生的利润，</p>
                         </div>
                     </div>
                 </div>
@@ -232,7 +224,7 @@
         <van-overlay :show="showTj">
             <div class="wrapper df df-c ai-c just-c-ct" @click="showTj=false">
                 <div class="tj-ok df df-c ai-c">
-                    <img src="~@/assets/test.png" class="img" />
+                    <img src="~@/assets/event/submit_title.png" class="img" />
                     <div class="mt-30 c_33 fs_28">活动发布请求已提交</div>
                     <div class="mt-20 c_o fs_28 b">等待审核</div>
                     <van-button type="info" size="small" class="btn">前去开启分销</van-button>
@@ -383,6 +375,7 @@ export default {
 }
 </script>
 <style scoped>
+.fs_14px{font-size:14px;}
 .cont{background:#F6F5F8;}
 .top{height:3rem; background:#2E8AF6; }
 .top .username{padding-top:0.74rem;}
@@ -393,7 +386,7 @@ export default {
 .formbox1{margin-top:-0.96rem;}
 .formbox2{margin-top:0.3rem;}
 
-.formbox .title{padding:0.1rem 0; line-height:1;}
+.formbox .title{line-height:1;}
 
 .form-input{border-bottom:1px solid #E2E6F1;}
 .video-input{border:1px solid #E2E6F1; padding:6px 4px;}
@@ -414,8 +407,9 @@ export default {
 .tt-mould .imgbox .img-ul .fl{display:inline-block;padding:0.1rem; margin:0 0.1rem;}
 .tt-mould .imgbox .img-ul .fl.active{background:#FF9C00; color:#ffffff;}
 
-.guige{border-bottom:1px solid #E2E6F1;}
-.guige .guige-li{font-size:14px;}
+.guige{padding-top:10px; border-bottom:1px solid #E2E6F1;}
+.guige .guige-label{padding: 0 4px;}
+.guige .guige-li{margin-top:10px; font-size:14px;}
 .guige .guige-li .li{padding-bottom:0.3rem;}
 
 .guige-popup{padding:0.2rem 0.5rem 0.5rem;}

@@ -76,5 +76,5 @@ export default {
 .listul .item .imgbox{position:relative; width:100%; height:2.08rem;}
 .listul .item .imgbox .img{width:100%; height:100%;}
 .listul .item .imgbox .txt{position:absolute; bottom:0; right:0; padding:2px 0.16rem; line-height:0.36rem; background:rgba(0,0,0,0.5); border-radius:4px 0 0 0;}
-.listul .item .title{height:0.78rem; line-height:0.78rem;}
+.listul .item .title{height:0.78rem; line-height:0.78rem; padding:0 4px;}
 </style>

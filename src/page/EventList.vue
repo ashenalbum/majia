@@ -12,18 +12,18 @@
                     <img src="~@/assets/test.png" class="img" />
                     <div class="detail">
                         <div class="df df-r ai-c just-c-bet">
-                            <div class="van-ellipsis fs_32">一叶子面膜 限时抢购</div>
+                            <div class="one-hide fs_32">一叶子面膜 限时抢购</div>
                             <van-button size="mini" color="#FF9C00">下架</van-button>
                         </div>
                         <div class="mt-10 df df-r ai-c fs_24 c_ashen">
                             <van-icon name="underway-o" size="0.3rem"/>
-                            <span class="van-ellipsis pl-10">2020/03/24 - 2020/04/01</span>
+                            <span class="one-hide pl-10">2020/03/24 - 2020/04/01</span>
                         </div>
                         <div class="mt-10 df df-r ai-c fs_24 c_ashen">
                             <van-icon name="friends-o" size="0.3rem"/>
-                            <span class="van-ellipsis label">1234</span>
+                            <span class="label">1234</span>
                             <van-icon name="eye-o" size="0.3rem"/>
-                            <span class="van-ellipsis label">1234</span>
+                            <span class="label">1234</span>
                         </div>
                         <div class="mt-20 df df-r just-c-bet fs_26">
                             <span class="c_status">报名中</span>
@@ -34,7 +34,7 @@
             </div>
         </van-list>
         <div class="kefu">
-            <div class="txt shadow c_ashen">联系客服</div>
+            <div class="txt shadow c_ashen fs_32">联系客服</div>
             <img src="~@/assets/event/kefu.png" class="icon" />
         </div>
         <van-popup v-model="showOperate" round position="bottom">
@@ -86,7 +86,7 @@ export default {
 .cont-list .ware .detail .label{padding-left:0.1rem; padding-right:0.4rem;}
 
 .kefu{position:fixed; left:0.2rem; bottom:0.6rem;}
-.kefu .txt{margin-left:0.4rem; height:0.64rem; line-height:0.64rem; padding:0 0.3rem 0 0.5rem; font-size:0.32rem; background:#ffffff; border-radius:0.1rem;}
+.kefu .txt{margin-left:0.4rem; line-height:1; padding:0.16rem 0.3rem 0.16rem 0.5rem; font-size:0.32rem; background:#ffffff; border-radius:0.1rem;}
 .kefu .icon{width:0.8rem; height:0.8rem; position:absolute; left:0; top:-0.08rem; border-radius:50%; box-shadow:0 0 6px 0 #2F8AF8;}
 
 .operate-box{padding:0.5rem 0.5rem 0.2rem;}

@@ -1,19 +1,33 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import MyCenter from '@/page/MyCenter'//首页
+import AllPath from '@/page/AllPath'//首页
 
 Vue.use(Router);
 
 export default new Router({
     // mode: 'history',
     routes: [{
-        path: '/', redirect: '/my_center'
+        path: '/', redirect: '/all_path'
+    },{
+        path: '/all_path',
+        name: 'AllPath',
+        component: AllPath
     }, {
         path: '/my_center',
         name: 'MyCenter',
         meta: { title: "个人中心"},
-        component: MyCenter
+        component: (resolve) =>require(['@/page/MyCenter.vue'],resolve)
     }, {
+        path: '/member',
+        name: 'Member',
+        meta: { title: "会员中心"},
+        component: (resolve) =>require(['@/page/Member.vue'],resolve)
+    }, {
+        path: '/profit',
+        name: 'Profit',
+        meta: { title: "我的收益"},
+        component: (resolve) =>require(['@/page/Profit.vue'],resolve)
+    },{
         path: '/event_list',
         name: 'EventList',
         meta: { title: "活动列表"},

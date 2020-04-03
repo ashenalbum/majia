@@ -15,7 +15,7 @@ export const upFile = (url,formData) => {
 
 // 创建axios实例
 const service = axios.create({
-    baseURL: "", // api的base_url
+    baseURL: "http://sqyx.78wa.com/", // api的base_url
     timeout: 500000 // 请求超时时间
 });
 

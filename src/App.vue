@@ -106,4 +106,11 @@ export default {
 
 .fixed-submit{position:fixed!important; z-index:1; right:0; bottom:2rem; border-radius:0.1rem 0 0 0.1rem; width:2rem;}
 .com-btn-y{display:inline-block; background:#FF9C00; border-radius:0.06rem; line-height:1; padding:0.08rem 0.12rem; color:#ffffff; font-size:0.24rem;}
+
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    padding: 0;
+    border: 0
+}
 </style>

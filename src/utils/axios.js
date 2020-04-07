@@ -1,21 +1,20 @@
 import axios from "axios";
 import store from "../store/index";
+import {Toast} from "vant";
 
 // 上传文件
-export const upFile = (url,formData) => {
-    let config = {
+export const upFile = (formData) => {
+    return axios({
+        method: "post",
         headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: e => {
-            var completeProgress = ((e.loaded / e.total * 100) | 0) + "%";
-            this.progress = completeProgress;
-        }
-    };
-    return axios.post(url,formData,config);
+        url: "http://sqyx.78wa.com/public/index.php/upload/Uploads/upload",
+        data: formData,
+    })
 }
 
 // 创建axios实例
 const service = axios.create({
-    baseURL: "http://sqyx.78wa.com/", // api的base_url
+    baseURL: "http://sqyx.78wa.com/public/index.php", // api的base_url
     timeout: 500000 // 请求超时时间
 });
 
@@ -38,10 +37,16 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     response => {
         const data = response.data;
+        if(data.err !== 0){
+            Toast(data.content||"error");
+            if(data.err == 1){
+                window.localStorage.clear();
+                // window.location.reload();
+            }
+        }
         return data;
     },
     error => {
-        console.log(error.message);
         return Promise.reject(error);
     }
 );

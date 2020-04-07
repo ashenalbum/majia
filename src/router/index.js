@@ -6,6 +6,7 @@ Vue.use(Router);
 
 export default new Router({
     // mode: 'history',
+    mode: 'hash',
     routes: [{
         path: '/', redirect: '/all_path'
     },{
@@ -57,6 +58,16 @@ export default new Router({
         name: 'OrderList',
         meta: { title: "订单列表"},
         component: (resolve) =>require(['@/page/OrderList.vue'],resolve)
+    }, {
+        path: '/order_detail',
+        name: 'OrderDetail',
+        meta: { title: "订单详情"},
+        component: (resolve) =>require(['@/page/OrderDetail.vue'],resolve)
+    }, {
+        path: '/order_logistics',
+        name: 'OrderLogistics',
+        meta: { title: "订单物流"},
+        component: (resolve) =>require(['@/page/OrderLogistics.vue'],resolve)
     }, {
         path: '/pay_after_set',
         name: 'PayAfterSet',

@@ -300,7 +300,6 @@ export default {
                     {type:3, content:"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"},
                 ]
             },
-
         }
     },
     methods: {

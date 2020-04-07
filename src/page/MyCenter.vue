@@ -18,7 +18,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="bottom">
+                <div class="bottom ai-c">
                     <div class="icon_box df df-r ai-c c_ff fs_30">
                         <img src="~@/assets/mycenter/huiyuan_bai.png" alt="">
                         <span>{{memberInfoData.group_name}}</span>
@@ -88,7 +88,6 @@ export default {
             // HeadNav
     },
     methods: {
-        
         getInfor(){
             // 会员个人信息
             axios({
@@ -124,11 +123,13 @@ export default {
             })
         }
     },
-    created: function() {
-        this.$emit("footer", true);
-        this.HeaderBool = this.$route.meta.showHeader;
+    created() {
+        // this.$emit("footer", true);
+        // this.HeaderBool = this.$route.meta.showHeader;
+        this.getInfor();
+        this.getCate();
     },
-    mounted:function(){
+    mounted() {
         // this.getInfor();
         // this.getCate();
     }

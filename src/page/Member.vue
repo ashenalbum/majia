@@ -2,22 +2,22 @@
     <div id="app">
         <HeadNav></HeadNav>
         <div class="header_box">
-            <div class="header_cont">
+            <div class="header_cont df df-r ai-c">
                 <div class="header_left">
                     <img :src="this.inforData.headpath" alt />
                 </div>
-                <div class="header_right">
-                    <van-notice-bar class="nickname" :text="inforData.nickname" />
-                    <!-- <h1>{{this.inforData.nickname}}</h1> -->
-                    <p style="margin:0.1rem 0">
+                <div class="header_right c_ff">
+                    <!-- <van-notice-bar class="nickname" :text="inforData.nickname+''" /> -->
+                    <div class="nickname one-hide">{{this.inforData.nickname}}</div>
+                    <div class="mt-20 df df-r ai-c">
                         <van-icon name="star" />
-                        {{this.inforData.group_name}}
-                    </p>
-                    <p v-if="End_time!==0 || true">
-                        <span>会员到期时间:</span>
-                        <van-notice-bar class="c_ff" :speed="30" :text="End_time"/>
-                    </p>
-                    <!-- <p>{{this.End_time}}</p> -->
+                        <span> {{this.inforData.group_name}}</span>
+                    </div>
+                    <div v-if="End_time!==0 || true" class="mt-10 df df-r ai-c">
+                        <span>会员到期时间：</span>
+                        <span>{{End_time}}</span>
+                        <!-- <van-notice-bar class="c_ff" :speed="30" :text="End_time+''"/> -->
+                    </div>
                 </div>
             </div>
             <div class="tab-bar">
@@ -37,7 +37,7 @@
             <div class="tab_content">
                 <div class="box">
                     <ul>
-                        <li v-for="(item,index) in this.MoneyData" :key="index" @click="Sel_list(index,item)" :class="{addclass: active==index2}">
+                        <li v-for="(item,index) in this.MoneyData" :key="index" @click="Sel_list(index,item)">
                             <p class="money_box" v-if="curId===0"> <img src="~@/assets/member/member_new1.png" alt /></p>
                             <p class="money_box" v-else> <img src="~@/assets/member/member_new2.png" alt /> </p>
                         </li>
@@ -126,7 +126,7 @@ export default {
             showDlg: false,
             page_id: "",
             member_name: "",
-            End_time: "",
+            End_time: null,
             isbuy: "",
             group_id: "",
             dis_bool: false,
@@ -198,8 +198,6 @@ export default {
             }).then((data)=>{
                 let JsonData = data.data;
                 this.group_id = JsonData.group_id;
-                // console.log('当前会员id为:'+that.group_id) //id
-                // console.log(JsonData.group_id); //当前会员id
                 if (JsonData.endtime == 0) {
                     this.End_time = 0;
                 } else {
@@ -220,7 +218,7 @@ export default {
             this.Payshow = false;
             // 确认支付
             axios({
-                url: "member/Apimember/member_group_pay",
+                url: "/member/Apimember/member_group_pay",
                 params: {
                     id: this.required_id,
                     interval: this.prdoct_num,
@@ -259,7 +257,7 @@ export default {
             if (this.required_id < this.group_id) {
                 Toast("无法购买低级别会员");
             } else {
-                if (this.LastName != "" && this.Lastmoney != "" && this.Last_danwei == "") {
+                if (this.LastName != "" && this.Lastmoney != "" && this.Last_danwei != "") {
                     this.radio = "WX";
                     this.Payshow = true;
                     this.isGive = 0;
@@ -334,35 +332,19 @@ export default {
 .header_box {
   width: 100%;
   margin: 0 auto;
-  margin-top: 1rem;
-  /* height: 2rem; */
-  margin-top: 0.8rem;
-  /* display: flex;
-  flex-direction: row;
-  justify-content: space-between; */
-  background: #297fff url("~@/assets/member/member_bg.png") no-repeat center
-    center/cover;
-  /* border-radius: 0.3rem; */
-  box-sizing: border-box;
-  padding: 0.3rem 0 0 0;
+  margin-top: 46px;
+  background: #297fff url("~@/assets/member/member_bg.png") no-repeat center center/cover;
 }
 .header_cont {
-  display: flex;
-  width: 60%;
-  margin: 0.6rem auto 0 auto;
+  width: 90%;
+  height: 3.4rem;
+  margin:auto;
 }
-.header_left {
-  width: 2rem;
-  height: 2rem;
-  line-height: 2.8rem;
-  text-align: center;
-  margin-right: 0.3rem;
-}
+.header_left{margin-right: 0.4rem;}
 .header_left img {
   width: 1.4rem;
   height: 1.4rem;
   border-radius: 50%;
-  vertical-align: middle;
 }
 .header_right {
   width: 5.5rem;
@@ -371,9 +353,6 @@ export default {
   font-size: 0.32rem;
   font-family: MicrosoftYaHei;
   font-weight: bold;
-  /* color: #141418; */
-  color: #fff;
-  margin: 0.5rem 0 0.2rem 0;
 }
 .header_right p {
   /* height: 0.23rem; */
@@ -388,7 +367,7 @@ export default {
 
 .tab-bar {
   width: 90%;
-  margin: 0.5rem auto 0 auto;
+  margin: 0 auto;
   display: flex;
   border-radius: 0.2rem;
   position: relative;

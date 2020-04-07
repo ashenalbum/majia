@@ -150,7 +150,6 @@ export default {
                     sort_type:"desc"
                 }
             }).then((data)=>{
-                if(data.err != 0){return;}
                 for(var i=0;i<data.data.length;i++){
                     let date= new Date(data.data[i].addtime);
                     data.data[i].addtime = date.toISOString().slice(0,10) + " " + date.toTimeString().slice(0,5);
@@ -187,44 +186,37 @@ export default {
                 }
             })
         },
-     Check_infor(){
-       var that = this;
-        var params = {};
-        params["param"] = {
-        };
-        params["url"] = "activity/Apiactivity/is_perfect_info";
-        params["success"] = function(d) {
-          if (d.data.type != 0) {
-            Toast('您没有完善过信息,请先完善信息');
-            var that_=that;
-            setTimeout(function(){
-              that_.$router.push('./perfect_information');
-            },800)
-          }
-        };
-        // httpConfig.getJson(params);
-    }
+        Check_infor(){
+            axios({
+                url: "/activity/Apiactivity/is_perfect_info",
+            }).then((data)=>{
+                if(data.data.type!=0){
+                    Toast('您没有完善过信息,请先完善信息');
+                    setTimeout(()=>{
+                        this.$router.push('./auth');
+                    },800);
+                }
+            })
+        }
     },
-    created: function() {
+    created(){
         // this.Check_infor();
         // this.HeaderBool = this.$route.meta.showHeader;
     },
-    mounted:function(){
+    mounted(){
         // 资金记录统计
-        var that = this;
-         var params1 = {};
-        params1['url'] = 'accounts/Apipoint/member_point';
-        params1['param'] = { 
-            point_type: "point",
-            select_type:0,
-            sort:"addtime",
-            sort_type:"desc"
-        };
-        params1['success'] = function(d){
-            that.DongJieZiJinData=d.data.frozen;
-            that.ZiJinData=d.data.money;
-        };
-        // httpConfig.getJson(params1);
+        axios({
+            url: "/accounts/Apipoint/member_point",
+            params: {
+                point_type: "point",
+                select_type: 0,
+                sort: "addtime",
+                sort_type: "desc"
+            }
+        }).then((data)=>{
+            this.DongJieZiJinData = data.data.frozen;
+            this.ZiJinData = data.data.money;
+        });
     }
 }
 </script>

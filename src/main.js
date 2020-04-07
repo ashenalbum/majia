@@ -18,6 +18,14 @@ new Vue({
   store,
 }).$mount('#app');
 
+// 测试 token 删除 1049
+axios({
+    url: "/activity/index1111/get_param",
+}).then((data)=>{
+    window.localStorage.setItem("token",JSON.stringify(data));
+    store.commit("setToken",JSON.parse(window.localStorage.getItem("token")));
+})
+
 // localStorage 储存 vuex
 store.commit("setToken",JSON.parse(window.localStorage.getItem("token")));
 
@@ -93,7 +101,7 @@ function wxConfig(Page_id){
                     imgUrl: data.data.thumb, // 分享图标
                     success: ()=>{ console.log("已分享") },
                     cancel: ()=> { console.log('已取消') },
-                    trigger: ()=>{ console.log('用户点击发送给朋友') },
+                    trigger: ()=>{ console.log('用户点击分享朋友圈') },
                     fail: ()=>{ console.log("分享失败") }
                 });
                 // 分享给朋友

@@ -1,57 +1,64 @@
 <template>
     <div class="cont">
         <div class="top">
-            <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-                <van-swipe-item v-for="(item,index) in [1,1,1]" :key="index">
-                    <img src="~@/assets/test.png" class="img" />
+            <van-swipe class="my-swipe" :autoplay="data.video_url?0:3000" indicator-color="white">
+                <van-swipe-item v-if="data.video_url">
+                    <video class="img" :src="data.video_url" controls autoplay muted></video>
+                </van-swipe-item>
+                <van-swipe-item v-for="(item,index) in data.head_pic_img" :key="index">
+                    <img :src="item.pic_img" class="img" />
                 </van-swipe-item>
             </van-swipe>
-            <div class="see c_ashen fs_28">267人浏览</div>
-            <div v-if="dmList.length" class="box">
-                <div v-for="(item,index) in dmList" :key="index" class="dm df df-r ai-c" :class="{dmmove:item.move}" :style="{top:item.top}">
-                    <div class="txt c_66 fs_20 van-ellipsis">{{item.txt}}</div>
-                    <img src="~@/assets/test.png" class="img" />
-                </div>
+            <div class="see c_ashen fs_28">{{data.browse_num}}人浏览</div>
+
+            <!-- <div v-if="dmList.length" class="box"></div> -->
+            
+            <div v-for="(item,index) in dmList" :key="index" class="dm df df-r ai-c" :class="{dmmove:item.move}" :style="{top:item.top}">
+                <div class="txt c_66 fs_20 van-ellipsis">{{item.txt}}</div>
+                <img :src="item.src" class="img" />
             </div>
         </div>
         <div class="bg_ff">
             <div class="details">
-                <div class="c_33 fs_32 van-ellipsis">一叶子面膜组合套装  限时抢购一叶子面膜组合套装  限时抢购</div>
-                <div class="mt-20 c_ashen fs_26 van-ellipsis">美白补水 有效护肤 唤醒肌肤活力，让你永葆青春让你永葆青春让你永葆青春</div>
+                <div class="c_33 fs_32 van-ellipsis">{{data.title}}</div>
+                <div class="mt-20 c_ashen fs_26 van-ellipsis">{{data.subhead}}</div>
                 <div class="mt-30 c_o fs_28">
                     <span class="label">组合套装</span>
                 </div>
                 <div class="mt-36 df df-r ai-e just-c-bet">
                     <div class="df df-r ai-e">
-                        <span class="c_red1 fs_30">￥99.8</span>
-                        <span class="yuanjia fs_26 c_ashen txt-line-t">￥159</span>
+                        <span class="c_red1 fs_30">￥{{data.special_offer}}</span>
+                        <span class="yuanjia fs_26 c_ashen txt-line-t">￥ {{data.price}}</span>
                     </div>
-                    <span class="fs_28 c_ashen">销量 123</span>
+                    <span class="fs_28 c_ashen">销量 {{data.people_buy_num}}</span>
                 </div>
             </div>
             <div class="seller shadow df df-r ai-c just-c-bet" @click="showSeller=true">
                 <div class="df df-r ai-c">
-                    <img src="~@/assets/test.png" class="icon" />
-                    <span class="name c_33 fs_30 one-hide">阿斯顿发送到发送到发送到发的</span>
+                    <img :src="userInfo.headpath" class="icon" />
+                    <span class="name c_33 fs_30 one-hide">{{userInfo.nickname}}</span>
                 </div>
-                <van-button size="mini" color="#FF9C00">关注</van-button>
+                <van-button size="mini" color="#FF9C00" @click="showSeller=true">关注</van-button>
             </div>
             <div class="words mt-40">
                 <div class="title df ai-c just-c-ct">
                     <div class="line"></div>
-                    <span class="txt fs_26">产品详情</span>
+                    <span class="txt fs_36">产品详情</span>
                 </div>
                 <div class="box">
-                    <div class="txt t-indent c_ashen">一叶子面膜组合套装，口碑品牌，致力于打造天然美肌产品一叶子面膜组合套装，口碑品牌，致力于打造天然美肌产品一叶子面膜组合套装，口碑品牌，致力于打造天然美肌产品一叶子面膜组合套装，口碑品牌，致力于打造天然美肌产品一叶子面膜组合套装，口碑品牌，致力于打造天然美肌产品</div>
-                    <img class="img" src="~@/assets/test.png" />
-                    <img class="img" src="~@/assets/test.png" />
+                    <div v-for="(item,index) in data.details" :key="index">
+                        <div v-if="item.type==1" class="txt t-indent c_ashen">{{item.content}}</div>
+                        <img v-if="item.type==2" class="img" :src="item.content" />
+                        <video v-else-if="item.type==3" class="video" :src="item.content" controls></video>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="help fs_22 c_88">
             <div class="fs_30">购买须知：</div>
-            <div class="t-indent">1.购买后关注“吗夹”公众号，可在菜单【会员中心】处找到已购买的活动信息或者发布最新活动。</div>
-            <div class="t-indent">2.活动付费后，原则上不予退款，请谨慎决定。如入住商承诺退款，请购买后联系商家客服协商处理。如有其它争议，请联系平台客服！</div>
+            <div v-html="data.instructions"></div>
+            <!-- <div class="t-indent">1.购买后关注“吗夹”公众号，可在菜单【会员中心】处找到已购买的活动信息或者发布最新活动。</div>
+            <div class="t-indent">2.活动付费后，原则上不予退款，请谨慎决定。如入住商承诺退款，请购买后联系商家客服协商处理。如有其它争议，请联系平台客服！</div> -->
         </div>
         <div class="bottom-btns df df-r fs_34">
             <div class="btn1 f1 df df-c ai-c just-c-ct">制作新活动</div>
@@ -66,20 +73,21 @@
         </div>
 
         <div v-if="showAd" class="ad df df-r shadow">
-            <img src="~@/assets/test.png" class="img" />
+            <img :src="ad.head_pic" class="img" />
             <div class="txt f1 df df-c just-c-bet">
-                <div class="title fs_26 c_33 van-multi-ellipsis--l2">张爱玲的书集十册  限时抢购</div>
+                <div class="title fs_26 c_33 van-multi-ellipsis--l2">{{ad.title}}</div>
                 <div class="df df-r ai-e just-c-bet">
                     <div class="df df-r ai-e just-c-bet">
-                        <span class="c_red1 fs_32">￥39</span>
-                        <span class="pl-20 fs_24 c_ashen txt-line-t">￥98</span>
+                        <span class="c_red1 fs_32">￥{{ad.special_offer}}</span>
+                        <span class="pl-20 fs_24 c_ashen txt-line-t">￥{{ad.price}}</span>
                     </div>
-                    <span class="fs_26 c_ashen">1234人参与</span>
+                    <span class="fs_26 c_ashen">{{ad.browse_times}}人参与</span>
                 </div>
             </div>
             <van-icon @click.stop="showAd=false" name="clear" size="0.5rem" color="#D1D6E5" class="close"/>
         </div>
-        <van-button class="fixed-submit" type="info">生成海报</van-button>
+
+        <van-button class="fixed-submit" type="info" @click="haibao">{{data.hb_btn_name}}</van-button>
 
         <!-- <van-overlay :show="showSeller" @click="showSeller=false">
             <div class="maskSeller">
@@ -107,27 +115,58 @@
 <script>
 // import Clipboard from 'clipboard';
 // import {Toast} from 'vant';
+import axios from "../utils/axios";
 
 export default {
+    name: "EventView",
     data(){
         return {
+            id: null,
+            data: {},
+            userInfo: {},
             showAd: true,
             showSeller: false,
-            dmList: [
-                {src:"", txt:"弹幕1弹幕1弹幕1弹幕1弹幕1弹幕", move:false, top:0},
-                {src:"", txt:"弹幕2弹幕2弹幕2弹幕2弹幕2弹幕2", move:false, top:0},
-                {src:"", txt:"弹幕3弹幕3弹幕3弹幕3弹幕3弹幕3", move:false, top:0},
-                {src:"", txt:"弹幕4弹幕4弹幕4弹幕4弹幕4弹幕4弹幕4", move:false, top:0},
-                {src:"", txt:"弹幕5弹幕5弹幕5弹幕5弹幕5弹幕5弹幕5弹幕5弹幕5", move:false, top:0},
-            ],
+            dmList: [],
+            ad: {},
         }
+    },
+    created(){
+        this.id = this.$route.query.id;
+        this.getData();
     },
     methods: {
         make(){
             this.$router.push("/event_form");
+        },
+        getData(){
+            axios({
+                url: "/activity/Apiactivity/previewTemplateInfo",
+                params: {activity_id: this.id}
+            }).then((data)=>{
+                console.log(data);
+                this.data = data.data;
+                this.userInfo = data.userinfo;
+                this.ad = data.data.recommend_advert;
+                this.dmList = [];
+                for(let i in data.data.barrage){
+                    let dm = data.data.barrage[i];
+                    this.dmList.push({
+                        txt: dm.nickname,
+                        src: dm.headpath,
+                        move: false,
+                        top:0,
+                    })
+                }
+            })
+        },
+        haibao(){
+            // this.$router.push()
         }
     },
     mounted(){
+        // let clipboard = new Clipboard(this.$refs.copywx);
+        // clipboard.on('success', ()=>{Toast("复制成功");});
+        // clipboard.on('error', ()=>{Toast("复制失败");});
         // 弹幕
         let propTop = 0;
         setInterval(()=>{
@@ -147,15 +186,15 @@ export default {
 </script>
 <style scoped>
 .cont{background:#F1EFF2; padding-bottom:1.6rem;}
-.top{position:relative; width:100%; height:4.6rem;}
+.top{position:relative; width:100%; height:4.6rem; overflow: hidden;}
 .my-swipe .van-swipe-item{width:100%; height:4.6rem;}
 .my-swipe .van-swipe-item .img{width:100%; height:100%;}
 .top .see{position:absolute; bottom:0; right:0; padding:0.1rem 0.22rem; background:rgba(0,0,0,0.55);}
 .top .box{position:absolute; top:0; left:0; width:100%; height:100%; overflow:hidden;}
-.top .box .dm{position:absolute; max-width:7rem; left:100%; height:0.44rem;}
-.top .box .dm .txt{padding:0.09rem 0.16rem 0.09rem 0.52rem; line-height:1; background:rgba(255,255,255,0.5); border-radius:0.2rem; white-space:nowrap;}
-.top .box .dm .img{position: absolute; width:0.44rem; height:0.44rem; border-radius:50%; left:0; top:0;}
-.top .box .dm.dmmove{transition:left 10s linear; left:-7rem;}
+.top .dm{position:absolute; max-width:7rem; left:100%; height:0.44rem;}
+.top .dm .txt{padding:0.09rem 0.16rem 0.09rem 0.52rem; line-height:1; background:rgba(255,255,255,0.5); border-radius:0.2rem; white-space:nowrap;}
+.top .dm .img{position: absolute; width:0.44rem; height:0.44rem; border-radius:50%; left:0; top:0;}
+.top .dm.dmmove{transition:left 10s linear; left:-7rem;}
 
 .bg_ff{background: #ffffff;}
 .details{padding:0.4rem 0.45rem; background:#ffffff;}
@@ -169,10 +208,12 @@ export default {
 .words .title{position:relative; width:3.8rem; margin:0 auto;}
 .words .title .line{position:absolute; left:0; right:0; top:50%; border-bottom:1px solid #E3E3E3;}
 .words .title .txt{position:relative; padding:0 0.5rem; color:#BBC1D4; background:#ffffff;}
-.words .box .txt{padding:0.36rem 0.4rem; line-height:2;}
+.words .box .txt{padding:0.36rem 0.2rem; line-height:2;}
 .words .box .img{display:block; width:100%; height:auto;}
+.words .box .video{display:block; width:100%; height:auto; background:#000000;}
 
 .help{width:6.4rem; margin:auto; padding:0.3rem 0 0.6rem; line-height:1.6;}
+.help p{margin:0.5em 0; text-indent:2em;}
 
 .bottom-btns{position:fixed; width:100%; height:1.28rem; left:0; bottom:0; border-radius:0.4rem 0.4rem 0 0; overflow:hidden;}
 .bottom-btns .btn1{height:100%; background: #ffffff; color:#FF9C00;}
@@ -197,5 +238,5 @@ export default {
 .maskSeller .linebox .line{position:absolute; left:0; right:0; top:50%; border-bottom:1px solid #E3E3E3;}
 .maskSeller .linebox .txt{position:relative; padding:0 0.5rem; background:#ffffff;}
 
-.fixed-submit{bottom: 3.6rem;}
+.fixed-submit{top:4.8rem; width:auto;}
 </style>

@@ -7,7 +7,7 @@
             @load="getList"
             class="cont-list c_33"
         >
-            <div v-for="(item,index) in [1,3,2,3]" :key="index" class="item df df-c">
+            <div v-for="(item,index) in dataList" :key="index" class="item df df-c">
                 <div class="df df-r ai-c just-c-bet">
                     <div class="df df-r ai-c">
                         <img src="~@/assets/test.png" class="icon" />
@@ -41,16 +41,27 @@
     </div>
 </template>
 <script>
+import axios from "../utils/axios";
 export default {
     data(){
         return {
+            page: 1,
+            pageSize: 20,
             loading: false,
             over: false,
-
+            dataList: [],
         }
     },
     methods: {
         getList(){
+            axios({
+                url: "/activity/Apiactivity/order_list",
+                params: {page: this.page, pagesize:this.pageSize}
+            }).then((data)=>{
+                console.log(data);
+                // this.dataList = this.dataList.concat()
+            })
+
             this.loading = false;
             this.over = true;
         }

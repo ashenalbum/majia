@@ -7,8 +7,10 @@ export const upFile = (formData) => {
     return axios({
         method: "post",
         headers: { "Content-Type": "multipart/form-data" },
-        url: "http://sqyx.78wa.com/public/index.php/upload/Uploads/upload",
+        // url: "http://sqyx.78wa.com/public/index.php/upload/Uploads/upload",
+        url: "http://sqyx.78wa.com/public/index.php/activity/Apiactivity/upload",
         data: formData,
+        params: {...store.state.token}
     })
 }
 

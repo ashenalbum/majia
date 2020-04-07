@@ -88,34 +88,35 @@ function wxConfig(Page_id){
             ]
         });
         wx.ready(() => {
-            axios({
-                url: "/activity/Apiactivity/sharing_getInfo",
-                params: {id: Page_id}
-            }).then((data)=>{
-                if(data.err!=0){return;}
-                //分享朋友圈
-                wx.onMenuShareTimeline({
-                    title: data.data.title, // 分享标题
-                    link: data.data.url,
-                    desc: data.data.content, // 分享描述
-                    imgUrl: data.data.thumb, // 分享图标
-                    success: ()=>{ console.log("已分享") },
-                    cancel: ()=> { console.log('已取消') },
-                    trigger: ()=>{ console.log('用户点击分享朋友圈') },
-                    fail: ()=>{ console.log("分享失败") }
-                });
-                // 分享给朋友
-                wx.onMenuShareAppMessage({
-                    title: data.data.title, // 分享标题
-                    link: data.data.url,
-                    desc: data.data.content, // 分享描述
-                    imgUrl: data.data.thumb, // 分享图标
-                    success: ()=>{ console.log('已分享') },
-                    trigger: ()=>{ console.log('用户点击发送给朋友') },
-                    cancel: ()=>{ console.log('已取消') },
-                    fail: ()=>{ console.log('分享失败') }
-                });
-            })
+            console.log(Page_id);
+            // axios({
+            //     url: "/activity/Apiactivity/sharing_getInfo",
+            //     params: {id: Page_id}
+            // }).then((data)=>{
+            //     if(data.err!=0){return;}
+            //     //分享朋友圈
+            //     wx.onMenuShareTimeline({
+            //         title: data.data.title, // 分享标题
+            //         link: data.data.url,
+            //         desc: data.data.content, // 分享描述
+            //         imgUrl: data.data.thumb, // 分享图标
+            //         success: ()=>{ console.log("已分享") },
+            //         cancel: ()=> { console.log('已取消') },
+            //         trigger: ()=>{ console.log('用户点击分享朋友圈') },
+            //         fail: ()=>{ console.log("分享失败") }
+            //     });
+            //     // 分享给朋友
+            //     wx.onMenuShareAppMessage({
+            //         title: data.data.title, // 分享标题
+            //         link: data.data.url,
+            //         desc: data.data.content, // 分享描述
+            //         imgUrl: data.data.thumb, // 分享图标
+            //         success: ()=>{ console.log('已分享') },
+            //         trigger: ()=>{ console.log('用户点击发送给朋友') },
+            //         cancel: ()=>{ console.log('已取消') },
+            //         fail: ()=>{ console.log('分享失败') }
+            //     });
+            // })
         });
         wx.error((res)=>{ console.log('err', res) });
     })

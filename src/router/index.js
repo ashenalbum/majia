@@ -6,7 +6,6 @@ Vue.use(Router);
 
 export default new Router({
     // mode: 'history',
-    mode: 'hash',
     routes: [{
         path: '/', redirect: '/all_path'
     },{
@@ -28,7 +27,7 @@ export default new Router({
         name: 'Profit',
         meta: { title: "我的收益"},
         component: (resolve) =>require(['@/page/Profit.vue'],resolve)
-    },{
+    }, {
         path: '/event_list',
         name: 'EventList',
         meta: { title: "活动列表"},

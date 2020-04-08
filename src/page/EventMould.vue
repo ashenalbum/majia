@@ -39,6 +39,7 @@
 </template>
 <script>
 import axios from "../utils/axios";
+import { Toast } from 'vant';
 
 export default {
     data(){
@@ -98,6 +99,7 @@ export default {
                 url: "/activity/Apiactivity/is_perfect_info"
             }).then((data)=>{
                 if(data.err!==0){
+                    Toast("请先验证信息");
                     this.$router.push("/auth");
                     return;
                 }

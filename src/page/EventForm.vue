@@ -33,7 +33,7 @@
 
             <van-field label="原价" v-model="formData.price" required placeholder="请输入原价" type="number" input-align="right" class="form-input" />
             <van-field label="活动价格" v-model="formData.special_offer" required placeholder="请输入活动价格" type="number" input-align="right" class="form-input" />
-            <div class="guige">
+            <div v-if="formData.type==1" class="guige">
                 <div class="guige-label df df-r ai-c just-c-bet">
                     <div class="title fs_32 c_33 fs_14px">产品规格</div>           
                     <van-button icon="plus" size="mini" color="#FF9B00" @click="showGuige=true"></van-button>
@@ -152,16 +152,16 @@
                 <div class="title txt-c c_33">产品规格</div>
                 <table class="table-input">
                     <tr>
-                        <td class="txt-r">规格名：</td><td><input /></td>
-                        <td class="txt-r">原 价：</td><td><input type="number" /></td>
+                        <td class="txt-r">规格名：</td><td><input v-model="guigeData.name" /></td>
+                        <td class="txt-r">原 价：</td><td><input type="number" v-model="guigeData.price" /></td>
                     </tr>
                     <tr>
-                        <td class="txt-r">活动价：</td><td><input type="number" /></td>
-                        <td class="txt-r">库 存：</td><td><input /></td>
+                        <td class="txt-r">活动价：</td><td><input type="number" v-model="guigeData.offerPic" /></td>
+                        <td class="txt-r">库 存：</td><td><input type="number" v-model="guigeData.stock" /></td>
                     </tr>
                 </table>
                 <div class="txt-c mt-50">
-                    <van-button class="btn" color="#FF9C00" size="small">保存设置</van-button>
+                    <van-button class="btn" color="#FF9C00" size="small" @click="addGuige">保存设置</van-button>
                 </div>
             </div>
         </van-popup>
@@ -257,7 +257,7 @@ export default {
             showSelTime: false,
             // 选择规格
             showGuige: false,
-            guigeData: { name: "", yuanjia: "", kucun: "", huodongjia: ""},
+            guigeData: { name: "", price: "", offerPic: "", stock: ""},
             // 协议
             showXieyi: false,
             checkXieyi: false,
@@ -288,11 +288,13 @@ export default {
                 cj: "", //场景
                 hy: "", //行业
                 head_pic_img: [],//头图
+                head_pic: [], //头图id
                 huzhu: false, //商家互助
                 danmu: false, //弹幕
                 startTime: "", //开始时间
                 endTime: "", //结束时间
-                details: [] //详情
+                details: [], //详情
+                spec_content: [], //规格
             },
         }
     },
@@ -307,6 +309,7 @@ export default {
     methods: {
         // 提交表单
         checkForm(){
+            console.log(this.formData);
             let data = this.formData;
             let testArr = [
                 {b:/^\s*$/.test(data.title), t:"请输入标题"},
@@ -329,7 +332,6 @@ export default {
                 data: {
                     source_template: this.id,
                     ...this.formData,
-                    id: null,
                 }
             }).then((data)=>{
                 if(data.err!=0){return}
@@ -344,6 +346,7 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 this.formData = data.data;
+                delete this.formData.id;
                 this.userInfo = data.userinfo;
                 if(this.hyData.length){this.fillSheet(this.formData.genre_id,this.hyData,"hy")}
                 if(this.cjData.length){this.fillSheet(this.formData.scene,this.cjData,"cj")}
@@ -416,6 +419,11 @@ export default {
                 this.formData.head_pic_img.splice(id,1);
                 this.formData.head_pic.splice(id,1);
             }).catch(() => {});
+        },
+        // 添加规格
+        addGuige(){
+            this.formData.spec_content.push({...this.guigeData});
+            this.showGuige = false;
         },
         // 删除规格
         delGuige(id){

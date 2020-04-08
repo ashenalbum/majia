@@ -23,7 +23,7 @@
                 <div class="c_33 fs_32 van-ellipsis">{{data.title}}</div>
                 <div class="mt-20 c_ashen fs_26 van-ellipsis">{{data.subhead}}</div>
                 <div class="mt-30 c_o fs_28">
-                    <span class="label">组合套装</span>
+                    <span v-for="(item,index) in data.spec_content" :key="index" class="label">{{item.name}}</span>
                 </div>
                 <div class="mt-36 df df-r ai-e just-c-bet">
                     <div class="df df-r ai-e">
@@ -143,7 +143,7 @@ export default {
                 url: "/activity/Apiactivity/previewTemplateInfo",
                 params: {activity_id: this.id}
             }).then((data)=>{
-                console.log(data);
+                if(data.err!=0){return}
                 this.data = data.data;
                 this.userInfo = data.userinfo;
                 this.ad = data.data.recommend_advert;

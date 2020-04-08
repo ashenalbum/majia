@@ -89,6 +89,7 @@ export default {
 .ai-c{align-items: center;}
 .ai-e{align-items: flex-end;}
 .as-c{align-self: center;}
+.df-w-w{flex-wrap: wrap;}
 .just-c-bet{justify-content: space-between;}
 .just-c-aro{justify-content: space-around;}
 .just-c-end{justify-content: flex-end;}

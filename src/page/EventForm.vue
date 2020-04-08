@@ -2,14 +2,14 @@
     <div class="cont">
         <div class="top">
             <div class="username pl-50 df df-r ai-c">
-                <img src="~@/assets/test.png" class="icon shadow" />
-                <span class="txt fs_36 c_ff">疯了的痘痘</span>
+                <img :src="userInfo.headpath" class="icon shadow" />
+                <span class="txt fs_36 c_ff">{{userInfo.nickname}}</span>
             </div>
         </div>
         <div class="formbox formbox1 shadow">
             <div class="title fs_32 c_33"><span class="c_red"> *</span>活动标题</div>
-            <van-field placeholder="请输入主标题" class="form-input pl-4" />
-            <van-field placeholder="请输入副标题" class="form-input pl-4" />
+            <van-field v-model="formData.title" placeholder="请输入主标题" class="form-input pl-4" />
+            <van-field v-model="formData.subhead" placeholder="请输入副标题" class="form-input pl-4" />
             <div class="ttbox df df-r c_ashen">
                 <span class="fs_30">上传头图：</span>
                 <van-radio-group v-model="fileType" class="radio-group df df-r" checked-color="#FF9C00">
@@ -18,36 +18,38 @@
                 </van-radio-group>
             </div>
             <div v-if="fileType===1" class="upimgbox df df-r">
-                <div v-for="(item,index) in formData.ttImg" :key="index" class="imgbox shadow df ai-c just-c-ct">
-                    <van-loading v-if="item.loading"/>
-                    <img v-else :src="item.url" class="img" />
-                    <van-icon v-if="!item.loading" @click="ttimgRemove(index)" name="clear" size="0.4rem" color="#D1D6E5" class="close"/>
-                </div>
-                <div class="addimg df df-c ai-c just-c-ct c_ashen">
-                    <van-icon name="photograph" size="0.44rem" @click="showTtMould=true" />
-                    <span class="fs_22">添加图片</span>
-                </div>
+                <vuedraggable v-model="formData.head_pic_img" class="df df-r df-w-w">
+                    <div v-for="(item,index) in formData.head_pic_img" :key="index" class="imgbox shadow df ai-c just-c-ct">
+                        <img :src="item.pic_img" class="img" />
+                        <van-icon v-if="!item.loading" @click="ttimgRemove(index)" name="clear" size="0.4rem" color="#D1D6E5" class="close"/>
+                    </div>
+                    <div class="addimg df df-c ai-c just-c-ct c_ashen">
+                        <van-icon name="photograph" size="0.44rem" @click="showTtMould=true" />
+                        <span class="fs_22">添加图片</span>
+                    </div>
+                </vuedraggable>
             </div>
-            <van-field v-else placeholder="请输入视频播放地址" class="video-input mb-20 pl-4" />
-            <van-field label="原价" required placeholder="请输入原价" type="number" input-align="right" class="form-input" />
-            <van-field label="活动价格" required placeholder="请输入活动价格" type="number" input-align="right" class="form-input" />
+            <van-field v-else v-model="formData.video_url" placeholder="请输入视频播放地址" class="video-input mb-20 pl-4" />
+
+            <van-field label="原价" v-model="formData.price" required placeholder="请输入原价" type="number" input-align="right" class="form-input" />
+            <van-field label="活动价格" v-model="formData.special_offer" required placeholder="请输入活动价格" type="number" input-align="right" class="form-input" />
             <div class="guige">
                 <div class="guige-label df df-r ai-c just-c-bet">
                     <div class="title fs_32 c_33 fs_14px">产品规格</div>           
                     <van-button icon="plus" size="mini" color="#FF9B00" @click="showGuige=true"></van-button>
                 </div>
                 <div class="guige-li c_ashen">
-                    <div v-for="(item,index) in []" :key="index" class="li df df-r ai-c">
-                        <div class=" van-ellipsis f1">规格名/黑色  原价/129  活动价/69  库存/120</div>
-                        <van-icon name="clear" size="0.4rem" color="#D1D6E5" class="close"/>
+                    <div v-for="(item,index) in formData.spec_content" :key="index" class="li df df-r ai-c">
+                        <div class=" van-ellipsis f1">规格名/{{item.name}}  原价/{{item.price}}  活动价/{{item.offerPic}}  库存/{{item.stock}}</div>
+                        <van-icon name="clear" size="0.4rem" color="#D1D6E5" class="close" @click="delGuige(index)"/>
                     </div>
                 </div>
             </div>
-            <van-field label="虚拟浏览量" placeholder="请输入数量" type="number" input-align="right" class="form-input pl-4" />
-            <van-field label="虚拟购买量" placeholder="请输入数量" type="number" input-align="right" class="form-input pl-4" />
-            <van-field label="开始时间" v-model="formData.startTime" placeholder="请选择开始时间" @click="selTime('startTime')" left-icon="question-o" @click-left-icon.stop="leftIcon('starttime')" readonly input-align="right" class="form-input pl-4" />
-            <van-field label="结束时间" v-model="formData.endTime" placeholder="请选择结束时间" @click="selTime('endTime')" left-icon="question-o" @click-left-icon.stop="leftIcon('endtime')" readonly input-align="right" class="form-input pl-4" />
-            <van-field label="购买按钮文案" placeholder="请输入，如:立即购买" left-icon="question-o" @click-left-icon.stop="leftIcon('paytxt')" input-align="right" class="pl-4" />
+            <van-field label="虚拟浏览量" v-model="formData.browse_num" placeholder="请输入数量" type="number" input-align="right" class="form-input pl-4" />
+            <van-field label="虚拟购买量" v-model="formData.people_buy_num" placeholder="请输入数量" type="number" input-align="right" class="form-input pl-4" />
+            <van-field label="开始时间" v-model="formData.start_time" placeholder="请选择开始时间" @click="selTime('start_time')" left-icon="question-o" @click-left-icon.stop="leftIcon('starttime')" readonly input-align="right" class="form-input pl-4" />
+            <van-field label="结束时间" v-model="formData.abort_time" placeholder="请选择结束时间" @click="selTime('abort_time')" left-icon="question-o" @click-left-icon.stop="leftIcon('endtime')" readonly input-align="right" class="form-input pl-4" />
+            <van-field label="购买按钮文案" v-model="formData.pay_btn" placeholder="请输入，如:立即购买" left-icon="question-o" @click-left-icon.stop="leftIcon('paytxt')" input-align="right" class="pl-4" />
         </div>
         <div class="formbox formbox2 shadow">
             <van-field label="活动场景" v-model="formData.cj" required readonly placeholder="请选择活动场景" @click="cjShow=true" input-align="right" class="form-input pr-4" right-icon="arrow" />
@@ -59,7 +61,7 @@
                         <span class="custom-title">开启商家互助</span>
                     </div>
                 </template>
-                <van-switch v-model="formData.huzhu" :change="onChange" size="0.4rem" />
+                <van-switch v-model="merchant_help_b" @input="changeHuzhu" size="0.4rem" />
             </van-cell>
             <van-cell class="cell form-input pl-4 pr-4">
                 <template #title>
@@ -68,42 +70,44 @@
                         <span class="custom-title">开启弹幕</span>
                     </div>
                 </template>
-                <van-switch v-model="formData.danmu" :change="onChange" size="0.4rem" />
+                <van-switch v-model="bullet_sw_b" @change="changeDanmu" size="0.4rem" />
             </van-cell>
-            <div class="title fs_32 c_33 mt-20"><span class="c_red"> *</span>活动详情</div>
-            <div class="mt-10 df df-r ai-c just-c-bet">
-                <van-button :plain="detailType!==0" @click="detailType=0" type="info" size="small">添加文字</van-button>
-                <van-button :plain="detailType!==1" @click="detailType=1" type="info" size="small">添加图片</van-button>
-                <van-button :plain="detailType!==2" @click="detailType=2" type="info" size="small">添加视频</van-button>
-            </div>
+            <div ref="detailbtns" class="title fs_32 c_33 mt-20"><span class="c_red"> *</span>活动详情</div>
+            <van-sticky>
+                <div class="w_62 mt-10 df df-r ai-c just-c-bet">
+                    <van-button :plain="detailType!==0" @click="changeDetailType(0)" type="info" size="small">添加文字</van-button>
+                    <van-button :plain="detailType!==1" @click="changeDetailType(1)" type="info" size="small">添加图片</van-button>
+                    <van-button :plain="detailType!==2" @click="changeDetailType(2)" type="info" size="small">添加视频</van-button>
+                </div>
+            </van-sticky>
             <div class="detail-inputbox mt-30 df df-c ai-c">
-                <van-field v-if="detailType===0" type="textarea" class="input" />
-                <van-uploader v-model="detailImg" v-else-if="detailType===1" :preview-image="false" :before-read="detailRead">
+                <van-field v-if="detailType===0" v-model="detailTxt" type="textarea" class="input" @blur="addDetails" />
+                <van-uploader v-model="detailImg" v-else-if="detailType===1" multiple :preview-image="false" :before-read="detailRead">
                     <div class="upfile fs_26 c_ashen df ai-c just-c-ct txt-c">宽度不得大于750px<br/>点击上传</div>
-                </van-uploader>            
-                <van-field v-else placeholder="请输入视频播放地址" class="video-input pl-4" />
+                </van-uploader>
+                <van-field v-else v-model="detailVideo" @blur="addVideos" placeholder="请输入视频播放地址" class="video-input pl-4" />
             </div>
             <div class="detail-list mt-30">
-                <div v-for="(item,index) in formData.detail" :key="index">
-                    <div v-if="item.type===1" class="txtbox mt-20">
-                        <div class="txt c_33 fs_28">文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字</div>
+                <div v-for="(item,index) in formData.details" :key="index">
+                    <div v-if="item.type==1" class="txtbox mt-20">
+                        <div class="txt c_33 fs_28">{{item.content}}</div>
                         <van-icon @click="detailRemove(index)" name="clear" size="0.4rem" color="#D1D6E5" class="close"/>
                     </div>
-                    <div v-if="item.type===2" class="imgbox mt-20">
+                    <div v-if="item.type==2" class="imgbox mt-20">
                         <img :src="item.content" class="img shadow" />
                         <van-icon @click="detailRemove(index)" name="clear" size="0.4rem" color="#D1D6E5" class="close"/>
                     </div>
-                    <div v-if="item.type===3" class="videobox mt-20">
-                        <video src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" controls="controls" class="video"></video>
+                    <div v-if="item.type==3" class="videobox mt-20">
+                        <video :src="item.content" controls="controls" class="video"></video>
                         <van-icon @click="detailRemove(index)" name="clear" size="0.4rem" color="#D1D6E5" class="close"/>
                     </div>
-                    <img v-if="index < formData.detail.length-1" @click="detailReverse(index)" src="~@/assets/event/reverse.png" class="reverse mt-20" />
+                    <img v-if="index < formData.details.length-1" @click="detailReverse(index)" src="~@/assets/event/reverse.png" class="reverse mt-20" />
                 </div>
             </div>
             <!-- <van-button class="submit" type="info">确认发布</van-button> -->
         </div>
-        <van-button class="fixed-submit" type="info" @click="showXieyi=true">确认发布</van-button>
-        <div class="help fs_22 c_88">
+        <van-button class="fixed-submit" type="info" @click="checkForm">确认发布</van-button>
+        <div ref="xuzhi" class="help fs_22 c_88">
             <div class="fs_30">购买须知：</div>
             <div class="t-indent">1.购买后关注“吗夹”公众号，可在菜单【会员中心】处找到已购买的活动信息或者发布最新活动。</div>
             <div class="t-indent">2.活动付费后，原则上不予退款，请谨慎决定。如入住商承诺退款，请购买后联系商家客服协商处理。如有其它争议，请联系平台客服！</div>
@@ -113,27 +117,22 @@
         <van-popup v-model="showTtMould" round position="bottom">
             <div class="tt-mould">
                 <div class="title df df-r ai-c just-c-bet">
-                    <van-uploader v-model="imgList" :preview-image="false" :before-read="beforeRead" accept="image/png, image/jpeg">
+                    <van-uploader v-model="imgList" :preview-image="false" multiple :before-read="beforeRead" accept="image/png, image/jpeg">
                         <van-button class="btn" size="mini" type="info"> 本地上传 </van-button>
                     </van-uploader>
-                    <span class="fs_26 c_blue">确定</span>
+                    <span class="fs_26 c_blue" @click="topMouldSelOk">确定</span>
                 </div>
                 <div class="imgbox mt-40">
                     <ul class="img-ul">
-                        <li v-for="(item,index) in [1,2,3,4,5,6,7]" :key="index" class="li">
-                            <img src="~@/assets/test.png" class="img" />
-                            <van-icon
-                                :name="index==1?'checked':'circle'"
-                                :color="index==1?'#FF9C00':'#ffffff'"
-                                size="0.4rem"
-                                class="check"
-                            />
+                        <li v-for="(item,index) in (topModel[topModelSel] && topModel[topModelSel].pics)" :key="index" @click="topModelImg=index" class="li shadow">
+                            <img :src="item.thumb" class="img" />
+                            <van-icon :name="topModelImg==index?'checked':'circle'" color="#FF9C00" size="0.4rem" class="check" />
                         </li>
                     </ul>
                 </div>
                 <div class="imgbox mt-30">
                     <ul class="img-ul">
-                        <li v-for="(item,index) in [1,2,3,4,5,6,7]" :key="index" class="fl" :class="{active:item==1}">分类{{item}}</li>
+                        <li v-for="(item,index) in topModel" :key="index" class="fl" @click="topModelSel=index;topModelImg=0" :class="{active:topModelSel==index}">{{item.title}}</li>
                     </ul>
                 </div>
             </div>
@@ -144,7 +143,7 @@
         <van-action-sheet v-model="hyShow" :actions="hyData" @select="selHy" />
         <!-- 选择时间 -->
         <van-popup v-model="showSelTime" position="bottom">
-            <van-datetime-picker v-model="nowDate" @confirm="selTimeOk" @cancel="cancel" type="datetime"/>
+            <van-datetime-picker v-model="nowDate" @confirm="selTimeOk" @cancel="showSelTime=false" type="datetime"/>
         </van-popup>
         <!-- 添加规格 -->
         <van-popup v-model="showGuige" position="bottom">
@@ -168,23 +167,21 @@
         </van-popup>
         <!-- 活动协议 -->
         <van-popup v-model="showXieyi">
-        <!-- <van-overlay :show="showXieyi"> -->
             <div class="wrapper df df-c ai-c just-c-ct" @click="showXieyi=false">
                 <div class="xieyi shadow" @click.stop>
                     <div class="txt-c c_33 fs_32">发布活动协议</div>
-                    <xieyi />
+                    <div class="txt-box fs_26 c_ashen" v-html="xieyi"></div>
                     <div class="mt-30 df df-c ai-c">
                         <van-checkbox v-model="checkXieyi" icon-size="0.26rem" checked-color="#FC9B0A">
                             <span class="fs_26 c_ashen">阅读并同意本协议</span>
                         </van-checkbox>
                     </div>
                     <div class="mt-30 df df-c ai-c">
-                        <van-button size="small" type="info" class="btn" @click="showXieyi=false;showTj=true">确认提交</van-button>
+                        <van-button size="small" type="info" class="btn" @click="formSubmit">确认提交</van-button>
                     </div>
                 </div>
-                <van-icon name="close" class="mt-30" size="0.6rem" color="#BFC4CE" />
+                <!-- <van-icon name="close" class="close" size="0.6rem" color="#BFC4CE" /> -->
             </div>
-        <!-- </van-overlay> -->
         </van-popup>
         <!-- 提示 -->
         <van-overlay :show="showTishi">
@@ -217,17 +214,19 @@
                         </div>
                     </div>
                 </div>
-                <van-icon name="close" class="mt-30" size="0.6rem" color="#BFC4CE" />
+                <van-icon name="close" class="close" size="0.6rem" color="#BFC4CE" />
             </div>
         </van-overlay>
         <!-- 提交完成提示 -->
         <van-overlay :show="showTj">
             <div class="wrapper df df-c ai-c just-c-ct" @click="showTj=false">
-                <div class="tj-ok df df-c ai-c">
+                <div class="tj-ok df df-c ai-c" @click.stop>
                     <img src="~@/assets/event/submit_title.png" class="img" />
                     <div class="mt-30 c_33 fs_28">活动发布请求已提交</div>
                     <div class="mt-20 c_o fs_28 b">等待审核</div>
-                    <van-button type="info" size="small" class="btn">前去开启分销</van-button>
+                    <router-link to="/distb_set">
+                        <van-button type="info" size="small" class="btn">前去开启分销</van-button>
+                    </router-link>
                 </div>
                 <van-icon name="close" class="mt-30" size="0.6rem" color="#BFC4CE" />
             </div>
@@ -237,15 +236,21 @@
 <script>
 import {Toast,Dialog} from "vant";
 import {upFile} from "../utils/axios";
-import xieyi from "../components/xieyi";
+import axios from "../utils/axios";
+import vuedraggable from 'vuedraggable';
 
 export default {
+    components: {vuedraggable},
     data(){
         return {
+            id: null,
             // 选择头图
             showTtMould: false,
             ttType: 0,
             ttImgid: 0,
+            topModel: [],
+            topModelSel:0,
+            topModelImg:0,
             // 选择时间
             nowDate: new Date(),
             focusName: "",
@@ -256,6 +261,7 @@ export default {
             // 协议
             showXieyi: false,
             checkXieyi: false,
+            xieyi:"",
             // 提示
             showTishi: false,
             tishiType: "",
@@ -263,70 +269,188 @@ export default {
             showTj: false,
             // 选择场景
             cjShow: false,
-            cjData:[
-                { name: '场景1' },
-                { name: '场景2' },
-                { name: '场景3' },
-            ],
+            cjData:[],
             // 选择行业
             hyShow: false,
-            hyData:[
-                { name: '行业1' },
-                { name: '行业2' },
-                { name: '行业3' },
-            ],
+            hyData:[],
+
             fileType: 1, //头图类型
             imgList: [], //头图列表
             detailType: 0, //活动，文字/图片/视频
             detailImg: [], //详情上传图片
+            detailTxt: "",
+            detailVideo: "", 
 
+            userInfo: {}, // 用户信息
+            merchant_help_b: false,
+            bullet_sw_b: false,
             formData: {
                 cj: "", //场景
                 hy: "", //行业
-                ttImg: [ //头图
-                    {url: "https://www.baidu.com/img/bd_logo1.png"},
-                    {url: "https://www.baidu.com/img/bd_logo1.png"},
-                    {url: "https://www.baidu.com/img/bd_logo1.png"},
-                    {url: "https://www.baidu.com/img/bd_logo1.png"},
-                    {url: "https://www.baidu.com/img/bd_logo1.png",loading:true},
-                ],
+                head_pic_img: [],//头图
                 huzhu: false, //商家互助
                 danmu: false, //弹幕
                 startTime: "", //开始时间
                 endTime: "", //结束时间
-                detail: [
-                    {type:1, content:"文字文字字文字文字文字文字文字文字文字"},
-                    {type:2, content:"https://www.baidu.com/img/bd_logo1.png"},
-                    {type:3, content:"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"},
-                ]
+                details: [] //详情
             },
         }
     },
+    created(){
+        this.id = this.$route.query.id;
+        this.getData();
+        this.getHy();
+        this.getCj();
+        this.getXieyi();
+        this.getTopImg();
+    },
     methods: {
-        changeFileType(){},
-        onChange(){},
+        // 提交表单
+        checkForm(){
+            let data = this.formData;
+            let testArr = [
+                {b:/^\s*$/.test(data.title), t:"请输入标题"},
+                {b:/^\s*$/.test(data.subhead), t:"请输入副标题"},
+                {b:data.head_pic_img.length==0, t:"请上传头图"},
+                {b:/^\s*$/.test(data.price), t:"请输入原价"},
+                {b:/^\s*$/.test(data.special_offer), t:"请输入活动价"},
+                {b:data.details.length==0, t:"请填写活动详情"},
+            ];
+            for(let i in testArr){if(testArr[i]['b']){Toast(testArr[i]['t']);return}}
+            this.showXieyi = true;
+        },
+        // 提交表单
+        formSubmit(){
+            if(!this.checkXieyi){Toast("请确认已阅读并同意活动协议");return}
+            this.showXieyi = false;
+            axios({
+                url: "/activity/Apiactivity/addActivity",
+                method: "post",
+                data: {
+                    source_template: this.id,
+                    ...this.formData,
+                    id: null,
+                }
+            }).then((data)=>{
+                if(data.err!=0){return}
+                this.showTj = true;
+            });
+        },
+        // 获取内容
+        getData(){
+            axios({
+                url: "/activity/Apiactivity/previewTemplateInfo",
+                params: {activity_id: this.id}
+            }).then((data)=>{
+                if(data.err!=0){return}
+                this.formData = data.data;
+                this.userInfo = data.userinfo;
+                if(this.hyData.length){this.fillSheet(this.formData.genre_id,this.hyData,"hy")}
+                if(this.cjData.length){this.fillSheet(this.formData.scene,this.cjData,"cj")}
+                this.merchant_help_b = Boolean(this.formData.merchant_help);
+                this.bullet_sw_b = Boolean(this.formData.bullet_sw);
+                let head_pic = [];
+                for(let i in data.data.head_pic_img){
+                    head_pic.push(data.data.head_pic_img[i].pic);
+                }
+                this.formData.head_pic = head_pic;
+            });
+        },
+        // 获取行业
+        getHy(){
+            axios({
+                url: "/activity/Apiactivity/getIndustryType"
+            }).then((data)=>{
+                if(data.err!=0){return}
+                let arr = [];
+                for(let i in data.data){ arr.push({id:Number(i), name:data.data[i]}) }
+                this.hyData = arr;
+                if(this.formData.genre_id !== undefined){
+                    this.fillSheet(this.formData.genre_id,this.hyData,"hy");
+                }
+            });
+        },
+        // 获取场景
+        getCj(){
+            axios({
+                url: "/activity/Apiactivity/sceneAcquisition"
+            }).then((data)=>{
+                if(data.err!=0){return}
+                this.cjData = data.data;
+                if(this.formData.scene !== undefined){
+                    this.fillSheet(this.formData.scene,this.cjData,"cj");
+                }
+            });
+        },
+        // 填充选择
+        fillSheet(id,arr,name){
+            for(let i in arr){
+                if(arr[i].id != id){continue;}
+                this.formData[name] = arr[i].name;
+                return;
+            }
+        },
+        // 获取协议
+        getXieyi(){
+            axios({
+                url: "/activity/Apiactivity/getInstructions"
+            }).then((data)=>{
+                if(data.err!=0){return}
+                this.xieyi = data.content;
+            });
+        },
+        // 获取头图分类
+        getTopImg(){
+            axios({
+                url: "/activity/Apiactivity/activityHeadpicClass"
+            }).then((data)=>{
+                if(data.err!=0){return}
+                this.topModel = data.data;
+            });
+        },
         // 删除头图
-        ttimgRemove(){},
+        ttimgRemove(id){
+            Dialog.confirm({
+                message: '确定删除该图片吗？'
+            }).then(() => {
+                this.formData.head_pic_img.splice(id,1);
+                this.formData.head_pic.splice(id,1);
+            }).catch(() => {});
+        },
+        // 删除规格
+        delGuige(id){
+            Dialog.confirm({
+                message: '确定删除该规格吗？'
+            }).then(() => {
+                this.formData.spec_content.splice(id,1);
+            }).catch(() => {});
+        },
         // 选择场景
         selCj(o){
             this.cjShow = false;
             this.formData.cj = o.name;
+            this.formData.scene = o.id;
         },
         // 选择行业
         selHy(o){
             this.hyShow = false;
             this.formData.hy = o.name;
+            this.formData.genre_id = o.id;
         },
+        // 商家互助
+        changeHuzhu(b){this.formData.merchant_help = b?1:0},
+        // 弹幕
+        changeDanmu(b){this.formData.bullet_sw = b?1:0},
         // 活动详情交换
         detailReverse(index){
-            this.formData.detail[index] = this.formData.detail.splice(index+1, 1, this.formData.detail[index])[0];
+            this.formData.details[index] = this.formData.details.splice(index+1, 1, this.formData.details[index])[0];
         },
         // 活动详情删除
         detailRemove(index){
             Dialog.confirm({
                 message: '确定删除该内容吗？'
             }).then(() => {
-                this.formData.detail.splice(index,1);
+                this.formData.details.splice(index,1);
             }).catch(() => {});
         },
         // 选择时间
@@ -339,41 +463,90 @@ export default {
             this.showSelTime = false;
             this.formData[this.focusName] = date.toISOString().slice(0,10) + " " + date.toTimeString().slice(0,5);
         },
-        cancel(){this.showSelTime = false;},
+        // 切换内容类型
+        changeDetailType(id){
+            this.detailType = id;
+            this.$refs.detailbtns.scrollIntoView();
+        },
+        // 添加文字内容
+        addDetails(){
+            if(/^\s*$/.test(this.detailTxt)){Toast("没有输入内容");return}
+            this.formData.details.push({type:1, content:this.detailTxt});
+            this.detailTxt = "";
+            this.$refs.xuzhi.scrollIntoView();
+        },
+        // 添加视频内容
+        addVideos(){
+            if(/^\s*$/.test(this.detailVideo)){Toast("没有输入内容");return}
+            this.formData.details.push({type:3, content:this.detailVideo});
+            this.detailVideo = "";
+            this.$refs.xuzhi.scrollIntoView();
+        },
         // 上传图片
         upImg(file){
             let data = new FormData();
             data.append("file",file);
-            return upFile("",data);
+            return upFile(data);
         },
+        // 本地上传头图
         beforeRead(file){
             this.showTtMould = false;
-            if(file.type!=="image/jpeg" || file.type!=="image/png"){
-                Toast("请上传jpg/png格式图片");
-                return false;
+            if(file instanceof Array){
+                for(let i in file){                    
+                    this.upImg(file[i]).then((data)=>{
+                        if(data.status != 200){Toast("error");return}
+                        Toast("上传成功")
+                        this.formData.head_pic_img.push({pic_img: data.data.content.url});
+                        this.formData.head_pic.push({pic_img: data.data.content.fileid});
+                    })
+                }
+            } else {
+                this.upImg(file).then((data)=>{
+                    if(data.status != 200){Toast("error");return}
+                    Toast("上传成功");
+                    this.formData.head_pic_img.push({pic_img: data.data.content.url});
+                    this.formData.head_pic.push({pic_img: data.data.content.fileid});
+                })
             }
-            console.log(file);
         },
+        // 选择头图完成
+        topMouldSelOk(){
+            this.showTtMould = false;
+            this.formData.head_pic_img.push({pic_img: this.topModel[this.topModelSel]['pics'][this.topModelImg]['thumb']});
+            this.formData.head_pic.push({pic_img: this.topModel[this.topModelSel]['pics'][this.topModelImg]['id']});
+            this.topModelSel = 0;
+            this.topModelImg = 0;
+        },
+        // 添加内容
         detailRead(file){
-            if(file.type!=="image/jpeg" || file.type!=="image/png"){
-                Toast("请上传jpg/png格式图片");
-                return false;
+            if(file instanceof Array){
+                for(let i in file){                    
+                    this.upImg(file[i]).then((data)=>{
+                        if(data.status != 200){Toast("error");return}
+                        Toast("上传成功")
+                        this.formData.details.push({type:2, content: data.data.content.url});
+                        this.$refs.xuzhi.scrollIntoView();
+                    })
+                }
+            } else {
+                this.upImg(file).then((data)=>{
+                    if(data.status != 200){Toast("error");return}
+                    Toast("上传成功");
+                    this.formData.details.push({type:2, content: data.data.content.url});
+                    this.$refs.xuzhi.scrollIntoView();
+                })
             }
-            console.log(file);
         },
         // 显示帮助
         leftIcon(type){
             this.showTishi = true;
             this.tishiType = type;
-            console.log(this.tishiType);
         }
-    },
-    components: {
-        xieyi
     }
 }
 </script>
 <style scoped>
+.w_62{width:6.2rem; margin-left:auto; margin-right:auto;}
 .fs_14px{font-size:14px;}
 .cont{background:#F6F5F8;}
 .top{height:3rem; background:#2E8AF6; }
@@ -399,7 +572,7 @@ export default {
 .tt-mould .title{padding:0 0.4rem;}
 .tt-mould .title .btn{padding:0 4px;}
 .tt-mould .imgbox{width:100%; overflow-x:auto; overflow-y:hidden;}
-.tt-mould .imgbox .img-ul{position:relative; white-space: nowrap; padding:0 0.1rem;}
+.tt-mould .imgbox .img-ul{position:relative; white-space: nowrap; padding:0.1rem;}
 .tt-mould .imgbox .img-ul .li{position:relative; display:inline-block; margin:0 0.2rem; width:1.64rem; height:2.32rem; }
 .tt-mould .imgbox .img-ul .li .img{width:100%; height:100%;}
 .tt-mould .imgbox .img-ul .li .check{box-sizing:border-box; position:absolute; right:0.1rem; top:0.1rem;}
@@ -446,7 +619,8 @@ export default {
 
 .wrapper {display: flex; left:0; top:0; width:100%; height: 100%; z-index:99;}
 .wrapper .tishi,
-.wrapper .xieyi{box-sizing:border-box; width:6.9rem; padding:0.5rem 0.5rem 0.3rem; background:#ffffff; border-radius:0.1rem;}
+.wrapper .xieyi{box-sizing:border-box; width:6.9rem; padding:0.5rem 0.5rem 0.3rem; border-radius:0.1rem;}
+.wrapper .xieyi .txt-box{height:7rem; overflow-x:hidden; overflow-y:scroll; -webkit-overflow-scrolling:touch}
 .wrapper .xieyi .btn{width:3.2rem; margin-bottom:0.1rem;}
 
 .wrapper .tishi .title{padding-bottom:0.2rem; border-bottom:1px solid #E2E6F1;}

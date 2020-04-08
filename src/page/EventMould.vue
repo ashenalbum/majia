@@ -71,6 +71,7 @@ export default {
                 url: "/activity/Apiactivity/getTemplateList",
                 params: {...this.search}
             }).then((data)=>{
+                if(data.err!=0){return}
                 this.loading = false;
                 this.search.page++;
                 if(data.count<=this.search.pageSize){
@@ -85,6 +86,7 @@ export default {
             axios({
                 url: "/activity/Apiactivity/getTemplateClass"
             }).then((data)=>{
+                if(data.err!=0){return}
                 this.tabs = data.data;
             });
         },
@@ -92,7 +94,15 @@ export default {
             this.$router.push({name:"EventView", query:{id: id}});
         },
         zhizuo(id){
-            this.$router.push({name:"EventForm", params:{eventId: id}});
+            axios({
+                url: "/activity/Apiactivity/is_perfect_info"
+            }).then((data)=>{
+                if(data.err!==0){
+                    this.$router.push("/auth");
+                    return;
+                }
+                this.$router.push({name:"EventForm", query:{id: id}});
+            });
         }
     },
     created(){

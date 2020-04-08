@@ -2,23 +2,23 @@
     <div class="cont">
         <div class="formbox">
             <van-radio-group v-model="formData.type" class="radio-group mb-20 df df-r ai-c just-c-aro">
-                <van-radio :name="1" class="radio" >个人认证</van-radio>
-                <van-radio :name="2" class="radio" >企业认证</van-radio>
+                <van-radio :name="0" class="radio" >个人认证</van-radio>
+                <van-radio :name="1" class="radio" >企业认证</van-radio>
             </van-radio-group>
-            <div v-if="formData.type===1" class="form1">
-                <van-field label="姓名" required placeholder="请输入姓名" input-align="right" class="form-input"/>
+            <div v-if="formData.type===0" class="form1">
+                <van-field v-model="formData.contact_name" label="姓名" required placeholder="请输入姓名" input-align="right" class="form-input"/>
             </div>
-            <div v-if="formData.type===2" class="form2">
-                <van-field label="企业名称" required placeholder="请输入企业名称" input-align="right" class="form-input"/>
-                <van-field label="法人名称" required placeholder="请输入法人名称" input-align="right" class="form-input"/>
+            <div v-if="formData.type===1" class="form2">
+                <van-field v-model="formData.firm_name" label="企业名称" required placeholder="请输入企业名称" input-align="right" class="form-input"/>
+                <van-field v-model="formData.contact_name" label="法人名称" required placeholder="请输入法人名称" input-align="right" class="form-input"/>
             </div>
-            <van-field label="手机号" required type="number" placeholder="请输入手机号" input-align="right" class="form-input"/>
-            <van-field label="验证码" required type="number" placeholder="请输入验证码" input-align="right" class="form-input">
+            <van-field v-model="formData.contact_mobile" label="手机号" required type="number" placeholder="请输入手机号" input-align="right" class="form-input"/>
+            <van-field v-model="formData.contact_mobile" label="验证码" required type="number" placeholder="请输入验证码" input-align="right" class="form-input">
                 <template #button>
                     <van-button size="mini" plain color="#FF9C00" class="minibtn"> 发送验证码 </van-button>
                 </template>
             </van-field>
-            <van-field label="微信号" placeholder="请输入微信号" input-align="right" class="form-input"/>
+            <van-field v-model="formData.contact_wx" label="微信号" placeholder="请输入微信号" input-align="right" class="form-input"/>
             <div class="upewm">
                 <div class="title">微信二维码</div>
                 <div class="df ai-c just-c-ct">
@@ -30,9 +30,10 @@
                     </van-uploader>
                 </div>
             </div>
-            <van-field label="客服微信" placeholder="请输入微信号" input-align="right" class="form-input"/>
-            <van-field label="客服电话" placeholder="请输入电话号" input-align="right" class="form-input"/>
+            <van-field v-model="formData.service_wx" label="客服微信" placeholder="请输入微信号" input-align="right" class="form-input"/>
+            <van-field v-model="formData.service_tel" label="客服电话" placeholder="请输入电话号" input-align="right" class="form-input"/>
         </div>
+        <van-button class="submit" type="info">确认发布</van-button>
     </div>
 </template>
 <script>
@@ -40,11 +41,22 @@ export default {
     data (){
         return {
             formData: {
-                type: 1,
+                type: 0,
+                formData: {}
             }
         }
     },
     methods: {
+        checkForm(){
+
+        },
+        formSubmit(){
+            // edit_organizer
+        },
+        phoneCode(){
+
+            // /verify/index/m_verify
+        },
         beforeRead(){
 
         },

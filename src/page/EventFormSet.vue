@@ -1,57 +1,71 @@
-<template>
+﻿<template>
     <div class="cont">
         <div v-for="(item,index) in formList" :key="index" class="item">
-            <van-cell :title="item.name" class="cell pl-4 pr-4" :border="false">
-                <van-switch v-model="formData[item.key]" size="0.4rem" />
+            <van-cell :title="item.write_name" class="cell pl-4 pr-4" :border="false">
+                <van-switch v-model="formData[index][item.name]" size="0.4rem"/>
             </van-cell>
-            <van-radio-group v-if="formData[item.key]" v-model="formData[item.key+'Required']" class="radio-group df df-r just-c-aro">
-                <van-radio :name="1" class="radio" :class="{c_blue:formData[item.key+'Required']==1}">必填</van-radio>
-                <van-radio :name="0" class="radio" :class="{c_blue:formData[item.key+'Required']==0}">选填</van-radio>
+            <van-radio-group v-if="formData[index][item.name]" v-model="formData[index][item.name+'_required']" class="radio-group df df-r just-c-aro">
+                <van-radio :name="1" class="radio" :class="{c_blue:formData[index][item.name+'_required']==1}">必填</van-radio>
+                <van-radio :name="0" class="radio" :class="{c_blue:formData[index][item.name+'_required']==0}">选填</van-radio>
             </van-radio-group>
         </div>
         
-        <van-button class="submit" type="info">保存设置</van-button>
+        <van-button class="submit" type="info" @click="submit">保存设置</van-button>
     </div>
 </template>
 <script>
+import axios from "../utils/axios";
+import { Toast } from 'vant';
+
 export default {
     data(){
         return {
-            formList:[
-                {key:"name",name:"真实姓名"},
-                {key:"tel",name:"联系电话"},
-                {key:"id",name:"身份证号"},
-                {key:"weixin",name:"微信号"},
-                {key:"email",name:"邮箱"},
-                {key:"location",name:"家庭住址"},
-                {key:"gongsi",name:"公司名称"},
-                {key:"date",name:"日期"},
-                {key:"note",name:"备注"},
-            ],
-            formData: {
-                name: false,
-                nameRequired: 1,
-                tel: false,
-                telRequired: 1,
-                id: false,
-                idRequired: 1,
-                weixin: false,
-                weixinRequired: 1,
-                email: false,
-                emailRequired: 1,
-                location: false,
-                locationRequired: 1,
-                gongsi: false,
-                gongsiRequired: 1,
-                date: false,
-                dateRequired: 1,
-                note: false,
-                noteRequired: 1,
-            }
+            id: 0,
+            formList:[],
+            formData: []
         }
     },
+	created(){
+		this.id = this.$route.query.id;
+        this.getData();
+	},
     methods: {
-
+        getData(){
+            axios({
+                url:"/activity/Apiactivity/getPresetForm",
+            }).then((data)=>{
+                if(data.err!=0){return false}
+                for(let i in data.data){
+                    let li = data.data[i];
+                    this.formList.push({write_name: li.write_name, name: li.name});
+                    let o = {};
+                    o[li.name] = false;
+                    o[li.name+'_required'] = 0;
+                    this.formData.push(o);
+                }
+                console.log(this.formList);
+                console.log(this.formData);
+            })
+        },
+        submit(){
+            let data = [];
+            for(let i in this.formList){
+                let key = this.formList[i].name;
+                let o = this.formData[i];
+                if(!o[key]){continue;}
+                data.push({name:key, is_required:o[key+'_required']});
+            }
+            axios({
+                url:"/activity/Apiactivity/addApplyForm",
+                params: {
+                    activity_id: this.id,
+                    data: data,
+                }
+            }).then((data)=>{
+                if(data.err!=0){return false}
+                Toast("操作成功");
+            })
+        }
     }
 }
 </script>

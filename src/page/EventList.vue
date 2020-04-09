@@ -7,27 +7,30 @@
             @load="getList"
             class="cont-list c_33"
         >
-            <div v-for="(item,index) in [1,3,2,3]" :key="index" class="item df df-c">
+            <div v-for="(item,index) in dataList" :key="index" class="item df df-c">
                 <div class="ware df df-r">
-                    <img src="~@/assets/test.png" class="img" />
+                    <img :src="item.head_pic" class="img" />
                     <div class="detail">
                         <div class="df df-r ai-c just-c-bet">
-                            <div class="one-hide fs_32">一叶子面膜 限时抢购</div>
-                            <van-button size="mini" color="#FF9C00">下架</van-button>
+                            <div class="one-hide fs_32">{{item.title}}</div>
+                            <div>
+                                <van-button v-if="item.audit_type!=1" size="mini" color="#BBC1D4" @click="toEdit(item)">编辑</van-button>
+                                <van-button v-else size="mini" color="#FF9C00" @click="frames(item)">{{item.putaway==0?"上架":"下架"}}</van-button>
+                            </div>
                         </div>
                         <div class="mt-10 df df-r ai-c fs_24 c_ashen">
                             <van-icon name="underway-o" size="0.3rem"/>
-                            <span class="one-hide pl-10">2020/03/24 - 2020/04/01</span>
+                            <span class="one-hide pl-10">{{computedTime(item)}}</span>
                         </div>
                         <div class="mt-10 df df-r ai-c fs_24 c_ashen">
                             <van-icon name="friends-o" size="0.3rem"/>
-                            <span class="label">1234</span>
+                            <span class="label">{{item.people_buy_num}}</span>
                             <van-icon name="eye-o" size="0.3rem"/>
-                            <span class="label">1234</span>
+                            <span class="label">{{item.browse_num}}</span>
                         </div>
                         <div class="mt-20 df df-r just-c-bet fs_26">
-                            <span class="c_status">报名中</span>
-                            <span class="c_ashen" @click="openOperate(index)">操作</span>
+                            <span class="c_status">{{getTypeTxt(item)}}</span>
+                            <span class="c_ashen" @click="openOperate(item)">操作</span>
                         </div>
                     </div>
                 </div>
@@ -39,41 +42,99 @@
         </div>
         <van-popup v-model="showOperate" round position="bottom">
             <div class="operate-box">
-                <span v-for="(item,index) in operateLs" :key="index" @click="operateClick(item.key)" class="label c_ashen fs_30">{{item.txt}}</span>
+                <span class="label c_ashen fs_30" id="copyurl" :data-clipboard-text="copyUrl">复制活动链接</span>
+                <span class="label c_ashen fs_30" @click="operateClick('fenxiao')">分销设置</span>
+                <span class="label c_ashen fs_30" @click="operateClick('formset')">表单设置</span>
+                <!-- <span class="label c_ashen fs_30" @click="operateClick('upbill')">上传海报</span> -->
+                <span class="label c_ashen fs_30" @click="operateClick('createbill')">生成海报</span>
+                <!-- <span class="label c_ashen fs_30" @click="operateClick('datas')">统计数据</span> -->
+                <span class="label c_ashen fs_30" @click="operateClick('payafter')">付费后页面设置</span>
             </div>
         </van-popup>
     </div>
 </template>
 <script>
+import axios from "../utils/axios";
+import {Toast} from 'vant';
+import Clipboard from 'clipboard';
+
 export default {
     data(){
         return {
+            search: {
+                page: 1,
+                pageSize: 20,
+            },
             loading: false,
             over: false,
-            operateLs: [
-                {txt:"复制活动链接", key:"copy"},
-                {txt:"分销设置", key:"fenxiao"},
-                {txt:"表单设置", key:"formset"},
-                {txt:"上传海报", key:"upbill"},
-                {txt:"生成海报", key:"createbill"},
-                {txt:"统计数据", key:"datas"},
-                {txt:"付费后页面设置", key:"payafter"},
-            ],
+            copyUrl: "",
             showOperate: false,
+            nowItem: {},
+
+            dataList: [],
         }
+    },
+    mounted(){
+        let clipboard = new Clipboard("#copyurl");
+        clipboard.on('success', ()=>{Toast("复制成功"); this.showOperate=false});
+        clipboard.on('error', ()=>{Toast("复制失败"); this.showOperate=false});
     },
     methods: {
         getList(){
+            axios({
+                url: "/activity/Apiactivity/getActivityList",
+                params: {...this.search}
+            }).then((data)=>{
+                if(data.err!=0){return;}
+                this.loading = false;
+                this.search.page++;
+                if(data.count<=this.search.pageSize){
+                    this.dataList = data.data;
+                }else{
+                    this.dataList = this.dataList.concat(data.data);
+                }
+                if(data.count<=this.dataList.length){ this.over = true;}
+            })
             this.loading = false;
             this.over = true;
         },
-        openOperate(id){
+        // 操作
+        openOperate(item){
             this.showOperate = true;
-            console.log(id)
+            this.copyUrl = item.activity_url;
+            this.nowItem = item;
         },
+        // 操作详情
         operateClick(type){
-            console.log(type);
+            let id = this.nowItem.id;
+            if(type=="fenxiao"){this.$router.push({path:"/distb_set", query:{id:id}}); return}
+            if(type=="formset"){this.$router.push({path:"/event_form_set", query:{id:id}}); return}
+            if(type=="createbill"){this.$router.push({path:"/bill", query:{id:id}}); return}
+            if(type=="payafter"){this.$router.push({path:"/pay_after_set", query:{id:id}}); return}
         },
+        // 活动时间
+        computedTime(item){
+            if(item.start_time==item.abort_time && item.abort_time=="活动不结束"){return "活动不结束"}
+            return item.start_time + " - " + item.abort_time;
+        },
+        // 活动状态
+        getTypeTxt(item){
+            if(item.audit_type==0){return "审核中"}
+            if(item.audit_type==1){return item.type==0?"报名中":"进行中"}
+            if(item.audit_type==2){return "审核未通过"}
+        },
+        // 编辑
+        toEdit(item){ this.$router.push({path:"/event_form", query:{id:item.id, isEdit:true}})},
+        // 上下架
+        frames(item){
+            axios({
+                url: "/activity/Apiactivity/editActivity",
+                params: {activity_id: item.id, specialOperate:true, putaway:true}
+            }).then((data)=>{
+                if(data.err!=0){return}
+                Toast("操作成功");
+            })
+        }
     }
 }
 </script>

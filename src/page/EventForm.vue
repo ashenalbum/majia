@@ -170,7 +170,7 @@
             <div class="wrapper df df-c ai-c just-c-ct" @click="showXieyi=false">
                 <div class="xieyi shadow" @click.stop>
                     <div class="txt-c c_33 fs_32">发布活动协议</div>
-                    <div class="txt-box fs_26 c_ashen" v-html="xieyi"></div>
+                    <div class="mt-10 txt-box fs_26 c_ashen" v-html="xieyi"></div>
                     <div class="mt-30 df df-c ai-c">
                         <van-checkbox v-model="checkXieyi" icon-size="0.26rem" checked-color="#FC9B0A">
                             <span class="fs_26 c_ashen">阅读并同意本协议</span>
@@ -214,7 +214,7 @@
                         </div>
                     </div>
                 </div>
-                <van-icon name="close" class="close" size="0.6rem" color="#BFC4CE" />
+                <van-icon name="close" class="mt-40 close" size="0.6rem" color="#BFC4CE" />
             </div>
         </van-overlay>
         <!-- 提交完成提示 -->
@@ -244,6 +244,7 @@ export default {
     data(){
         return {
             id: null,
+            isEdit: false,
             // 选择头图
             showTtMould: false,
             ttType: 0,
@@ -285,6 +286,10 @@ export default {
             merchant_help_b: false,
             bullet_sw_b: false,
             formData: {
+                title: "", //标题
+                subhead: "", //副标题
+                price: "", //原价
+                special_offer: "", //活动价
                 cj: "", //场景
                 hy: "", //行业
                 head_pic_img: [],//头图
@@ -300,6 +305,7 @@ export default {
     },
     created(){
         this.id = this.$route.query.id;
+        this.isEdit = this.$route.query.isEdit;
         this.getData();
         this.getHy();
         this.getCj();
@@ -309,7 +315,6 @@ export default {
     methods: {
         // 提交表单
         checkForm(){
-            console.log(this.formData);
             let data = this.formData;
             let testArr = [
                 {b:/^\s*$/.test(data.title), t:"请输入标题"},
@@ -317,6 +322,8 @@ export default {
                 {b:data.head_pic_img.length==0, t:"请上传头图"},
                 {b:/^\s*$/.test(data.price), t:"请输入原价"},
                 {b:/^\s*$/.test(data.special_offer), t:"请输入活动价"},
+                {b:data.scene===undefined, t:"请选择活动场景"},
+                {b:data.genre_id===undefined, t:"请选择行业类型"},
                 {b:data.details.length==0, t:"请填写活动详情"},
             ];
             for(let i in testArr){if(testArr[i]['b']){Toast(testArr[i]['t']);return}}
@@ -326,8 +333,12 @@ export default {
         formSubmit(){
             if(!this.checkXieyi){Toast("请确认已阅读并同意活动协议");return}
             this.showXieyi = false;
+            let url = this.isEdit?"/activity/Apiactivity/editActivity":"/activity/Apiactivity/addActivity";
+            this.formData.activity_id = this.formData.id;
+            delete this.formData.id;
+            
             axios({
-                url: "/activity/Apiactivity/addActivity",
+                url: url,
                 method: "post",
                 data: {
                     source_template: this.id,
@@ -346,7 +357,6 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 this.formData = data.data;
-                delete this.formData.id;
                 this.userInfo = data.userinfo;
                 if(this.hyData.length){this.fillSheet(this.formData.genre_id,this.hyData,"hy")}
                 if(this.cjData.length){this.fillSheet(this.formData.scene,this.cjData,"cj")}
@@ -626,7 +636,7 @@ export default {
 .help{width:6.4rem; margin:auto; padding:0.3rem 0 0.6rem; line-height:1.6;}
 
 .wrapper {display: flex; left:0; top:0; width:100%; height: 100%; z-index:99;}
-.wrapper .tishi,
+.wrapper .tishi{box-sizing:border-box; width:6.9rem; padding:0.5rem 0.5rem 0.3rem; border-radius:0.1rem; background:#ffffff;}
 .wrapper .xieyi{box-sizing:border-box; width:6.9rem; padding:0.5rem 0.5rem 0.3rem; border-radius:0.1rem;}
 .wrapper .xieyi .txt-box{height:7rem; overflow-x:hidden; overflow-y:scroll; -webkit-overflow-scrolling:touch}
 .wrapper .xieyi .btn{width:3.2rem; margin-bottom:0.1rem;}

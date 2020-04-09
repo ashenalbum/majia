@@ -52,6 +52,7 @@ function wxConfig(Page_id){
         url: "/wechat/Apiwechat/get_wx_config",
         params: {request_url: location.split('#')[0]}
     }).then((data)=>{
+        if(data.err!=0){return}
         wx.config({
             debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
             appId: data.data.appId, // 必填，公众号的唯一标识
@@ -92,7 +93,7 @@ function wxConfig(Page_id){
                     cancel: ()=>{ console.log('已取消') },
                     fail: ()=>{ console.log('分享失败') }
                 });
-            })
+            });
         });
         wx.error((res)=>{ console.log('err', res) });
     })

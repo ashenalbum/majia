@@ -38,12 +38,8 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     response => {
         const data = response.data;
-        if(data.err !== 0){
-            Toast(data.content||"error");
-            if(data.err == 1){
-                window.localStorage.clear();
-                // window.location.reload();
-            }
+        if(data.err!==0 && data.content){
+            Toast(data.content);
         }
         return data;
     },

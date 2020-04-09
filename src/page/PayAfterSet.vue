@@ -12,8 +12,8 @@
                 <van-button :plain="detailType!==1" @click="detailType=1" type="info" size="small">添加图片</van-button>
             </div>
             <div class="detail-inputbox mt-30 df df-c ai-c">
-                <van-field v-if="detailType===0" type="textarea" class="input" />
-                <van-uploader v-else-if="detailType===1">
+                <van-field v-model="detailTxt" v-if="detailType===0" type="textarea" class="input" @blur="addDetails" />
+                <van-uploader v-else-if="detailType===1" :before-read="beforeRead" >
                     <div class="upfile fs_26 c_ashen df ai-c just-c-ct txt-c">宽度不得大于750px<br/>点击上传</div>
                 </van-uploader>
             </div>
@@ -32,28 +32,65 @@
             </div>
         </div>
         <div v-else class="mt-40 linkbox">
-            <van-field placeholder="请输入跳转链接" class="video-input pl-4" />
+            <van-field v-model="after_pay_url" placeholder="请输入跳转链接" class="video-input pl-4" />
         </div>
-        <van-button class="submit" type="info">确认发布</van-button>
+        <van-button ref="btn" class="submit" type="info">确认发布</van-button>
     </div>
 </template>
 <script>
+import axios from "../utils/axios";
+import {upFile} from "../utils/axios";
+import { Toast } from 'vant';
+
 export default {
     data(){
         return {
-            type: 0,
-            detailType: 0,
-            detail: [
-                {type:1, content:"文字文字字文字文字文字文字文字文字文字"},
-                {type:2, content:"https://www.baidu.com/img/bd_logo1.png"}
-            ]
+            id: 0,
+            type: 0, // 内容/链接
+            after_pay_url: "", //跳转链接
+            detailType: 0, //输入类型
+            detailTxt: "", //输入内容
+            detail: []
         }
     },
+    created(){
+        this.id = this.$route.query.id;
+    },
     methods: {
+        submit(){
+            axios({
+                url: "/activity/Apiactivity/specialOperate",
+                params: {
+                    activity_id: this.id,
+                    after_pay_type: this.type,
+                    after_pay_url: this.after_pay_url,
+                    after_pay_custom: this.detail,
+                }
+            }).then((data)=>{
+                if(data.err!=0){return}
+            });
+        },
         // 活动详情交换
         detailReverse(index){
             this.detail[index] = this.detail.splice(index+1, 1, this.detail[index])[0];
         },
+        // 添加文字内容
+        addDetails(){
+            if(/^\s*$/.test(this.detailTxt)){Toast("没有输入内容");return}
+            this.detail.push({type:1, content:this.detailTxt});
+            this.detailTxt = "";
+            this.$refs.btn.scrollIntoView();
+        },
+        // 上传图片
+        beforeRead(file){
+            let formData = new FormData();
+            formData.append("file", file);
+            upFile(formData).then((data)=>{
+                if(data.status!=200){return;}
+                this.detail.push({type:2, content:data.data.content.url});
+                this.$refs.btn.scrollIntoView();
+            }).catch((err)=>{Toast(err)})
+        }
     }
 }
 </script>

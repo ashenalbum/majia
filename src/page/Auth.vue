@@ -44,6 +44,7 @@ import { Toast } from 'vant';
 export default {
     data (){
         return {
+            id: null,
             ewmImg: "",
             codeTxt: "发送验证码",
             codeDisabled: false,
@@ -60,6 +61,9 @@ export default {
                 service_tel: "",
             }
         }
+    },
+    created(){
+        this.id = this.$route.query.id;
     },
     methods: {
         checkForm(){

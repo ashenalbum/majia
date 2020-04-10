@@ -198,7 +198,7 @@ export default {
 
 .bg_ff{background: #ffffff;}
 .details{padding:0.4rem 0.45rem; background:#ffffff;}
-.details .label{display:inline-block; line-height:0.4rem; padding:0 0.18rem; }
+.details .label{display:inline-block; line-height:0.4rem; margin-right:0.1rem; margin-bottom:0.1rem; padding:2px 0.18rem; border-radius:2px; background:#FFF8EC;}
 .details .yuanjia{padding-left:0.2rem;}
 
 .seller{width:7rem; box-sizing:border-box; margin:0 auto; padding:0 0.32rem; height:1.28rem; border-radius:0.1rem;}

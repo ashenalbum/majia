@@ -100,7 +100,7 @@ export default {
             }).then((data)=>{
                 if(data.err!==0){
                     Toast("请先验证信息");
-                    this.$router.push("/auth");
+                    this.$router.push({name:"Auth",query:{id: id}});
                     return;
                 }
                 this.$router.push({name:"EventForm", query:{id: id}});

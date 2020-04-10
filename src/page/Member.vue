@@ -228,10 +228,10 @@ export default {
                     repeat: 1
                 }
             }).then((data)=>{
-                if (data.data.pay_type == "Balance") {
+                if (data.data && data.data.pay_type == "Balance") {
                     Toast("支付成功");
                     this.$router.push("./my_center");
-                }else if(data.data.pay_type == "WX"){
+                }else if(data.data && data.data.pay_type == "WX"){
                     let obj = data.data.returnData;
                     wx.chooseWXPay({
                         timestamp: obj.timeStamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符

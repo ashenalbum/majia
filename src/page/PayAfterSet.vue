@@ -34,7 +34,7 @@
         <div v-else class="mt-40 linkbox">
             <van-field v-model="after_pay_url" placeholder="请输入跳转链接" class="video-input pl-4" />
         </div>
-        <van-button ref="btn" class="submit" type="info">确认发布</van-button>
+        <van-button ref="btn" class="submit" type="info" @click="checkForm">确认发布</van-button>
     </div>
 </template>
 <script>
@@ -57,6 +57,11 @@ export default {
         this.id = this.$route.query.id;
     },
     methods: {
+        checkForm(){
+            if(this.type==1 && !this.after_pay_url){Toast("请输入跳转链接");return}
+            if(this.type==0 && this.detail.length==0){Toast("请输入图文内容");return}
+            this.submit();
+        },
         submit(){
             axios({
                 url: "/activity/Apiactivity/specialOperate",
@@ -68,6 +73,7 @@ export default {
                 }
             }).then((data)=>{
                 if(data.err!=0){return}
+                Toast("操作成功");
             });
         },
         // 活动详情交换

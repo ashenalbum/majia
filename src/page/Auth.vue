@@ -64,8 +64,18 @@ export default {
     },
     created(){
         this.id = this.$route.query.id;
+        this.getData();
     },
     methods: {
+        getData(){
+            axios({
+                url: "/activity/Apiactivity/get_user_info",
+            }).then((data)=>{
+                if(data.err!=0){return;}
+                this.formData = data.data;
+                if(!this.formData.contact_type){this.formData.contact_type = 0;}
+            })
+        },
         checkForm(){
             let data = this.formData;
             if(data.contact_type==1 && (!data.firm_name)){Toast("请输入企业名称");return}

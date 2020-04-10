@@ -62,7 +62,7 @@
             <div class="btn1 f1 df df-c ai-c just-c-ct" @click="toMould">制作新活动</div>
             <div class="btn2 f1 df df-c ai-c just-c-ct" @click="showGuige=true">
                 <span>{{data.pay_btn}}</span>
-                <span v-if="showLastTime" class="fs_26">剩余：{{lastTime}}</span>
+                <span v-if="showLastTime" class="fs_26">{{lastTime}}</span>
             </div>
         </div>
         <!-- 客服 -->
@@ -191,6 +191,7 @@ export default {
             ad: {},
             showLastTime: true, //显示倒计时
             lastTime: "", //结束倒计时
+            timeIsover: false, //活动结束
 
             showKefu: false, // 显示客服
             showGuige: false, // 选择规格
@@ -209,15 +210,19 @@ export default {
         }
     },
     beforeRouteUpdate(to,from,next){
+
         next();
         this.$router.go(0);
     },
     created(){
+        // if(){}
+
         this.id = this.$route.query.id;
         this.area = area;
         this.getData();
         this.getOrganizer();
         this.getActivityForm();
+        this.getAfterPay();
     },
     methods: {
         getData(){
@@ -235,11 +240,11 @@ export default {
                 // 设置规格
                 if(data.data.spec_content.length){
                     this.buyNum = 1;
-                    this.buyOneMoney = this.buyMoney = data.data.spec_content[0].price;
+                    this.buyOneMoney = this.buyMoney = data.data.spec_content[0][this.timeIsover?'price':'offerPic'];
                     this.buyKc = data.data.spec_content[0].stock;
                 }else{
                     this.buyNum = 1;
-                    this.buyOneMoney = this.buyMoney = data.data.price;
+                    this.buyOneMoney = this.buyMoney = data.data[this.timeIsover?'price':'special_offer'];
                 }
                 this.dmList = [];
                 for(let i in data.data.barrage){
@@ -252,6 +257,15 @@ export default {
                     })
                 }
                 this.getLastTime();
+            })
+        },
+        getAfterPay(){
+            axios({
+                url: "/activity/Apiactivity/getAfterPay",
+                params: {activity_id: this.id}
+            }).then((data)=>{
+                if(data.err!=0){return}
+                
             })
         },
         // 商家信息
@@ -283,14 +297,20 @@ export default {
                 this.timeToString(over);
             },1000)
         },
+        // 计算时间
         timeToString(over){
             let now = new Date().getTime();
             let time = over - now;
+            if(time<=0){
+                this.timeIsover = true;
+                this.lastTime = "活动结束";
+                return;
+            }
             let d = parseInt(time/86400000);
             let h = parseInt((time%86400000)/3600000);
             let m = parseInt((time%3600000)/60000);
             let s = parseInt((time%60000)/1000);
-            this.lastTime = (d==0?"":(d+"天"))+h+"时"+m+"分"+s+"秒";
+            this.lastTime = "剩余："+(d==0?"":(d+"天"))+h+"时"+m+"分"+s+"秒";
         },
         // 选择省市区
         selAreaOk(o){
@@ -302,7 +322,7 @@ export default {
             if(this.guigeId==id){return}
             this.guigeId = id;
             this.buyNum = 1;
-            this.buyOneMoney = this.buyMoney = this.data.spec_content[id].price;
+            this.buyOneMoney = this.buyMoney = this.data.spec_content[id].offerPic;
             this.buyKc = this.data.spec_content[id].stock;
         },
         // 改变购买数量

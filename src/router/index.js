@@ -99,5 +99,10 @@ export default new Router({
         name: 'PayDetail',
         meta: {title: "详情"},
         component: (resolve) =>require(['@/page/PayDetail.vue'],resolve)
+    },{
+        path: '/wxCashOut',
+        name: 'WxCashOut',
+        meta: {title: "提现"},
+        component: (resolve) =>require(['@/page/WxCashOut.vue'],resolve)
     }]
 })

@@ -19,12 +19,13 @@ new Vue({
 }).$mount('#app');
 
 // 测试 token 删除 1049
-axios({
-    url: "/activity/index1111/get_param",
-}).then((data)=>{
-    window.localStorage.setItem("token",JSON.stringify(data));
-    store.commit("setToken",JSON.parse(window.localStorage.getItem("token")));
-})
+// axios({
+//     url: "/activity/index1111/get_param",
+// }).then((data)=>{
+//     window.localStorage.setItem("token",JSON.stringify(data));
+//     store.commit("setToken",JSON.parse(window.localStorage.getItem("token")));
+// })
+
 
 // localStorage 储存 vuex
 store.commit("setToken",JSON.parse(window.localStorage.getItem("token")));
@@ -32,6 +33,9 @@ store.commit("setToken",JSON.parse(window.localStorage.getItem("token")));
 // 跳转路由
 router.beforeEach(function (to, from, next) {
     window.scrollTo(0,0);
+    
+    console.log("-------------------")
+    console.log(from)
     // title
     if(to.meta.title){ document.title = to.meta.title; }
     // 判断微信

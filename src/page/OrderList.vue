@@ -45,25 +45,33 @@ import axios from "../utils/axios";
 export default {
     data(){
         return {
-            page: 1,
-            pageSize: 20,
+            search: {
+                page: 1,
+                pageSize: 20,
+            },
             loading: false,
             over: false,
             dataList: [],
         }
     },
+    
     methods: {
         getList(){
+            if(this.over){return;}
             axios({
                 url: "/activity/Apiactivity/order_list",
-                params: {page: this.page, pagesize:this.pageSize}
+                params: {...this.search}
             }).then((data)=>{
-                console.log(data);
-                // this.dataList = this.dataList.concat()
-            })
-
-            this.loading = false;
-            this.over = true;
+                if(data.err!=0){return}
+                this.loading = false;
+                this.search.page++;
+                if(data.count<=this.search.pageSize){
+                    this.dataList = data.data;
+                }else{
+                    this.dataList = this.dataList.concat(data.data);
+                }
+                if(data.count<=this.dataList.length){ this.over = true;}
+            });
         }
     }
 }

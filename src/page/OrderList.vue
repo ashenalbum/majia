@@ -10,30 +10,30 @@
             <div v-for="(item,index) in dataList" :key="index" class="item df df-c">
                 <div class="df df-r ai-c just-c-bet">
                     <div class="df df-r ai-c">
-                        <img src="~@/assets/test.png" class="icon" />
-                        <span class="name fs_28 c_ashen">疯了的痘痘</span>
+                        <img :src="item.headpath" class="icon" />
+                        <span class="name fs_28 c_ashen">{{item.user_name}}</span>
                     </div>
-                    <span class="c_status fs_26">等待确认</span>
+                    <span class="c_status fs_26">{{getType(item.order_status)}}</span>
                 </div>
                 <div class="ware df df-r">
-                    <img src="~@/assets/test.png" class="img" />
+                    <img :src="item.pic" class="img" />
                     <div class="detail">
                         <div class="df df-r ai-c just-c-bet">
-                            <div class="one-hide fs_32">一叶子面膜 限时抢购</div>
-                            <span class="fs_26">￥99.8</span>
+                            <div class="one-hide fs_32">{{item.title}}</div>
+                            <span class="fs_26">￥{{item.unit_price}}</span>
                         </div>
                         <div class="mt-20 df df-r ai-c just-c-bet c_ashen fs_24">
                             <div class="one-hide labels">
-                                <span>组合套装</span>
+                                <span v-if="item.spec">{{item.spec}}</span>
                             </div>
-                            <span class="fs_26">×1</span>
+                            <span class="fs_26">×{{item.num}}</span>
                         </div>
-                        <div class="mt-40 df df-r just-c-end fs_28">合计：￥302.00</div>
+                        <div class="mt-40 df df-r just-c-end fs_28">合计：￥{{item.price}}</div>
                     </div>
                 </div>
                 <div class="btns mt-10 df df-r ai-c just-c-end">
-                    <van-button plain round size="small" color="#9FA9C7" >查看物流</van-button>
-                    <van-button plain round size="small" color="#FF9C00" >订单信息</van-button>
+                    <!-- <van-button plain round size="small" color="#9FA9C7" >查看物流</van-button> -->
+                    <van-button plain round size="small" color="#FF9C00" @click="toDetail(item)">订单信息</van-button>
                 </div>
             </div>
         </van-list>
@@ -72,7 +72,15 @@ export default {
                 }
                 if(data.count<=this.dataList.length){ this.over = true;}
             });
-        }
+        },
+        // 状态文字
+        getType(s){
+            return {0:"未确认", 1:"已确认", 2:"退款中", 3:"交易关闭", 4:"退货订单"}[s];
+        },
+        // 详情
+        toDetail(item){
+            this.$router.push({path:"/order_detail", query:{id: item.id}});
+        },
     }
 }
 </script>

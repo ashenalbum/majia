@@ -123,7 +123,7 @@ export default {
             let formData = new FormData();
             formData.append("file",file);
             upFile(formData).then((data)=>{
-                if(data.status!=200){Toast(data.statusText);return}
+                if(data.data.err!=0){return}
                 Toast("上传成功");
                 this.ewmImg = data.data.content.url;
                 this.formData.code_wx = data.data.content.fileid;

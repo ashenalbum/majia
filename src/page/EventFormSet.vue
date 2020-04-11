@@ -43,8 +43,6 @@ export default {
                     o[li.name+'_required'] = 0;
                     this.formData.push(o);
                 }
-                console.log(this.formList);
-                console.log(this.formData);
             })
         },
         submit(){

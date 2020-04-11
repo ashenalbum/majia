@@ -155,9 +155,9 @@ export default {
                     data.data[i].addtime = date.toISOString().slice(0,10) + " " + date.toTimeString().slice(0,5);
                 }
                 this.$parent.loading = false;//停止加载
-                this.detailsData = this.detailsData.concat(this.data);
+                this.detailsData = this.detailsData.concat(data.data);
 
-                if (this.detailsData.length >= this.count) {
+                if (this.detailsData.length >= data.count) {
                     this.$refs.infiniteLoading2.$emit("$InfiniteLoading:complete");
                 } else {
                     this.PageNum++;

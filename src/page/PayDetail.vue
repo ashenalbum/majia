@@ -65,6 +65,8 @@
                 <span v-if="showLastTime" class="fs_26">{{lastTime}}</span>
             </div>
         </div>
+        <!-- 制作海报 -->
+        <van-button class="fixed-submit" type="info" @click="toHaibao">{{data.hb_btn_name}}</van-button>
         <!-- 客服 -->
         <div class="fixed-btn df df-r ai-c" @mousedown.stop>
             <transition name="van-slide-right">
@@ -146,7 +148,6 @@
         <!-- 填写个人信息 -->
         <van-popup v-model="showUserInfo" round position="bottom" closeable>
             <div class="user-info">
-                <div class="fs_30 c_33">填写信息</div>
                 <div class="mt-30">
                     <van-field
                         v-for="(item,index) in buyFormLs"
@@ -177,6 +178,7 @@ import Clipboard from 'clipboard';
 import {Toast} from 'vant';
 import axios from "../utils/axios";
 import area from "../json/area";
+import wx from "weixin-js-sdk";
 
 export default {
     name: "EventView",
@@ -210,19 +212,19 @@ export default {
         }
     },
     beforeRouteUpdate(to,from,next){
-
         next();
         this.$router.go(0);
     },
     created(){
-        // if(){}
-
-        this.id = this.$route.query.id;
+        if(this.$route.query.id){
+            this.id = this.$route.query.id;
+        }else if(this.$route.query.activity_id1){
+            this.id = this.$route.query.activity_id1;
+        }
         this.area = area;
         this.getData();
         this.getOrganizer();
         this.getActivityForm();
-        this.getAfterPay();
     },
     methods: {
         getData(){
@@ -259,15 +261,6 @@ export default {
                 this.getLastTime();
             })
         },
-        getAfterPay(){
-            axios({
-                url: "/activity/Apiactivity/getAfterPay",
-                params: {activity_id: this.id}
-            }).then((data)=>{
-                if(data.err!=0){return}
-                
-            })
-        },
         // 商家信息
         getOrganizer(){
             axios({
@@ -291,7 +284,8 @@ export default {
         // 倒计时
         getLastTime(){
             if(this.data.abort_time==0){this.showLastTime=false;return}
-            let over = new Date(this.data.abort_time*1000).getTime();
+            if(typeof this.data.abort_time === "number"){this.data.abort_time*=1000;}
+            let over = new Date(this.data.abort_time).getTime();
             this.timeToString(over);
             setInterval(()=>{
                 this.timeToString(over);
@@ -357,8 +351,27 @@ export default {
                     ty_form: ty_form,
                 }
             }).then((data)=>{
-                console.log(data);
+                if(data.err!=0){return;}
+                if(data.data!==2){return;}
+                this.wxpay(data.content);                    
             })
+        },
+        // 支付
+        wxpay(obj) {
+            let obj1 = obj[0];
+            wx.chooseWXPay({
+                timestamp: obj1.timeStamp,
+                nonceStr: obj1.nonceStr,
+                package: obj1.package,
+                signType: obj1.signType,
+                paySign: obj1.paySign,
+                success: () => {
+                    Toast("支付成功");
+                    this.$router.push({name:"PayAfter", query:{id:this.id}});
+                },
+                cancel: () => {},
+                fail: () => {}
+            });
         },
         toMould(){
             this.$router.push("/event_mould");
@@ -368,6 +381,9 @@ export default {
         },
         toDetail(id){
             this.$router.push({name:"PayDetail", query:{id: id}});
+        },
+        toHaibao(){
+            this.$router.push("/bill");
         }
     },
     mounted(){

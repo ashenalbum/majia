@@ -104,5 +104,10 @@ export default new Router({
         name: 'WxCashOut',
         meta: {title: "提现"},
         component: (resolve) =>require(['@/page/WxCashOut.vue'],resolve)
+    },{
+        path: '/pay_after',
+        name: 'PayAfter',
+        meta: {title: " "},
+        component: (resolve) =>require(['@/page/PayAfter.vue'],resolve)
     }]
 })

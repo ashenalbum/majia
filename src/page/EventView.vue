@@ -114,7 +114,7 @@
 </template>
 <script>
 // import Clipboard from 'clipboard';
-// import {Toast} from 'vant';
+import {Toast} from 'vant';
 import axios from "../utils/axios";
 
 export default {
@@ -136,7 +136,16 @@ export default {
     },
     methods: {
         make(){
-            this.$router.push("/event_form");
+            axios({
+                url: "/activity/Apiactivity/is_perfect_info"
+            }).then((data)=>{
+                if(data.err!==0){
+                    Toast("请先验证信息");
+                    this.$router.push({name:"Auth",query:{id: this.id}});
+                    return;
+                }
+                this.$router.push({name:"EventForm", query:{id: this.id}});
+            });
         },
         getData(){
             axios({

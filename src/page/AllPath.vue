@@ -15,6 +15,7 @@
         <router-link to="/auth"><div>/auth</div></router-link>
         <router-link to="/pay_list"><div>/pay_list</div></router-link>
         <router-link to="/pay_detail"><div>/pay_detail</div></router-link>
+        <router-link to="/pay_after"><div>/pay_after</div></router-link>
 
         <van-uploader :before-read="beforeRead" />
 

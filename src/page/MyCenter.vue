@@ -104,7 +104,7 @@ export default {
                 }
                 this.group_id = data.data.id;
                 this.memberInfoData = data.data;
-                // that.bus.$emit('loading', false);
+                // this.bus.$emit('loading', false);
             })
         },
         getCate(){
@@ -112,12 +112,14 @@ export default {
                 url: '/member/Apimenu/member_navigation',
                 params: { sign: "member_mid" }
             }).then((data)=>{
+                if(data.err!=0){return}
                 if(data.data.type==1){
                     this.inforBool = true;
                 }else{
                     this.inforBool = false;
                     this.memberCateData = data.data;
-                    this.cate1 = this.memberCateData[0].sub;
+                    console.log(this.memberCateData);
+                    this.cate1 = this.memberCateData[0] && this.memberCateData[0].sub;
                     this.cate2 = this.memberCateData;
                 }
             })

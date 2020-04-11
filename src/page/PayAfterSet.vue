@@ -55,6 +55,7 @@ export default {
     },
     created(){
         this.id = this.$route.query.id;
+        this.getData();
     },
     methods: {
         checkForm(){
@@ -64,17 +65,29 @@ export default {
         },
         submit(){
             axios({
-                url: "/activity/Apiactivity/specialOperate",
+                url: "/activity/Apiactivity/editActivity",
                 params: {
                     activity_id: this.id,
                     after_pay_type: this.type,
                     after_pay_url: this.after_pay_url,
                     after_pay_custom: this.detail,
+                    specialOperate: true,
                 }
             }).then((data)=>{
                 if(data.err!=0){return}
                 Toast("操作成功");
             });
+        },
+        getData(){
+            axios({
+                url: "/activity/Apiactivity/getAfterPay",
+                params: {activity_id: this.id}
+            }).then((data)=>{
+                if(data.err!=0){return;}
+                this.type = data.data.after_pay_type;
+                this.after_pay_url = data.data.after_pay_url;
+                this.detail = data.data.after_pay_custom;
+            })
         },
         // 活动详情交换
         detailReverse(index){
@@ -92,7 +105,7 @@ export default {
             let formData = new FormData();
             formData.append("file", file);
             upFile(formData).then((data)=>{
-                if(data.status!=200){return;}
+                if(data.data.err!=0){return}
                 this.detail.push({type:2, content:data.data.content.url});
                 this.$refs.btn.scrollIntoView();
             }).catch((err)=>{Toast(err)})

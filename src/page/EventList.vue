@@ -109,7 +109,7 @@ export default {
             let id = this.nowItem.id;
             if(type=="fenxiao"){this.$router.push({path:"/distb_set", query:{id:id}}); return}
             if(type=="formset"){this.$router.push({path:"/event_form_set", query:{id:id}}); return}
-            if(type=="createbill"){this.$router.push({path:"/bill", query:{id:id}}); return}
+            if(type=="createbill"){this.$router.push({path:"/bill", query:{id:id, share_url:this.nowItem.activity_poster_url}}); return}
             if(type=="payafter"){this.$router.push({path:"/pay_after_set", query:{id:id}}); return}
         },
         // 活动时间
@@ -133,6 +133,9 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 Toast("操作成功");
+                this.search.page = 1;
+                this.dataList = [];
+                this.getList();
             })
         }
     }

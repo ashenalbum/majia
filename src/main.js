@@ -7,6 +7,7 @@ import 'vant/lib/index.css';
 import axios from './utils/axios';
 import wx from 'weixin-js-sdk';
 import './static/reset.css';
+import { Base64 } from 'js-base64';
 
 Vue.use(Tabbar).use(TabbarItem).use(Overlay).use(ImagePreview).use(Stepper).use(DatetimePicker).use(Slider).use(NoticeBar).use(Notify).use(Loading).use(Dialog).use(Image).use(Grid).use(GridItem).use(Uploader).use(Sidebar).use(SidebarItem).use(Cell).use(Area).use(AddressEdit).use(List).use(CellGroup).use(Swipe).use(SwipeItem).use(Tab).use(Tabs).use(Button).use(Icon).use(Popup).use(Checkbox).use(CheckboxGroup).use(Field).use(RadioGroup).use(Radio).use(Search).use(Switch).use(PullRefresh).use(SwipeCell).use(Toast).use(NavBar).use(Tag).use(AddressList).use(Picker).use(ActionSheet).use(Sticky);
 
@@ -32,10 +33,11 @@ store.commit("setToken",JSON.parse(window.localStorage.getItem("token")));
 
 // 跳转路由
 router.beforeEach(function (to, from, next) {
-    window.scrollTo(0,0);
-    
-    console.log("-------------------")
-    console.log(from)
+    let share = to.query.share || from.query.share;
+    if (share) {
+        let share_url = 'http://sqyx.78wa.com' + Base64.decode(share.replace('%3D', '='));
+        localStorage.setItem("share_url", share_url);
+    }
     // title
     if(to.meta.title){ document.title = to.meta.title; }
     // 判断微信
@@ -46,6 +48,7 @@ router.beforeEach(function (to, from, next) {
     if(is_weixin==false && titlePage.indexOf(to.name)>-1){to.meta.showHeader = true;}
     else{to.meta.showHeader = false;}
 
+    window.scrollTo(0,0);
     next();
 })
 

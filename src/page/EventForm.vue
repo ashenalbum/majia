@@ -512,7 +512,7 @@ export default {
             if(file instanceof Array){
                 for(let i in file){                    
                     this.upImg(file[i]).then((data)=>{
-                        if(data.status != 200){Toast("error");return}
+                        if(data.data.err!=0){return}
                         Toast("上传成功")
                         this.formData.head_pic_img.push({pic_img: data.data.content.url});
                         this.formData.head_pic.push({pic_img: data.data.content.fileid});
@@ -520,7 +520,7 @@ export default {
                 }
             } else {
                 this.upImg(file).then((data)=>{
-                    if(data.status != 200){Toast("error");return}
+                    if(data.data.err!=0){return}
                     Toast("上传成功");
                     this.formData.head_pic_img.push({pic_img: data.data.content.url});
                     this.formData.head_pic.push({pic_img: data.data.content.fileid});
@@ -540,7 +540,7 @@ export default {
             if(file instanceof Array){
                 for(let i in file){                    
                     this.upImg(file[i]).then((data)=>{
-                        if(data.status != 200){Toast("error");return}
+                        if(data.data.err!=0){return}
                         Toast("上传成功")
                         this.formData.details.push({type:2, content: data.data.content.url});
                         this.$refs.xuzhi.scrollIntoView();
@@ -548,7 +548,7 @@ export default {
                 }
             } else {
                 this.upImg(file).then((data)=>{
-                    if(data.status != 200){Toast("error");return}
+                    if(data.data.err!=0){return}
                     Toast("上传成功");
                     this.formData.details.push({type:2, content: data.data.content.url});
                     this.$refs.xuzhi.scrollIntoView();

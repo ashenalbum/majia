@@ -130,7 +130,7 @@ export default {
                 allowTaint: true,
                 canvas: canvas,
                 width: width,
-                height: width,
+                height: height,
                 useCORS: true,
                 scale: scale,
             }).then(()=>{

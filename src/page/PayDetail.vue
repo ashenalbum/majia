@@ -18,7 +18,7 @@
                 <img :src="item.src" class="img" />
             </div>
         </div>
-        <div class="bg_ff">
+        <div class="cont-box bg_ff">
             <div class="details">
                 <div class="c_33 fs_32 van-ellipsis">{{data.title}}</div>
                 <div class="mt-20 c_ashen fs_26 van-ellipsis">{{data.subhead}}</div>
@@ -171,6 +171,32 @@
         <van-popup v-model="showSelarea" round position="bottom">
             <van-area :area-list="area" @confirm="selAreaOk" @cancel="showSelarea=false"/>
         </van-popup>
+        <!-- 生成海报 -->
+        <van-overlay :show="showHbDom" class="df ai-c just-c-ct" @click="showHbDom=false">
+            <div id="bill" ref="bill" class="bill shadow" @click.stop>        
+                <canvas class="canvas" id="canvas" ref="canvas"></canvas>
+                <van-uploader :disabled="disabled" :preview-image="false" :before-read="beforeRead">
+                    <div class="placehold df df-c ai-c just-c-ct c_99">
+                        <span class="fs_28">点击设置背景</span>
+                        <span class="mt-20 fs_24">600 * 960</span>
+                    </div>
+                </van-uploader>
+                <img v-if="bgimg" :src="bgimg" crossOrigin='anonymous' class="bgimg" />
+                <div class="user">
+                    <div class="name fs_24 c_99">{{info.nickname}}</div>
+                    <div class="iconbox">
+                        <img :src="info.headpath" crossOrigin='anonymous' class="icon" />
+                        <div class="icon-border"></div>
+                    </div>
+                </div>
+                <div class="ewmbox">
+                    <canvas id="ewm" ref="ewm" class="ewm"></canvas>
+                </div>
+            </div>
+        </van-overlay>
+        <van-overlay :show="showHb" @click="showHb=false" class="df ai-c just-c-ct">
+            <img class="hb-img" :src="imgUrl" @click.stop/>
+        </van-overlay>
     </div>
 </template>
 <script>
@@ -179,6 +205,9 @@ import {Toast} from 'vant';
 import axios from "../utils/axios";
 import area from "../json/area";
 import wx from "weixin-js-sdk";
+import {upFile} from "../utils/axios";
+import QRCode from "qrcode";
+import html2canvas from 'html2canvas';
 
 export default {
     name: "EventView",
@@ -208,7 +237,15 @@ export default {
             buyKc: 0, // 库存
             guigeId: 0, // 规格index
             buyFormLs: [], // 购买表单
-            buyFormData: {} // 表单数据
+            buyFormData: {}, // 表单数据
+
+            showHbDom: false,
+            info: {},
+            share_url: "",
+            showHb: false,
+            bgimg: false,
+            imgUrl: "",
+            disabled: false,
         }
     },
     beforeRouteUpdate(to,from,next){
@@ -261,6 +298,7 @@ export default {
                     })
                 }
                 this.getLastTime();
+                this.bgimg = this.data.sales_posterss;
             })
         },
         // 商家信息
@@ -271,6 +309,78 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 this.sjInfo = data.content;
+            })
+        },
+        // 海报信息
+        getInfo(){
+            axios({
+                url: '/member/Apimember/member_getInfo',
+            }).then((data)=>{
+                if(data.err!=0){return}
+                this.info = data.data;
+                this.createEwm()
+            })
+        },
+        // 生成二维码
+        createEwm(){
+            if(!localStorage.getItem("share_url")){
+                this.share_url = "http://sqyx.78wa.com/dist/#/";
+            }else{
+                this.share_url =localStorage.getItem("share_url");
+            }
+            let msg = document.getElementById('ewm');
+            QRCode.toCanvas(msg, this.share_url);
+            msg.style.width = "100%";
+            msg.style.height = "100%";
+        },
+        // 制作海报
+        toHaibao(){
+            this.showHbDom = true;
+            Toast("生成海报中...");
+            setTimeout(this.createImg,50);
+            // this.$router.push({path:"/bill", query:{img:this.data.sales_posterss||true}});
+        },
+        // 生成海报
+        createImg(){
+            let bill = this.$refs.bill;
+            let width = bill.offsetWidth;
+            let height = bill.offsetHeight;
+            let canvas = this.$refs.canvas;
+            let scale = 2;
+            canvas.width = width * scale;
+            canvas.height = height * scale;
+            
+            html2canvas(bill,{
+                allowTaint: true,
+                canvas: canvas,
+                width: width,
+                height: height,
+                useCORS: true,
+                scale: scale,
+            }).then(()=>{
+                let context = canvas.getContext('2d');
+                context.mozImageSmoothingEnabled = false;
+                context.webkitImageSmoothingEnabled = false;
+                context.msImageSmoothingEnabled = false;
+                context.imageSmoothingEnabled = false;
+                this.imgUrl = canvas.toDataURL("image/png");
+                this.showHb = true;
+                this.showHbDom = false;
+                Toast("已生成海报，长按图片保存");
+            }).catch(()=>{
+                Toast("error");
+                this.showHb = false;
+                this.showHbDom = false;
+            });
+        },
+        beforeRead(file){
+            let formdata = new FormData();
+            formdata.append("file",file);
+            formdata.append("sales_posterss",this.id);
+            Toast("正在上传");
+            upFile(formdata).then((data)=>{
+                if(data.data.err!=0){return}
+                this.bgimg = data.data.content.url;
             })
         },
         // 获取购买表单
@@ -389,10 +499,6 @@ export default {
                 window.removeEventListener('scroll',this.handleScroll);
             }
         },
-        // 制作海报
-        toHaibao(){
-            this.$router.push({path:"/bill", query:{img:this.data.sales_posterss||true}});
-        },
         toMycenter(){
             this.$router.push("/my_center");
         },
@@ -430,12 +536,15 @@ export default {
         },1500);
         // 滚动
         window.addEventListener('scroll',this.handleScroll);
+        // 制作海报
+        this.getInfo();
     },
 }
 </script>
 <style scoped>
 .cont{background:#F1EFF2; padding-bottom:1.6rem;}
 .top{position:relative; width:100%; height:4.6rem; overflow: hidden;}
+.cont-box{position:relative;}
 .my-swipe .van-swipe-item{width:100%; height:4.6rem;}
 .my-swipe .van-swipe-item .img{width:100%; height:100%;}
 .top .see{position:absolute; bottom:0; right:0; padding:0.1rem 0.22rem; background:rgba(0,0,0,0.55);}
@@ -489,7 +598,7 @@ export default {
 
 .fixed-submit{top:5.45rem; width:auto;}
 
-.fixed-btn{position:fixed; right:0.5rem; top:50%; min-height:1.22rem;}
+.fixed-btn{position:fixed; right:0.5rem; top:8.4rem; min-height:1.22rem;}
 .fixed-btn .txt{padding:0.1rem 0.7rem 0.1rem 0.26rem; background:#ffffff; border-radius:0.1rem;}
 .fixed-btn .txt .line{padding:0.1rem 0; line-height:1; border-bottom:1px solid #D7DBE9;}
 .fixed-btn .txt .line:last-child{border:none;}
@@ -507,4 +616,30 @@ export default {
 .user-info{padding:0.5rem;}
 .user-info .input{border-bottom:1px solid #C7CDDF;}
 .user-info .next-btn{width:2.7rem;}
+
+.bill{position:relative;width:6.32rem; height:10.1rem; background:#EEF0F5;}
+.bill .placehold{width:6.32rem; height:10.1rem;}
+.bill .bgimg{position:absolute; width:100%; height:100%; top:0; left:0;}
+.bill .user{position:absolute; left:0.64rem; top:0.64rem;}
+.bill .iconbox{width:1.15rem; height:1.15rem;}
+.bill .iconbox .icon-border{box-sizing:content-box; position:absolute; left:-3px; top:-3px; width:1.15rem; height:1.15rem; padding:3px; background-image:url(~@/assets/bill/iconborder.png); background-size:100% 100%;}
+.bill .iconbox .icon{position:absolute; left:0; top:0; width:1.15rem; height:1.15rem; border-radius:50%;}
+.bill .user .name{position:absolute; left:1rem; top:0; bottom:0; margin:auto; padding:0 0.2rem 0 0.3rem; height:0.44rem; line-height:0.44rem; background:url(~@/assets/bill/name.png); background-size:100% 100%; white-space:nowrap;}
+.bill .ewmbox{position:absolute; right:0.64rem; bottom:0.45rem; box-sizing:border-box; width:1.76rem; height:1.76rem; padding:0.08rem; background:url(~@/assets/bill/ewmbg.png); background-size:100% 100%;}
+.bill .ewmbox .ewm{width:100%; height:100%;}
+#qrcode{width:100%; height:100%;}
+#qrcode img{width:100%;height:100%;}
+.btns{width:6.4rem; margin-left:auto; margin-right:auto;}
+.btns .btn{width:2.5rem;}
+
+.popup-box .top-btn{padding:0.3rem 0.4rem;}
+.popup-box .imgbox{width:100%; overflow-x:auto; overflow-y:hidden;}
+.popup-box .imgbox .img-ul{position:relative; white-space: nowrap; padding:0 0.1rem;}
+.popup-box .imgbox .img-ul li{position:relative; display:inline-block; margin:0 0.2rem; width:1.64rem; height:2.32rem; }
+.popup-box .imgbox .img-ul li .img{width:100%; height:100%;}
+.popup-box .imgbox .img-ul li .check{box-sizing:border-box; position:absolute; right:0.1rem; top:0.1rem;}
+.popup-box .upfile{padding:0.4rem;}
+
+.canvas{position:absolute; top:0; left:0; z-index:-1; width:6.32rem; height:10.01rem; background:#ffffff;}
+.hb-img{width:6.32rem; height:10.01rem;}
 </style>

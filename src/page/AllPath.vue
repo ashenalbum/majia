@@ -23,6 +23,7 @@
 </template>
 <script>
 import {upFile} from "../utils/axios";
+import { Toast } from 'vant';
 
 export default {
     data(){
@@ -35,6 +36,7 @@ export default {
             console.log(file);
             let formData = new FormData();
             formData.append("file", file);
+            Toast("正在上传");
             upFile(formData).then((data)=>{
                 console.log(data);
             }).catch((err)=>{

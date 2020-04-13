@@ -19,8 +19,8 @@
                 <van-icon @click="showForm2=false" name="delete" size="0.5rem" color="#999999" />
             </div>
             <div class="form mt-10">
-                <van-field label="分销层级" readonly :value="sales_info[1].level" type="number" input-align="right" class="pl-4" />
-                <van-field label="分成方式" readonly :value="sales_info[1].typeTxt" placeholder="请选择分成方式" right-icon="arrow"  input-align="right" class="pl-4" @click="showSeltype=true;focusIndex=1" />
+                <van-field label="分销层级" readonly :value="sales_info[1]&&sales_info[1].level" type="number" input-align="right" class="pl-4" />
+                <van-field label="分成方式" readonly :value="sales_info[1]&&sales_info[1].typeTxt" placeholder="请选择分成方式" right-icon="arrow"  input-align="right" class="pl-4" @click="showSeltype=true;focusIndex=1" />
                 <van-field label="分销奖励" v-model="sales_info[1].number" type="number" placeholder="请输入奖励" input-align="right" class="pl-4" />
             </div>
         </div>
@@ -65,7 +65,6 @@ export default {
             showSeltype: false, //选择方式
             types: [
                 {id:0, name:"百分比"},
-                {id:0, name:"直接金额"}
             ],
             focusIndex: 0,
             
@@ -79,8 +78,34 @@ export default {
     },
     created(){
         this.id = this.$route.query.id;
+        this.getData();
     },
     methods: {
+        getData(){
+            axios({
+                url: "/activity/Apiactivity/getApplySalesInfo",
+                params: {activity_id: this.id}
+            }).then((data)=>{
+                if(data.err!=0){return}
+                this.sales_info = data.data;
+                if(!(this.sales_info instanceof Array)){
+                    this.sales_info = [];
+                }else if(this.sales_info.length==2){
+                    this.showForm2 = true;
+                }
+                if(!this.sales_info[0]){this.sales_info.push({level:1, typeTxt:""})}
+                if(!this.sales_info[1]){this.sales_info.push({level:2, typeTxt:""})}
+            });
+            axios({
+                url: "/activity/Apiactivity/previewTemplateInfo",
+                params: {activity_id: this.id}
+            }).then((data)=>{
+                if(data.err!=0){return}
+                if(data.data.type==0){
+                    this.types.push({id:1, name:"直接金额"})
+                }
+            })
+        },
         checkForm(){
             if(this.sales_info[0].type===undefined){Toast("请选择分成方式");return}
             if(this.sales_info[0].number===undefined){Toast("请输入分销奖励");return}

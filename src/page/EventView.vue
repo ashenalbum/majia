@@ -45,9 +45,9 @@
                     <div class="line"></div>
                     <span class="txt fs_36">产品详情</span>
                 </div>
-                <div class="box">
+                <div class="box mt-20">
                     <div v-for="(item,index) in data.details" :key="index">
-                        <div v-if="item.type==1" class="txt t-indent c_ashen">{{item.content}}</div>
+                        <div v-if="item.type==1" v-html="item.content" class="txt t-indent c_ashen">{{item.content}}</div>
                         <img v-if="item.type==2" class="img" :src="item.content" />
                         <video v-else-if="item.type==3" class="video" :src="item.content" controls></video>
                     </div>
@@ -72,7 +72,7 @@
             </div>
         </div>
 
-        <div v-if="showAd" class="ad df df-r shadow">
+        <!-- <div v-if="showAd" class="ad df df-r shadow">
             <img :src="ad.head_pic" class="img" />
             <div class="txt f1 df df-c just-c-bet">
                 <div class="title fs_26 c_33 van-multi-ellipsis--l2">{{ad.title}}</div>
@@ -85,7 +85,7 @@
                 </div>
             </div>
             <van-icon @click.stop="showAd=false" name="clear" size="0.5rem" color="#D1D6E5" class="close"/>
-        </div>
+        </div> -->
 
         <van-button class="fixed-submit" type="info" @click="haibao">{{data.hb_btn_name}}</van-button>
 
@@ -153,6 +153,7 @@ export default {
                 params: {activity_id: this.id}
             }).then((data)=>{
                 if(data.err!=0){return}
+                document.title = data.data.title + "  预览";
                 this.data = data.data;
                 this.userInfo = data.userinfo;
                 this.ad = data.data.recommend_advert;
@@ -169,7 +170,7 @@ export default {
             })
         },
         haibao(){
-            // this.$router.push()
+            Toast("预览活动暂不支持生成海报");
         }
     },
     mounted(){
@@ -217,7 +218,7 @@ export default {
 .words .title{position:relative; width:3.8rem; margin:0 auto;}
 .words .title .line{position:absolute; left:0; right:0; top:50%; border-bottom:1px solid #E3E3E3;}
 .words .title .txt{position:relative; padding:0 0.5rem; color:#BBC1D4; background:#ffffff;}
-.words .box .txt{padding:0.36rem 0.2rem; line-height:2;}
+.words .box .txt{padding:0.3rem 0.2rem; line-height:1.4; font-size:0.28rem;}
 .words .box .img{display:block; width:100%; height:auto;}
 .words .box .video{display:block; width:100%; height:auto; background:#000000;}
 
@@ -247,5 +248,5 @@ export default {
 .maskSeller .linebox .line{position:absolute; left:0; right:0; top:50%; border-bottom:1px solid #E3E3E3;}
 .maskSeller .linebox .txt{position:relative; padding:0 0.5rem; background:#ffffff;}
 
-.fixed-submit{top:4.8rem; width:auto;}
+.fixed-submit{top:5.45rem; width:auto;}
 </style>

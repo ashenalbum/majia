@@ -46,7 +46,8 @@
                 <span class="label c_ashen fs_30" @click="operateClick('fenxiao')">分销设置</span>
                 <span class="label c_ashen fs_30" @click="operateClick('formset')">表单设置</span>
                 <!-- <span class="label c_ashen fs_30" @click="operateClick('upbill')">上传海报</span> -->
-                <span class="label c_ashen fs_30" @click="operateClick('createbill')">生成海报</span>
+                <span class="label c_ashen fs_30" id="copybill" :data-clipboard-text="billUrl">复制海报链接</span>
+                <!-- <span class="label c_ashen fs_30" @click="operateClick('createbill')">生成海报</span> -->
                 <!-- <span class="label c_ashen fs_30" @click="operateClick('datas')">统计数据</span> -->
                 <span class="label c_ashen fs_30" @click="operateClick('payafter')">付费后页面设置</span>
             </div>
@@ -68,6 +69,7 @@ export default {
             loading: false,
             over: false,
             copyUrl: "",
+            billUrl: "",
             showOperate: false,
             nowItem: {},
 
@@ -78,6 +80,10 @@ export default {
         let clipboard = new Clipboard("#copyurl");
         clipboard.on('success', ()=>{Toast("复制成功"); this.showOperate=false});
         clipboard.on('error', ()=>{Toast("复制失败"); this.showOperate=false});
+
+        let urlbill = new Clipboard("#copybill");
+        urlbill.on('success', ()=>{Toast("复制成功"); this.showOperate=false});
+        urlbill.on('error', ()=>{Toast("复制失败"); this.showOperate=false});
     },
     methods: {
         getList(){
@@ -102,6 +108,7 @@ export default {
         openOperate(item){
             this.showOperate = true;
             this.copyUrl = item.activity_url;
+            this.billUrl = item.activity_poster_url;
             this.nowItem = item;
         },
         // 操作详情
@@ -109,7 +116,7 @@ export default {
             let id = this.nowItem.id;
             if(type=="fenxiao"){this.$router.push({path:"/distb_set", query:{id:id}}); return}
             if(type=="formset"){this.$router.push({path:"/event_form_set", query:{id:id}}); return}
-            if(type=="createbill"){this.$router.push({path:"/bill", query:{id:id, share_url:this.nowItem.activity_poster_url}}); return}
+            // if(type=="createbill"){this.$router.push({path:"/bill", query:{id:id, share_url:this.nowItem.activity_poster_url}}); return}
             if(type=="payafter"){this.$router.push({path:"/pay_after_set", query:{id:id}}); return}
         },
         // 活动时间

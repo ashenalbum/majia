@@ -7,7 +7,7 @@ Vue.use(Router);
 export default new Router({
     // mode: 'history',
     routes: [{
-        path: '/', redirect: '/all_path'
+        path: '/', redirect: '/pay_list'
     },{
         path: '/all_path',
         name: 'AllPath',

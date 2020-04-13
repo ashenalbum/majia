@@ -1,10 +1,12 @@
 <template>
     <div class="cont df df-c ai-c">
-        <div id="bill" ref="bill" class="bill">
-            <div class="placehold df df-c ai-c just-c-ct c_99">
-                <span class="fs_28">点击设置背景</span>
-                <span class="mt-20 fs_24">600 * 960</span>
-            </div>
+        <div id="bill" ref="bill" class="bill shadow">
+            <van-uploader :disabled="disabled" :preview-image="false" :before-read="beforeRead">
+                <div class="placehold df df-c ai-c just-c-ct c_99">
+                    <span class="fs_28">点击设置背景</span>
+                    <span class="mt-20 fs_24">600 * 960</span>
+                </div>
+            </van-uploader>
             <img v-if="bgimg" :src="bgimg" crossOrigin='anonymous' class="bgimg" />
             <div class="user">
                 <div class="name fs_24 c_99">{{info.nickname}}</div>
@@ -17,11 +19,14 @@
                 <canvas id="ewm" ref="ewm" class="ewm"></canvas>
             </div>
         </div>
-        <div class="btns mt-40 df df-r ai-c just-c-aro">
-            <van-button size="small" class="btn" color="#999999" plain @click="createHb">生成</van-button>
+        <div v-if="!disabled" class="btns mt-40 df df-r ai-c just-c-aro">
+            <van-button size="small" class="btn" color="#999999" plain @click="createHb">预览并保存</van-button>
             <van-uploader :preview-image="false" :before-read="beforeRead">
-                <van-button size="small" class="btn" color="#FF9C00" @click="showPopup=true">上传</van-button>
+                <van-button size="small" class="btn" color="#FF9C00">上传(600*960)</van-button>
             </van-uploader>
+        </div>
+        <div v-else class="btns mt-40">
+            <van-button block size="small" type="info" @click="createImg">预览并保存</van-button>
         </div>
 
         <van-overlay :show="showHb">
@@ -71,17 +76,22 @@ import { Toast } from 'vant';
 export default {
     data(){
         return {
+            id: null,
             info: {},
             share_url: "",
             showHb: false,
             bgimg: false,
             imgUrl: "",
+            disabled: false,
         }
     },
     created(){
-        if(this.$route.query.share_url){
-            localStorage.setItem("share_url",this.$route.query.share_url);
+        this.id = this.$route.query.id;
+        if(this.$route.query.img){
+            this.bgimg = this.$route.query.img;
+            this.disabled = true;
         }
+        // if(this.$route.query.share_url){localStorage.setItem("share_url",this.$route.query.share_url);}
         if(!localStorage.getItem("share_url")){
             this.share_url = "http://sqyx.78wa.com/dist/#/";
         }else{
@@ -135,12 +145,14 @@ export default {
             });
         },
         createHb(){
-            if(!this.bgimg){Toast("请先上传图片");return}
+            // if(!this.bgimg){Toast("请先上传图片");return}
             this.createImg();
         },
         beforeRead(file){
             let formdata = new FormData();
             formdata.append("file",file);
+            formdata.append("sales_posterss",this.id);
+            Toast("正在上传");
             upFile(formdata).then((data)=>{
                 if(data.data.err!=0){return}
                 this.bgimg = data.data.content.url;
@@ -152,7 +164,7 @@ export default {
 <style scoped>
 .cont{padding:0.4rem 0 0.1rem; user-select:none;}
 .bill{position:relative; width:6.32rem; height:10.1rem; background:#EEF0F5;}
-.bill .placehold{height:100%;}
+.bill .placehold{width:6.32rem; height:10.1rem;}
 .bill .bgimg{position:absolute; width:100%; height:100%; top:0; left:0;}
 .bill .user{position:absolute; left:0.64rem; top:0.64rem;}
 .bill .iconbox{width:1.15rem; height:1.15rem;}

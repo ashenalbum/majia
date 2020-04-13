@@ -12,7 +12,7 @@
                 <van-button :plain="detailType!==1" @click="detailType=1" type="info" size="small">添加图片</van-button>
             </div>
             <div class="detail-inputbox mt-30 df df-c ai-c">
-                <van-field v-model="detailTxt" v-if="detailType===0" type="textarea" class="input" @blur="addDetails" />
+                <van-field v-model="detailTxt" v-if="detailType===0" type="textarea" class="input" @blur="addDetails" @keyup.enter.native="addDetails" />
                 <van-uploader v-else-if="detailType===1" :before-read="beforeRead" >
                     <div class="upfile fs_26 c_ashen df ai-c just-c-ct txt-c">宽度不得大于750px<br/>点击上传</div>
                 </van-uploader>
@@ -86,7 +86,7 @@ export default {
                 if(data.err!=0){return;}
                 this.type = data.data.after_pay_type;
                 this.after_pay_url = data.data.after_pay_url;
-                this.detail = data.data.after_pay_custom;
+                this.detail = data.data.after_pay_custom || [];
             })
         },
         // 活动详情交换
@@ -95,7 +95,7 @@ export default {
         },
         // 添加文字内容
         addDetails(){
-            if(/^\s*$/.test(this.detailTxt)){Toast("没有输入内容");return}
+            if(/^\s*$/.test(this.detailTxt)){return}
             this.detail.push({type:1, content:this.detailTxt});
             this.detailTxt = "";
             this.$refs.btn.scrollIntoView();
@@ -104,6 +104,7 @@ export default {
         beforeRead(file){
             let formData = new FormData();
             formData.append("file", file);
+            Toast("正在上传");
             upFile(formData).then((data)=>{
                 if(data.data.err!=0){return}
                 this.detail.push({type:2, content:data.data.content.url});

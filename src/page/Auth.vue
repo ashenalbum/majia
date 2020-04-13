@@ -122,6 +122,7 @@ export default {
         beforeRead(file){
             let formData = new FormData();
             formData.append("file",file);
+            Toast("正在上传");
             upFile(formData).then((data)=>{
                 if(data.data.err!=0){return}
                 Toast("上传成功");

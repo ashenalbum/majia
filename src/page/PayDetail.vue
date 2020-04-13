@@ -40,14 +40,14 @@
                 </div>
                 <van-button size="mini" color="#FF9C00" @click="showSeller=true">关注</van-button>
             </div>
-            <div class="words mt-40">
+            <div ref="detail" class="words mt-40">
                 <div class="title df ai-c just-c-ct">
                     <div class="line"></div>
                     <span class="txt fs_36">产品详情</span>
                 </div>
                 <div class="box">
                     <div v-for="(item,index) in data.details" :key="index">
-                        <div v-if="item.type==1" class="txt t-indent c_ashen">{{item.content}}</div>
+                        <div v-if="item.type==1" v-html="item.content" class="txt t-indent c_ashen"></div>
                         <img v-if="item.type==2" class="img" :src="item.content" />
                         <video v-else-if="item.type==3" class="video" :src="item.content" controls></video>
                     </div>
@@ -216,6 +216,9 @@ export default {
         this.$router.go(0);
     },
     created(){
+        if(this.$route.query.showPoter){
+            this.$router.replace({path:"/bill",query:this.$route.query});
+        }
         if(this.$route.query.id){
             this.id = this.$route.query.id;
         }else if(this.$route.query.activity_id1){
@@ -236,7 +239,6 @@ export default {
                 this.data = data.data;
                 this.userInfo = data.userinfo;
                 if(data.data.recommend_advert){
-                    this.showAd = true;
                     this.ad = data.data.recommend_advert;
                 }
                 // 设置规格
@@ -284,7 +286,7 @@ export default {
         // 倒计时
         getLastTime(){
             if(this.data.abort_time==0){this.showLastTime=false;return}
-            if(typeof this.data.abort_time === "number"){this.data.abort_time*=1000;}
+            if((typeof this.data.abort_time) === "number"){this.data.abort_time*=1000;}
             let over = new Date(this.data.abort_time).getTime();
             this.timeToString(over);
             setInterval(()=>{
@@ -373,8 +375,23 @@ export default {
                 fail: () => {}
             });
         },
+        // 滚动显示弹幕
         toMould(){
             this.$router.push("/event_mould");
+        },
+        // 滚动条
+        handleScroll(){
+            let detail = this.$refs.detail;
+            let long = detail.offsetTop - document.documentElement.scrollTop;
+            if(long<=0){
+                this.showAd = true;
+                setTimeout(()=>{ this.showAd = false;},5000);    
+                window.removeEventListener('scroll',this.handleScroll);
+            }
+        },
+        // 制作海报
+        toHaibao(){
+            this.$router.push({path:"/bill", query:{img:this.data.sales_posterss||true}});
         },
         toMycenter(){
             this.$router.push("/my_center");
@@ -382,9 +399,6 @@ export default {
         toDetail(id){
             this.$router.push({name:"PayDetail", query:{id: id}});
         },
-        toHaibao(){
-            this.$router.push("/bill");
-        }
     },
     mounted(){
         let clipboard1 = new Clipboard(this.$refs.copytxt1);
@@ -414,6 +428,8 @@ export default {
                 return;
             }
         },1500);
+        // 滚动
+        window.addEventListener('scroll',this.handleScroll);
     },
 }
 </script>
@@ -441,7 +457,7 @@ export default {
 .words .title{position:relative; width:3.8rem; margin:0 auto;}
 .words .title .line{position:absolute; left:0; right:0; top:50%; border-bottom:1px solid #E3E3E3;}
 .words .title .txt{position:relative; padding:0 0.5rem; color:#BBC1D4; background:#ffffff;}
-.words .box .txt{padding:0.36rem 0.2rem; line-height:2;}
+.words .box .txt{padding:0.3rem 0.2rem; line-height:1.4; font-size:0.28rem;}
 .words .box .img{display:block; width:100%; height:auto;}
 .words .box .video{display:block; width:100%; height:auto; background:#000000;}
 
@@ -471,7 +487,7 @@ export default {
 .maskSeller .linebox .line{position:absolute; left:0; right:0; top:50%; border-bottom:1px solid #E3E3E3;}
 .maskSeller .linebox .txt{position:relative; padding:0 0.5rem; background:#ffffff;}
 
-.fixed-submit{top:4.8rem; width:auto;}
+.fixed-submit{top:5.45rem; width:auto;}
 
 .fixed-btn{position:fixed; right:0.5rem; top:50%; min-height:1.22rem;}
 .fixed-btn .txt{padding:0.1rem 0.7rem 0.1rem 0.26rem; background:#ffffff; border-radius:0.1rem;}

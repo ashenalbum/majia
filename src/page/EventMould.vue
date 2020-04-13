@@ -22,15 +22,15 @@
                 @load="getList"
                 class="listul pl-40 mt-30"
             >
-                <div v-for="(item,index) in dataList" :key="index" class="item shadow">
+                <div v-for="(item,index) in dataList" :key="index" class="item shadow" @click="yulan(item.id)">
                     <div class="imgbox">
                         <img class="img" :src="item.head_pic" />
                         <span class="txt c_ff fs_24">{{item.useNum}}人在使用</span>
                     </div>
                     <div class="title van-ellipsis fs_28 c_33 txt-c">{{item.title}}</div>
                     <div class="df df-r ai-c just-c-bet pl-20">
-                        <a class="fs_26 c_ashen" href="javascript:;" @click="yulan(item.id)">预览</a>
-                        <a class="com-btn-y" href="javascript:;" @click="zhizuo(item.id)">立即制作</a>
+                        <a class="fs_26 c_ashen" href="javascript:;" >预览</a>
+                        <a class="com-btn-y" href="javascript:;" @click.stop="zhizuo(item.id)">立即制作</a>
                     </div>
                 </div>
             </van-list>

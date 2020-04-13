@@ -53,7 +53,7 @@ router.beforeEach(function (to, from, next) {
 })
 
 // 微信config
-function wxConfig(Page_id){
+function wxConfig(){
     let location = window.location.href;
     axios({
         url: "/wechat/Apiwechat/get_wx_config",
@@ -75,7 +75,7 @@ function wxConfig(Page_id){
         wx.ready(() => {
             axios({
                 url: "/activity/Apiactivity/sharing_getInfo",
-                params: {id: Page_id}
+                // params: {id: Page_id}
             }).then((data)=>{
                 if(data.err!=0){return;}
                 //分享朋友圈

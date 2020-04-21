@@ -15,7 +15,8 @@
                             <div class="one-hide fs_32">{{item.title}}</div>
                             <div>
                                 <van-button v-if="item.audit_type!=1" size="mini" color="#BBC1D4" @click="toEdit(item)">编辑</van-button>
-                                <van-button v-else size="mini" color="#FF9C00" @click="frames(item)">{{item.putaway==0?"上架":"下架"}}</van-button>
+                                <!-- <van-button v-else size="mini" color="#FF9C00" @click="frames(item)">{{item.putaway==0?"上架":"下架"}}</van-button> -->
+                                <span v-else class="fs_26 c_99">进行中</span>
                             </div>
                         </div>
                         <div class="mt-10 df df-r ai-c fs_24 c_ashen">
@@ -36,18 +37,23 @@
                 </div>
             </div>
         </van-list>
-        <div class="kefu">
+        <!-- <div class="kefu">
             <div class="txt shadow c_ashen fs_32">联系客服</div>
             <img src="~@/assets/event/kefu.png" class="icon" />
-        </div>
+        </div> -->
         <van-popup v-model="showOperate" round position="bottom">
             <div class="operate-box">
                 <span class="label c_ashen fs_30" id="copyurl" :data-clipboard-text="copyUrl">复制活动链接</span>
                 <span class="label c_ashen fs_30" @click="operateClick('fenxiao')">分销设置</span>
                 <span class="label c_ashen fs_30" @click="operateClick('formset')">表单设置</span>
-                <!-- <span class="label c_ashen fs_30" @click="operateClick('upbill')">上传海报</span> -->
+                <span class="label c_ashen fs_30" @click="operateClick('dingdan')">订单列表</span>
+                <span class="label c_ashen fs_30" @click="operateClick('upbill')">上传海报</span>
                 <span class="label c_ashen fs_30" id="copybill" :data-clipboard-text="billUrl">复制海报链接</span>
-                <!-- <span class="label c_ashen fs_30" @click="operateClick('createbill')">生成海报</span> -->
+                <span class="label c_ashen fs_30" @click="operateClick('createbill',billUrl)">生成海报</span>
+                <!-- <span class="label c_ashen fs_30" @click="operateClick('duijiang')">设置兑奖内容</span> -->
+                <span class="label c_ashen fs_30" id="duijiang" :data-clipboard-text="dhUrl">复制兑奖链接</span>
+                <span class="label c_ashen fs_30" @click="operateClick('qudao')">添加渠道</span>
+                <span class="label c_ashen fs_30" @click="operateClick('liulan')">浏览记录</span>
                 <!-- <span class="label c_ashen fs_30" @click="operateClick('datas')">统计数据</span> -->
                 <span class="label c_ashen fs_30" @click="operateClick('payafter')">付费后页面设置</span>
             </div>
@@ -70,6 +76,7 @@ export default {
             over: false,
             copyUrl: "",
             billUrl: "",
+            dhUrl: "",
             showOperate: false,
             nowItem: {},
 
@@ -84,6 +91,10 @@ export default {
         let urlbill = new Clipboard("#copybill");
         urlbill.on('success', ()=>{Toast("复制成功"); this.showOperate=false});
         urlbill.on('error', ()=>{Toast("复制失败"); this.showOperate=false});
+
+        let copyDj = new Clipboard("#duijiang");
+        copyDj.on('success', ()=>{Toast("复制成功"); this.showOperate=false});
+        copyDj.on('error', ()=>{Toast("复制失败"); this.showOperate=false});
     },
     methods: {
         getList(){
@@ -96,28 +107,33 @@ export default {
                 this.search.page++;
                 if(data.count<=this.search.pageSize){
                     this.dataList = data.data;
+                    this.over = true;
                 }else{
                     this.dataList = this.dataList.concat(data.data);
                 }
                 if(data.count<=this.dataList.length){ this.over = true;}
             })
-            this.loading = false;
-            this.over = true;
         },
         // 操作
         openOperate(item){
             this.showOperate = true;
             this.copyUrl = item.activity_url;
             this.billUrl = item.activity_poster_url;
+            this.dhUrl = item.activity_convert_url
             this.nowItem = item;
         },
         // 操作详情
-        operateClick(type){
+        operateClick(type,data){
             let id = this.nowItem.id;
+            if(type=="dingdan"){this.$router.push({path:"/userdata", query:{id:id}});}
             if(type=="fenxiao"){this.$router.push({path:"/distb_set", query:{id:id}}); return}
             if(type=="formset"){this.$router.push({path:"/event_form_set", query:{id:id}}); return}
-            // if(type=="createbill"){this.$router.push({path:"/bill", query:{id:id, share_url:this.nowItem.activity_poster_url}}); return}
+            if(type=="upbill"){this.$router.push({path:"/bill", query:{id:id}}); return}
+            if(type=="createbill"){window.location.href = data; return}
+            if(type=="duijiang"){this.$router.push({path:"/redeem", query:{id:id}}); return}
             if(type=="payafter"){this.$router.push({path:"/pay_after_set", query:{id:id}}); return}
+            if(type=="liulan"){this.$router.push({path:"/browse", query:{id:id}}); return}
+            if(type=="qudao"){this.$router.push({path:"/channel", query:{id:id}}); return}
         },
         // 活动时间
         computedTime(item){

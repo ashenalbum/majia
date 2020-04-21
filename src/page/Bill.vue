@@ -1,7 +1,7 @@
 <template>
     <div class="cont df df-c ai-c">
         <div id="bill" ref="bill" class="bill shadow">
-            <van-uploader :disabled="disabled" :preview-image="false" :before-read="beforeRead">
+            <van-uploader :preview-image="false" :before-read="beforeRead">
                 <div class="placehold df df-c ai-c just-c-ct c_99">
                     <span class="fs_28">点击设置背景</span>
                     <span class="mt-20 fs_24">600 * 960</span>
@@ -19,15 +19,15 @@
                 <canvas id="ewm" ref="ewm" class="ewm"></canvas>
             </div>
         </div>
-        <div v-if="!disabled" class="btns mt-40 df df-r ai-c just-c-aro">
+        <div class="btns mt-40 df df-r ai-c just-c-aro">
             <van-button size="small" class="btn" color="#999999" plain @click="createHb">预览并保存</van-button>
             <van-uploader :preview-image="false" :before-read="beforeRead">
                 <van-button size="small" class="btn" color="#FF9C00">上传(600*960)</van-button>
             </van-uploader>
         </div>
-        <div v-else class="btns mt-40">
-            <van-button block size="small" type="info" @click="createImg">预览并保存</van-button>
-        </div>
+        <!-- <div v-else class="btns mt-40">
+            <van-button block size="small" type="info" @click="upDate">提交</van-button>
+        </div> -->
 
         <van-overlay :show="showHb">
             <div class="wrapper df df-c ai-c just-c-ct" @click="showHb=false">
@@ -81,19 +81,15 @@ export default {
             share_url: "",
             showHb: false,
             bgimg: false,
+            bgimgId: null,
             imgUrl: "",
-            disabled: false,
         }
     },
     created(){
         this.id = this.$route.query.id;
-        if(this.$route.query.img){
-            this.bgimg = this.$route.query.img;
-            this.disabled = true;
-        }
         // if(this.$route.query.share_url){localStorage.setItem("share_url",this.$route.query.share_url);}
         if(!localStorage.getItem("share_url")){
-            this.share_url = "http://sqyx.78wa.com/dist/#/";
+            this.share_url = window.location.href;
         }else{
             this.share_url =localStorage.getItem("share_url");
         }
@@ -141,12 +137,27 @@ export default {
                 context.imageSmoothingEnabled = false;
                 this.imgUrl = canvas.toDataURL("image/png");
                 this.showHb = true;
-                Toast("长按保存海报");
+                Toast("正在上传");
+                this.upDate();
             });
         },
         createHb(){
             // if(!this.bgimg){Toast("请先上传图片");return}
             this.createImg();
+        },
+        upDate(){
+            if(!this.bgimg){Toast("请先上传图片");return}
+            // 提交海报背景图片
+            axios({
+                url: "/activity/Apiactivity/editActivity",
+                params: {
+                    activity_id: this.id,
+                    sales_posterss: this.bgimgId,
+                }
+            }).then((data)=>{
+                if(data.err!=0){return}
+                Toast("上传成功,长按保存海报");
+            })
         },
         beforeRead(file){
             let formdata = new FormData();
@@ -156,6 +167,7 @@ export default {
             upFile(formdata).then((data)=>{
                 if(data.data.err!=0){return}
                 this.bgimg = data.data.content.url;
+                this.bgimgId = data.data.content.fileid;
             })
         },
     }

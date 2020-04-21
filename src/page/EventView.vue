@@ -62,10 +62,7 @@
         </div>
         <div class="bottom-btns df df-r fs_34">
             <div class="btn1 f1 df df-c ai-c just-c-ct">制作新活动</div>
-            <div class="btn2 f1 df df-c ai-c just-c-ct">
-                <span>立即购买</span>
-                <span class="fs_26">剩余 60：24：12</span>
-            </div>
+            <div class="btn2 f1 df df-c ai-c just-c-ct"><span>{{data.pay_btn}}</span></div>
             <div class="made df df-r ai-c just-c-ct c_ff fs_34" @click="make">
                 <van-icon name="edit" size="0.45rem" />
                 <span class="pl-20"> 立即制作</span>
@@ -190,7 +187,7 @@ export default {
                 setTimeout(()=> dm.move=false, 10000);
                 return;
             }
-        },1500);
+        },2000);
     },
 }
 </script>
@@ -204,7 +201,7 @@ export default {
 .top .dm{position:absolute; max-width:7rem; left:100%; height:0.44rem;}
 .top .dm .txt{padding:0.09rem 0.16rem 0.09rem 0.52rem; line-height:1; background:rgba(255,255,255,0.5); border-radius:0.2rem; white-space:nowrap;}
 .top .dm .img{position: absolute; width:0.44rem; height:0.44rem; border-radius:50%; left:0; top:0;}
-.top .dm.dmmove{transition:left 10s linear; left:-7rem;}
+.top .dm.dmmove{transition:left 14s linear; left:-7rem;}
 
 .bg_ff{background: #ffffff;}
 .details{padding:0.4rem 0.45rem; background:#ffffff;}

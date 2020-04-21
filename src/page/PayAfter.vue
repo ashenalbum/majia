@@ -7,6 +7,9 @@
                 <video v-else-if="item.type==3" class="video" :src="item.content" controls></video>
             </div>
         </div>
+        <div class="btn-box mt-20">
+            <van-button type="info" @click="toMyCenter" block>返回个人中心</van-button>
+        </div>
     </div>
 </template>
 <script>
@@ -37,6 +40,9 @@ export default {
                 }
             })
         },
+        toMyCenter(){
+            this.$router.push({path:"/my_center"});
+        },
     }
 }
 </script>
@@ -44,4 +50,5 @@ export default {
 .box .txt{padding:0.36rem 0.2rem; line-height:2;}
 .box .img{display:block; width:100%; height:auto;}
 .box .video{display:block; width:100%; height:auto; background:#000000;}
+.btn-box{width:6rem; margin-left:auto; margin-right:auto; margin-bottom:0.2rem;}
 </style>

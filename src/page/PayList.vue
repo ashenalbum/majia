@@ -77,6 +77,7 @@ export default {
                 this.search.page++;
                 if(data.count<=this.search.pageSize){
                     this.dataList = data.data;
+                    this.over = true;
                 }else{
                     this.dataList = this.dataList.concat(data.data);
                 }

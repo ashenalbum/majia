@@ -18,7 +18,7 @@
                 </van-radio-group>
             </div>
             <div v-if="fileType===1" class="upimgbox df df-r">
-                <vuedraggable v-model="formData.head_pic_img" class="df df-r df-w-w">
+                <!-- <vuedraggable v-model="formData.head_pic_img" class="df df-r df-w-w"> -->
                     <div v-for="(item,index) in formData.head_pic_img" :key="index" class="imgbox shadow df ai-c just-c-ct">
                         <img :src="item.pic_img" class="img" />
                         <van-icon v-if="!item.loading" @click="ttimgRemove(index)" name="cross" size="0.2rem" color="#ffffff" class="close"/>
@@ -27,13 +27,13 @@
                         <van-icon name="photograph" size="0.44rem" />
                         <span class="fs_22">添加图片</span>
                     </div>
-                </vuedraggable>
+                <!-- </vuedraggable> -->
             </div>
             <van-field v-else v-model="formData.video_url" placeholder="请输入视频播放地址" class="video-input mb-20 pl-4" />
 
             <van-field label="原价" v-model="formData.price" required placeholder="请输入原价" type="number" input-align="right" class="form-input" />
             <van-field label="活动价格" v-model="formData.special_offer" required placeholder="请输入活动价格" type="number" input-align="right" class="form-input" />
-            <div v-if="formData.type==1" class="guige">
+            <div class="guige">
                 <div class="guige-label df df-r ai-c just-c-bet">
                     <div class="title fs_32 c_33 fs_14px">产品规格</div>           
                     <van-button icon="plus" size="mini" color="#FF9B00" @click="showGuige=true"></van-button>
@@ -61,7 +61,7 @@
                         <span class="custom-title">开启商家互助</span>
                     </div>
                 </template>
-                <van-switch v-model="merchant_help_b" @input="changeHuzhu" size="0.4rem" />
+                <van-switch v-model="merchant_help_b" @change="changeHuzhu" size="0.4rem" />
             </van-cell>
             <van-cell class="cell form-input pl-4 pr-4">
                 <template #title>
@@ -167,18 +167,19 @@
             </div>
         </van-popup>
         <!-- 活动协议 -->
-        <van-popup v-model="showXieyi">
-            <div class="wrapper df df-c ai-c just-c-ct" @click="showXieyi=false">
-                <div class="xieyi shadow" @click.stop>
+        <van-popup v-model="showXieyi" :close-on-click-overlay="false">
+            <div class="wrapper df df-c ai-c just-c-ct" @click.stop>
+                <div class="xieyi shadow">
                     <div class="txt-c c_33 fs_32">发布活动协议</div>
                     <div class="mt-10 txt-box fs_26 c_ashen" v-html="xieyi"></div>
                     <div class="mt-30 df df-c ai-c">
-                        <van-checkbox v-model="checkXieyi" icon-size="0.26rem" checked-color="#FC9B0A">
+                        <van-checkbox v-model="checkXieyi" icon-size="0.3rem" checked-color="#FC9B0A">
                             <span class="fs_26 c_ashen">阅读并同意本协议</span>
                         </van-checkbox>
                     </div>
-                    <div class="mt-30 df df-c ai-c">
-                        <van-button size="small" type="info" class="btn" @click="formSubmit">确认提交</van-button>
+                    <div class="mt-30 df df-r ai-c just-c-bet">
+                        <van-button size="small" type="info" @click="back">返回</van-button>
+                        <van-button size="small" type="info" @click="agreeXieyi">继续</van-button>
                     </div>
                 </div>
                 <!-- <van-icon name="close" class="close" size="0.6rem" color="#BFC4CE" /> -->
@@ -219,27 +220,29 @@
             </div>
         </van-overlay>
         <!-- 提交完成提示 -->
-        <van-overlay :show="showTj">
+        <!-- <van-overlay :show="showTj"> -->
+        <van-popup v-model="showTj" @close="backList">
             <div class="wrapper df df-c ai-c just-c-ct" @click="showTj=false">
                 <div class="tj-ok df df-c ai-c" @click.stop>
                     <img src="~@/assets/event/submit_title.png" class="img" />
                     <div class="mt-30 c_33 fs_28">活动发布请求已提交</div>
                     <div class="mt-20 c_o fs_28 b">等待审核</div>
-                    <van-button type="info" size="small" class="btn" @click="toDistb">前去开启分销</van-button>
+                    <van-button type="info" size="small" class="btn" @click="toPayAfterSet">设置支付后页面</van-button>
                 </div>
-                <van-icon name="close" class="mt-30" size="0.6rem" color="#BFC4CE" />
+                <!-- <van-icon name="close" class="mt-30" size="0.6rem" color="#BFC4CE" /> -->
             </div>
-        </van-overlay>
+        </van-popup>
+        <!-- </van-overlay> -->
     </div>
 </template>
 <script>
 import {Toast,Dialog} from "vant";
 import {upFile} from "../utils/axios";
 import axios from "../utils/axios";
-import vuedraggable from 'vuedraggable';
+// import vuedraggable from 'vuedraggable';
 
 export default {
-    components: {vuedraggable},
+    // components: {vuedraggable},
     data(){
         return {
             id: null,
@@ -259,7 +262,7 @@ export default {
             showGuige: false,
             guigeData: { name: "", price: "", offerPic: "", stock: ""},
             // 协议
-            showXieyi: false,
+            showXieyi: true,
             checkXieyi: false,
             xieyi:"",
             // 提示
@@ -300,6 +303,8 @@ export default {
                 details: [], //详情
                 spec_content: [], //规格
             },
+            merchant_help_text: "",
+            toId: null,
         }
     },
     created(){
@@ -330,16 +335,19 @@ export default {
                 {b:data.details.length==0, t:"请填写活动详情"},
             ];
             for(let i in testArr){if(testArr[i]['b']){Toast(testArr[i]['t']);return}}
-            this.showXieyi = true;
+            this.formSubmit();
+        },
+        agreeXieyi(){
+            if(!this.checkXieyi){Toast("请确认已阅读并同意活动协议");return}
+            this.showXieyi = false;
         },
         // 提交表单
         formSubmit(){
-            if(!this.checkXieyi){Toast("请确认已阅读并同意活动协议");return}
             this.showXieyi = false;
+            this.showTj = true;
             let url = this.isEdit?"/activity/Apiactivity/editActivity":"/activity/Apiactivity/addActivity";
             this.formData.activity_id = this.formData.id;
             delete this.formData.id;
-            
             axios({
                 url: url,
                 method: "post",
@@ -350,6 +358,7 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 this.showTj = true;
+                this.toId = data.activity_id;
             }).catch(()=>{Toast("error")});
         },
         // 获取内容
@@ -376,6 +385,7 @@ export default {
                     head_pic.push(data.data.head_pic_img[i].pic);
                 }
                 this.formData.head_pic = head_pic;
+                this.merchant_help_text = data.data.merchant_help_text;
             });
         },
         // 获取行业
@@ -442,6 +452,7 @@ export default {
         // 添加规格
         addGuige(){
             this.formData.spec_content.push({...this.guigeData});
+            this.guigeData = { name: "", price: "", offerPic: "", stock: ""};
             this.showGuige = false;
         },
         // 删除规格
@@ -465,7 +476,18 @@ export default {
             this.formData.genre_id = o.id;
         },
         // 商家互助
-        changeHuzhu(b){this.formData.merchant_help = b?1:0},
+        changeHuzhu(b){
+            if(b){
+                this.merchant_help_b = false;
+                this.formData.merchant_help = 0;
+                this.$dialog.confirm({
+                    message: this.merchant_help_text,
+                }).then(()=>{
+                    this.merchant_help_b = true;
+                    this.formData.merchant_help = 1;
+                }).catch(()=>{})
+            }
+        },
         // 弹幕
         changeDanmu(b){this.formData.bullet_sw = b?1:0},
         // 活动详情交换
@@ -582,10 +604,10 @@ export default {
             this.showTishi = true;
             this.tishiType = type;
         },
-        // 前去分销
-        toDistb(){
-            this.$router.push({path:"/distb_set", query:{id:this.id}});
-        }
+        toPayAfterSet(){this.$router.push({path:"/pay_after_set", query:{id: this.toId}});},
+        // 返回
+        back(){this.$router.go(-1)},
+        backList(){this.$router.push({path:"/event_list"})}
     }
 }
 </script>

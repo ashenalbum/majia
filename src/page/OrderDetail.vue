@@ -59,20 +59,65 @@
                 <div class="fs_26 c_ashen f1">发货地址：陕西省西安市某某区 某某街道  某某小区  2号楼5单元402</div>
             </div>
         </div> -->
-        <div v-if="data.pay_status==0" class="btns df df-r ai-c just-c-end">
-            <van-button size="small" round color="#FF9C00" @click="fukuan">付款</van-button>
-        </div>
-        <div v-else-if="data.scene==0" class="btns df df-r ai-c just-c-end">
-            <!-- <van-button size="small" plain round color="#B3B9CF" >查看物流</van-button> -->
-            <van-button v-if="data.order_status==0" size="small" round color="#FF9C00" @click="shouhuo">确认收货</van-button>
-        </div>
-        <div v-else class="mt-20 df df-c ai-c just-c-ct">
-            <div class="wembox">
-                <img :src="imgUrl" />
-                <canvas id="ewm" ref="ewm" class="ewm" style="display:none;"></canvas>
+        <!-- 是用户 -->
+        <div v-if="!is_pos">
+            <div v-if="data.pay_status==0" class="btns df df-r ai-c just-c-end">
+                <van-button size="small" round color="#FF9C00" @click="fukuan">付款</van-button>
             </div>
-            <div class="txt_c fs_28 c_ashen">我的兑换码</div>
+            <div v-else-if="data.scene==0" class="btns df df-r ai-c just-c-end">
+                <!-- <van-button size="small" plain round color="#B3B9CF" >查看物流</van-button> -->
+                <van-button v-if="data.order_status==0" size="small" round color="#FF9C00" @click="shouhuo">确认收货</van-button>
+                <span v-else class="c_red1 fs_26">已收货</span>
+            </div>
+            <div v-else-if="data.ship_status==0" class="mt-20 df df-c ai-c just-c-ct">
+                <div class="wembox">
+                    <img :src="imgUrl" />
+                </div>
+                <div class="txt_c fs_28 c_ashen">我的兑换码</div>
+            </div>
+            <div v-else class="btns df df-r ai-c just-c-end">
+                <span class="c_red1">已兑换</span>
+            </div>
         </div>
+        <!-- 是商户 -->
+        <div v-else class="fs_28">
+            <div v-if="data.pay_status==0" class="btns df df-r ai-c just-c-end">
+                <van-button size="small" round color="#FF9C00" @click="yifukuan">确认已付款</van-button>
+            </div>
+            <div v-else-if="data.scene==0">
+                <div v-if="data.ship_status==0" class="btns df df-r ai-c just-c-end">
+                    <van-button size="small" round color="#FF9C00" @click="showKd=true">确认发货</van-button>
+                </div>
+                <div v-else-if="data.ship_status==1" class="btns df df-r ai-c just-c-end">
+                    <span class="c_red1">已发货</span>
+                </div>
+                <div v-else-if="data.ship_status==2" class="btns df df-r ai-c just-c-end">
+                    <span class="c_red1">已完成</span>
+                </div>
+            </div>
+            <div v-else>
+                <div v-if="data.ship_status==0" class="btns df df-r ai-c just-c-end">
+                    <van-button size="small" round color="#FF9C00" @click="saoma">扫码兑换</van-button>
+                </div>
+                <div v-else class="btns df df-r ai-c just-c-end">
+                    <span class="c_red1">已兑换</span>
+                </div>
+            </div>
+        </div>
+        <van-popup v-model="showKd" position="bottom">
+            <div class="popup">
+                <div class="popup-btns df df-r ai-c just-c-bet fs_26">
+                    <span class="c_99" @click="showKd=false">取消</span>
+                    <span class="c_blue" @click="fahuo">确定</span>
+                </div>
+                <div class="df df-c ai-c">
+                    <van-field v-model="kdgs" label="快递公司" placeholder="请输入快递公司" class="mt-30 input" />
+                    <van-field v-model="kddh" label="快递单号" placeholder="请输入快递单号" class="mt-30 input" />
+                </div>
+            </div>
+        </van-popup>
+        
+        <canvas id="ewm" ref="ewm" class="ewm" style="display:none;"></canvas>
     </div>
 </template>
 <script>
@@ -85,13 +130,19 @@ export default {
     data(){
         return {
             id: null,
+            is_pos: false,
             data: {},
             imgUrl: "",
             pay_info: [],
+
+            showKd: false,
+            kdgs: "",
+            kddh: "",
         }
     },
     created(){
         this.id = this.$route.query.id;
+        this.is_pos = Boolean(this.$route.query.pos);
     },
     mounted(){
         this.getData();
@@ -142,16 +193,18 @@ export default {
         shouhuo(){
             axios({
                 url: "/activity/Apiactivity/edit_order",
-                params: {order_id: this.data.id}
+                params: {
+                    order_id: this.data.id
+                }
             }).then((data)=>{
                 if(data.err!=0){return;}
                 Toast("操作成功");
-                this.$router.push({path:"/pay_after", query:{id: this.id}});
+                this.getData();
             });
         },
         // 生成二维码
         createEwm(){
-            if(this.data.scene!=1 || this.data.pay_status==0){return;}
+            if(this.is_pos || this.data.scene!=1 || this.data.pay_status==0){return;}
             let msg = document.getElementById('ewm');
             QRCode.toCanvas(msg, this.data.convert_url);
             msg.style.width = "100%";
@@ -163,7 +216,61 @@ export default {
             context.msImageSmoothingEnabled = false;
             context.imageSmoothingEnabled = false;
             this.imgUrl = msg.toDataURL("image/png");
-        }
+        },
+        // 确认发货
+        fahuo(){
+            if(!this.kdgs){Toast("请输入快递公司");return}
+            if(!this.kddh){Toast("请输入快递单号");return}
+            this.showKd = false;
+            axios({
+                url: "/activity/Apiactivity/order_status",
+                params: {
+                    order_id: this.id,
+                    ship_status: 1,
+                    excom: this.kdgs,
+                    excode: this.kddh,
+                }
+            }).then((data)=>{
+                if(data.err!=0){return}
+                Toast("操作成功");
+                this.getData();
+            })
+        },
+        // 确认已付款
+        yifukuan(){
+            axios({
+                url: "/activity/Apiactivity/order_status",
+                params: {
+                    order_id:this.id,
+                    pay_status:1
+                }
+            }).then((data)=>{
+                if(data.err!=0){return}
+                Toast("操作成功");
+                this.getData();
+            })
+        },
+        // 扫码
+        saoma(){
+            wx.scanQRCode({
+                needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+                scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+                success:(res)=>{
+                    let result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+                    axios({
+                        url: "/activity/Apiactivity/write_off",
+                        params: {
+                            order_id: this.id,
+                            random_code: result,
+                        }
+                    }).then((data)=>{
+                        if(data.err!=0){return}
+                        Toast("操作成功");
+                        this.getData();
+                    })
+                }
+            });
+        },
     }
 }
 </script>
@@ -185,4 +292,7 @@ export default {
 .btns{width:6.7rem; margin:0 auto; padding:0.4rem 0 0.3rem;}
 .wembox{width:4rem; height:4rem; margin-left:auto; margin-right:auto;}
 .wembox>*{display:block;width:100%;height:100%;}
+
+.popup{padding:0.2rem 0.2rem 0.3rem;}
+.popup .input{padding:10px 2px; border-bottom:1px solid #dddddd;}
 </style>

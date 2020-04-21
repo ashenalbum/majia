@@ -126,6 +126,7 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 Toast("操作成功");
+                this.$router.push({path:"event_list"});
             });
         },
         selType(o){

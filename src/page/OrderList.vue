@@ -67,6 +67,7 @@ export default {
                 this.search.page++;
                 if(data.count<=this.search.pageSize){
                     this.dataList = data.data;
+                    this.over = true;
                 }else{
                     this.dataList = this.dataList.concat(data.data);
                 }
@@ -86,7 +87,7 @@ export default {
 </script>
 <style scoped>
 .cont-list{width:6.7rem; margin:0 auto; padding-top:0.3rem;}
-.cont-list .item{margin-bottom:0.4rem;}
+.cont-list .item{margin-bottom:0.6rem;}
 .cont-list .item .icon{width:0.5rem; height:0.5rem; border-radius:50%;}
 .cont-list .item .name{padding-left:0.2rem;}
 .cont-list .ware{padding:0.2rem 0; border-bottom:1px solid #E2E6F1;}

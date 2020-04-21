@@ -7,16 +7,12 @@
             </van-radio-group>
         </div>
         <div v-if="type===0" class="formbox">
-            <div class="btnbox mt-10 df df-r ai-c">
-                <van-button :plain="detailType!==0" @click="detailType=0" type="info" size="small">添加文字</van-button>
-                <van-button :plain="detailType!==1" @click="detailType=1" type="info" size="small">添加图片</van-button>
-            </div>
-            <div class="detail-inputbox mt-30 df df-c ai-c">
-                <van-field v-model="detailTxt" v-if="detailType===0" type="textarea" class="input" @blur="addDetails" @keyup.enter.native="addDetails" />
-                <van-uploader v-else-if="detailType===1" :before-read="beforeRead" >
-                    <div class="upfile fs_26 c_ashen df ai-c just-c-ct txt-c">宽度不得大于750px<br/>点击上传</div>
-                </van-uploader>
-            </div>
+            <van-sticky>
+                <div class="btnbox df df-r ai-c">
+                    <van-button :plain="detailType!==0" @click="addDetailType(0)" type="info" size="small">添加文字</van-button>
+                    <van-button :plain="detailType!==1" @click="addDetailType(1)" type="info" size="small">添加图片</van-button>
+                </div>
+            </van-sticky>
             <div class="detail-list mt-30">
                 <div v-for="(item,index) in detail" :key="index" class="mt-20">
                     <div v-if="item.type===1" class="txtbox">
@@ -30,11 +26,17 @@
                     <img v-if="index < detail.length-1" @click="detailReverse(index)" src="~@/assets/event/reverse.png" class="reverse mt-20" />
                 </div>
             </div>
+            <div ref="detailbtns" class="detail-inputbox mt-30 df df-c ai-c">
+                <van-field v-model="detailTxt" v-if="detailType===0" type="textarea" class="input" @blur="addDetails" @keyup.enter.native="addDetails" />
+                <van-uploader v-else-if="detailType===1" :before-read="beforeRead" >
+                    <div class="upfile fs_26 c_ashen df ai-c just-c-ct txt-c">宽度不得大于750px<br/>点击上传</div>
+                </van-uploader>
+            </div>
         </div>
         <div v-else class="mt-40 linkbox">
             <van-field v-model="after_pay_url" placeholder="请输入跳转链接" class="video-input pl-4" />
         </div>
-        <van-button ref="btn" class="submit" type="info" @click="checkForm">确认发布</van-button>
+        <van-button ref="btn" class="submit" block type="info" @click="checkForm">确认发布</van-button>
     </div>
 </template>
 <script>
@@ -76,6 +78,7 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 Toast("操作成功");
+                this.$router.push({path:"/distb_set",query:{id:this.id}});
             });
         },
         getData(){
@@ -88,6 +91,11 @@ export default {
                 this.after_pay_url = data.data.after_pay_url;
                 this.detail = data.data.after_pay_custom || [];
             })
+        },
+        // 选择添加类型
+        addDetailType(type){
+            this.detailType =  type;
+            this.$refs.detailbtns.scrollIntoView();
         },
         // 活动详情交换
         detailReverse(index){
@@ -115,14 +123,17 @@ export default {
 }
 </script>
 <style scoped>
-.cont{width:6rem; margin:auto;}
+/* .cont{width:6rem; margin:auto;} */
 
-.ttbox{padding:0.4rem 0 0.2rem;}
+.ttbox{width:6rem; margin:auto; padding:0.4rem 0 0.2rem;}
 .ttbox .radio-group{padding-right:0.2rem;}
 .ttbox .radio-group .radio{padding-right:0.3rem;}
 
 .formbox{padding:0.4rem 0;}
+.btnbox{padding:0.1rem 0.75rem; background:#ffffff;}
 .btnbox>*{margin-right:0.2rem;}
+.van-sticky--fixed .btnbox{box-shadow: 0px 0px 6px 0px rgba(187, 187, 187, 0.8);}
+.detail-list{width:6rem; margin-left:auto; margin-right:auto;}
 .detail-list .close{position:absolute; top:-0.3rem; right:-0.3rem; padding:0.1rem;}
 .detail-list .txtbox{position:relative;border:1px solid #D1D6E5;}
 .detail-list .txtbox .txt{padding:4px;}
@@ -132,10 +143,12 @@ export default {
 .detail-list .videobox .video{width:100%; height:100%; background:#000;}
 .detail-list .reverse{width:0.44rem; height:auto; }
 
+.detail-inputbox{width:6rem; margin-left:auto; margin-right:auto;}
 .detail-inputbox .input{border:1px solid #CCD0DD;}
 .detail-inputbox .upfile{border:1px solid #CCD0DD; width:4.82rem; height:2.1rem;}
 
+.linkbox{width:6rem; margin-left:auto; margin-right:auto;}
 .video-input{border:1px solid #E2E6F1; padding:6px 4px;}
 
-.submit{border-radius:0.1rem; width:100%; margin:0.6rem 0 0.4rem;}
+.submit{border-radius:0.1rem; width:6rem; margin:0.6rem auto 0.4rem;}
 </style>

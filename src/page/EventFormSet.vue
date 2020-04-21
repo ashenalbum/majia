@@ -1,13 +1,15 @@
 ﻿<template>
     <div class="cont">
         <div v-for="(item,index) in formList" :key="index" class="item">
-            <van-cell :title="item.write_name" class="cell pl-4 pr-4" :border="false">
-                <van-switch v-model="formData[index][item.name]" size="0.4rem"/>
-            </van-cell>
-            <van-radio-group v-if="formData[index][item.name]" v-model="formData[index][item.name+'_required']" class="radio-group df df-r just-c-aro">
-                <van-radio :name="1" class="radio" :class="{c_blue:formData[index][item.name+'_required']==1}">必填</van-radio>
-                <van-radio :name="0" class="radio" :class="{c_blue:formData[index][item.name+'_required']==0}">选填</van-radio>
-            </van-radio-group>
+            <div v-if="item.name!='detailed_addr'">
+                <van-cell :title="item.write_name" class="cell pl-4 pr-4" :border="false">
+                    <van-switch v-model="formData[index][item.name]" size="0.4rem"/>
+                </van-cell>
+                <van-radio-group v-if="formData[index][item.name]" v-model="formData[index][item.name+'_required']" class="radio-group df df-r just-c-aro">
+                    <van-radio :name="1" class="radio" :class="{c_blue:formData[index][item.name+'_required']==1}">必填</van-radio>
+                    <van-radio :name="0" class="radio" :class="{c_blue:formData[index][item.name+'_required']==0}">选填</van-radio>
+                </van-radio-group>
+            </div>
         </div>
         
         <van-button class="submit" type="info" @click="submit">保存设置</van-button>

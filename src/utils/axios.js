@@ -7,7 +7,7 @@ export const upFile = (formData) => {
     return axios({
         method: "post",
         headers: { "Content-Type": "multipart/form-data" },
-        url: "http://sqyx.78wa.com/public/index.php/activity/Apiactivity/upload",
+        url: window.baseUrl + "/public/index.php/activity/Apiactivity/upload",
         data: formData,
         params: {...store.state.token}
     })
@@ -15,7 +15,7 @@ export const upFile = (formData) => {
 
 // 创建axios实例
 const service = axios.create({
-    baseURL: "http://sqyx.78wa.com/public/index.php", // api的base_url
+    baseURL: window.baseUrl + "/public/index.php", // api的base_url
     timeout: 500000 // 请求超时时间
 });
 

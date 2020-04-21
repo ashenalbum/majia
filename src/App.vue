@@ -30,6 +30,8 @@ export default {
     watch: {
         $route: {
             handler: function(val) {
+                // title
+                if(val.meta.title){ document.title = val.meta.title; }
                 this.isActive = val.meta.showHeader;
             }
         }

@@ -58,6 +58,11 @@ export default new Router({
         meta: { title: "订单列表"},
         component: (resolve) =>require(['@/page/OrderList.vue'],resolve)
     }, {
+        path: '/userdata',
+        name: 'Userdata',
+        meta: { title: " 用户数据", showHeader: true, },
+        component: (resolve) =>require(['@/page/Userdata.vue'],resolve)
+    },{
         path: '/order_detail',
         name: 'OrderDetail',
         meta: { title: "订单详情"},
@@ -87,6 +92,26 @@ export default new Router({
         name: 'Auth',
         meta: {title: "认证信息"},
         component: (resolve) =>require(['@/page/Auth.vue'],resolve)
+    },{
+        path: '/channel',
+        name: 'Channel',
+        meta: { title: "添加渠道"},
+        component: (resolve) =>require(['@/page/Channel.vue'],resolve)
+    },{
+        path: '/redeem',
+        name: 'Redeem',
+        meta: { title: "设置兑奖", showHeader: true, },
+        component: (resolve) =>require(['@/page/Redeem.vue'],resolve)
+    },{
+        path: '/redeem_details',
+        name: 'RedeemDetails',
+        meta: { title: "兑奖详情", showHeader: true, },
+        component: (resolve) =>require(['@/page/RedeemDetails.vue'],resolve)
+    },{
+        path: '/browse',
+        name: 'Browse',
+        meta: { title: " 浏览记录", showHeader: true, },
+        component: (resolve) =>require(['@/page/Browse.vue'],resolve)
     },
     // 支付
     {
@@ -107,7 +132,7 @@ export default new Router({
     },{
         path: '/pay_after',
         name: 'PayAfter',
-        meta: {title: " "},
+        meta: {title: "支付成功"},
         component: (resolve) =>require(['@/page/PayAfter.vue'],resolve)
     }]
 })

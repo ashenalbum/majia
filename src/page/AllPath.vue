@@ -16,6 +16,10 @@
         <router-link to="/pay_list"><div>/pay_list</div></router-link>
         <router-link to="/pay_detail"><div>/pay_detail</div></router-link>
         <router-link to="/pay_after"><div>/pay_after</div></router-link>
+        <router-link to="/redeem"><div>/redeem</div></router-link>
+        <router-link to="/redeem_details"><div>/redeem_details</div></router-link>
+        <router-link to="/channel"><div>/channel</div></router-link>
+        <router-link to="/browse"><div>/browse</div></router-link>
 
         <van-uploader :before-read="beforeRead" />
 

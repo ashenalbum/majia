@@ -114,6 +114,9 @@ export default {
             this.detailsData = [];
             this.expenditureData = [];
             this.PageNum = 1; //初始化页数
+            this.$refs.infiniteLoading1.$emit("$InfiniteLoading:reset"); //继续加载
+            this.$refs.infiniteLoading2.$emit("$InfiniteLoading:reset"); //继续加载
+            this.$refs.infiniteLoading3.$emit("$InfiniteLoading:reset"); //继续加载
         },
         infiniteHandler1() {
             axios({
@@ -151,7 +154,7 @@ export default {
                 }
             }).then((data)=>{
                 for(var i=0;i<data.data.length;i++){
-                    let date= new Date(data.data[i].addtime);
+                    let date= new Date(data.data[i].addtime*1000);
                     data.data[i].addtime = date.toISOString().slice(0,10) + " " + date.toTimeString().slice(0,5);
                 }
                 this.$parent.loading = false;//停止加载

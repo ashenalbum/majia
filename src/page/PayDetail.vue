@@ -59,10 +59,10 @@
             <div v-html="data.instructions"></div>
         </div>
         <div class="bottom-btns df df-r fs_34">
-            <div class="btn1 f1 df df-c ai-c just-c-ct" @click="toMould">制作新活动</div>
-            <div class="btn2 f1 df df-c ai-c just-c-ct" @click="showGuige=true">
-                <span>{{data.pay_btn}}</span>
-                <span v-if="showLastTime" class="fs_26">{{lastTime}}</span>
+            <div class="btn1 f1 df df-c ai-c just-c-ct" @click="newEvent">制作新活动</div>
+            <div class="btn2 f1 df df-c ai-c just-c-ct" :class="{ashen:data.audit_type!=1}" @click="buyBtnClick">
+                <span>{{data.audit_type==1?data.pay_btn:"活动未开始"}}</span>
+                <span v-if="data.audit_type==1&&showLastTime" class="fs_26">{{lastTime}}</span>
             </div>
         </div>
         <!-- 制作海报 -->
@@ -104,9 +104,9 @@
                 <div class="box" @click.stop>
                     <div class="df df-r ai-c just-c-bet">
                         <ul class="ul fs_26">
-                            <li>联系电话：<span ref="copytxt1" :data-clipboard-text="sjInfo.contact_mobile" class="c_o">{{sjInfo.contact_mobile}}</span></li>
+                            <li>联系电话：<span ref="copytxt1" :data-clipboard-text="sjInfo.contact_mobile" class="c_o">{{sjInfo.contact_mobile}} <span class="copy c_ff">复制</span></span></li>
                             <li v-if="sjInfo.service_wx" ref="copytxt2" :data-clipboard-text="sjInfo.service_wx">客服微信：<span ref="copywx">{{sjInfo.service_wx}} <span class="copy c_ff">复制</span></span></li>
-                            <li v-if="sjInfo.service_tel" ref="copytxt3" :data-clipboard-text="sjInfo.service_tel">客服电话：<span class="c_o">{{sjInfo.service_tel}}</span></li>
+                            <li v-if="sjInfo.service_tel" ref="copytxt3" :data-clipboard-text="sjInfo.service_tel">客服电话：<span class="c_o">{{sjInfo.service_tel}} <span class="copy c_ff">复制</span></span></li>
                         </ul>
                         <img :src="sjInfo.headpath" class="icon" />
                     </div>
@@ -136,7 +136,7 @@
                         <span v-for="(item,index) in data.spec_content" :key="index" @click="changeBuyGg(index)" class="label" :class="{active:guigeId==index}">{{item.name}}</span>
                     </div>
                 </div>
-                <div class="item mt-20 df df-r ai-c just-c-bet">
+                <div v-if="data.spec_content && data.spec_content.length" class="item mt-20 df df-r ai-c just-c-bet">
                     <div class="fs_30 c_33">购买数量</div>
                     <van-stepper v-model="buyNum" @change="chengeBuyNum"/>
                 </div>
@@ -175,13 +175,13 @@
         <van-overlay :show="showHbDom" class="df ai-c just-c-ct" @click="showHbDom=false">
             <div id="bill" ref="bill" class="bill shadow" @click.stop>        
                 <canvas class="canvas" id="canvas" ref="canvas"></canvas>
-                <van-uploader :disabled="disabled" :preview-image="false" :before-read="beforeRead">
+                <!-- <van-uploader :disabled="disabled" :preview-image="false" :before-read="beforeRead">
                     <div class="placehold df df-c ai-c just-c-ct c_99">
                         <span class="fs_28">点击设置背景</span>
                         <span class="mt-20 fs_24">600 * 960</span>
                     </div>
-                </van-uploader>
-                <img v-if="bgimg" :src="bgimg" crossOrigin='anonymous' class="bgimg" />
+                </van-uploader> -->
+                <img ref="bgimgDom" v-if="bgimg" :src="bgimg" crossOrigin='anonymous' class="bgimg" />
                 <div class="user">
                     <div class="name fs_24 c_99">{{info.nickname}}</div>
                     <div class="iconbox">
@@ -239,6 +239,7 @@ export default {
             buyFormLs: [], // 购买表单
             buyFormData: {}, // 表单数据
 
+            autoCreateHb: false,
             showHbDom: false,
             info: {},
             share_url: "",
@@ -250,11 +251,13 @@ export default {
     },
     beforeRouteUpdate(to,from,next){
         next();
-        this.$router.go(0);
+        // this.$router.go(0);
+        window.location.reload();
     },
     created(){
         if(this.$route.query.showPoter){
-            this.$router.replace({path:"/bill",query:this.$route.query});
+            // this.$router.replace({path:"/bill",query:this.$route.query});
+            this.autoCreateHb = true;
         }
         if(this.$route.query.id){
             this.id = this.$route.query.id;
@@ -274,6 +277,7 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 this.data = data.data;
+                document.title = this.data.title + "  详情";
                 this.userInfo = data.userinfo;
                 if(data.data.recommend_advert){
                     this.ad = data.data.recommend_advert;
@@ -324,7 +328,7 @@ export default {
         // 生成二维码
         createEwm(){
             if(!localStorage.getItem("share_url")){
-                this.share_url = "http://sqyx.78wa.com/dist/#/";
+                this.share_url = window.location.href;
             }else{
                 this.share_url =localStorage.getItem("share_url");
             }
@@ -332,12 +336,15 @@ export default {
             QRCode.toCanvas(msg, this.share_url);
             msg.style.width = "100%";
             msg.style.height = "100%";
+            
+            if(this.autoCreateHb){this.toHaibao()}
         },
         // 制作海报
         toHaibao(){
             this.showHbDom = true;
             Toast("生成海报中...");
-            setTimeout(this.createImg,50);
+            window.scrollTo(0,0);
+            setTimeout(this.createImg,100);
             // this.$router.push({path:"/bill", query:{img:this.data.sales_posterss||true}});
         },
         // 生成海报
@@ -441,6 +448,22 @@ export default {
             this.showGuige = false;
             this.showUserInfo = true;
         },
+        // 点击购买
+        buyBtnClick(){
+            if(this.data.audit_type!=1){return}
+            // 没有规格
+            if((!this.data.spec_content) || this.data.spec_content.length==0){
+                // 没有表单
+                if((!this.buyFormLs)|| this.buyFormLs.length==0){
+                    this.buySubmit();
+                }else{
+                    
+                    this.showUserInfo = true;
+                }
+            }else{
+                this.showGuige = true;
+            }
+        },
         // 购买
         buySubmit(){
             for(let i in this.buyFormLs){
@@ -470,6 +493,7 @@ export default {
         },
         // 支付
         wxpay(obj) {
+            console.log("微信支付");
             let obj1 = obj[0];
             wx.chooseWXPay({
                 timestamp: obj1.timeStamp,
@@ -492,10 +516,11 @@ export default {
         // 滚动条
         handleScroll(){
             let detail = this.$refs.detail;
+            // if(!detail){return}
             let long = detail.offsetTop - document.documentElement.scrollTop;
             if(long<=0){
                 this.showAd = true;
-                setTimeout(()=>{ this.showAd = false;},5000);    
+                setTimeout(()=>{ this.showAd = false;},10000);    
                 window.removeEventListener('scroll',this.handleScroll);
             }
         },
@@ -504,6 +529,9 @@ export default {
         },
         toDetail(id){
             this.$router.push({name:"PayDetail", query:{id: id}});
+        },
+        newEvent(){
+            window.location.href = this.data.tencent_url;
         },
     },
     mounted(){
@@ -533,7 +561,7 @@ export default {
                 setTimeout(()=> dm.move=false, 10000);
                 return;
             }
-        },1500);
+        },2000);
         // 滚动
         window.addEventListener('scroll',this.handleScroll);
         // 制作海报
@@ -552,7 +580,7 @@ export default {
 .top .dm{position:absolute; max-width:7rem; left:100%; height:0.44rem;}
 .top .dm .txt{padding:0.09rem 0.16rem 0.09rem 0.52rem; line-height:1; background:rgba(255,255,255,0.5); border-radius:0.2rem; white-space:nowrap;}
 .top .dm .img{position: absolute; width:0.44rem; height:0.44rem; border-radius:50%; left:0; top:0;}
-.top .dm.dmmove{transition:left 10s linear; left:-7rem;}
+.top .dm.dmmove{transition:left 14s linear; left:-7rem;}
 
 .bg_ff{background: #ffffff;}
 .details{padding:0.4rem 0.45rem; background:#ffffff;}
@@ -576,6 +604,7 @@ export default {
 .bottom-btns{position:fixed; width:100%; height:1.28rem; left:0; bottom:0; border-radius:0.4rem 0.4rem 0 0; overflow:hidden;}
 .bottom-btns .btn1{height:100%; background: #ffffff; color:#FF9C00;}
 .bottom-btns .btn2{height:100%; background:#FF9C00; color:#ffffff;}
+.bottom-btns .btn2.ashen{background:#aaaaaa;}
 .bottom-btns .made{position:absolute; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.7)}
 
 .ad{position:fixed; left:0.5rem; bottom:1.45rem; box-sizing:border-box; width:6.5rem; height:1.6rem; padding:0.22rem 0.25rem; background:#ffffff; border-radius:3px;}

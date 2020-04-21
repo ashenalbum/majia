@@ -2,14 +2,14 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router/index'
 import store from './store/index'
-import { Tabbar, Sidebar, ImagePreview, Overlay, Slider, Stepper, DatetimePicker, NoticeBar, Dialog, Notify, Grid, Loading, Image, GridItem, Uploader, SidebarItem, TabbarItem, Cell, AddressEdit, Area, List, CellGroup, Swipe, SwipeItem, PullRefresh, AddressList, Tab, Tabs, Button, Icon, Popup, Checkbox, CheckboxGroup, Field, RadioGroup, Tag, Radio, Search, Switch, SwipeCell, Toast, NavBar, Picker, ActionSheet, Sticky} from 'vant';
+import { Tabbar, Sidebar, ImagePreview, Overlay, Slider, Stepper, DatetimePicker, NoticeBar, Dialog, Notify, Grid, Loading, Image, GridItem, Uploader, SidebarItem, TabbarItem, Cell, AddressEdit, Area, List, CellGroup, Swipe, SwipeItem, PullRefresh, AddressList, Tab, Tabs, Button, Icon, Popup, Checkbox, CheckboxGroup, Field, RadioGroup, Tag, Radio, Search, Switch, SwipeCell, Toast, NavBar, Picker, ActionSheet, Sticky, Col, Row} from 'vant';
 import 'vant/lib/index.css';
 import axios from './utils/axios';
 import wx from 'weixin-js-sdk';
 import './static/reset.css';
 import { Base64 } from 'js-base64';
 
-Vue.use(Tabbar).use(TabbarItem).use(Overlay).use(ImagePreview).use(Stepper).use(DatetimePicker).use(Slider).use(NoticeBar).use(Notify).use(Loading).use(Dialog).use(Image).use(Grid).use(GridItem).use(Uploader).use(Sidebar).use(SidebarItem).use(Cell).use(Area).use(AddressEdit).use(List).use(CellGroup).use(Swipe).use(SwipeItem).use(Tab).use(Tabs).use(Button).use(Icon).use(Popup).use(Checkbox).use(CheckboxGroup).use(Field).use(RadioGroup).use(Radio).use(Search).use(Switch).use(PullRefresh).use(SwipeCell).use(Toast).use(NavBar).use(Tag).use(AddressList).use(Picker).use(ActionSheet).use(Sticky);
+Vue.use(Tabbar).use(TabbarItem).use(Overlay).use(ImagePreview).use(Stepper).use(DatetimePicker).use(Slider).use(NoticeBar).use(Notify).use(Loading).use(Dialog).use(Image).use(Grid).use(GridItem).use(Uploader).use(Sidebar).use(SidebarItem).use(Cell).use(Area).use(AddressEdit).use(List).use(CellGroup).use(Swipe).use(SwipeItem).use(Tab).use(Tabs).use(Button).use(Icon).use(Popup).use(Checkbox).use(CheckboxGroup).use(Field).use(RadioGroup).use(Radio).use(Search).use(Switch).use(PullRefresh).use(SwipeCell).use(Toast).use(NavBar).use(Tag).use(AddressList).use(Picker).use(ActionSheet).use(Sticky).use(Col).use(Row);
 
 Vue.config.productionTip = false
 
@@ -35,11 +35,9 @@ store.commit("setToken",JSON.parse(window.localStorage.getItem("token")));
 router.beforeEach(function (to, from, next) {
     let share = to.query.share || from.query.share;
     if (share) {
-        let share_url = 'http://sqyx.78wa.com' + Base64.decode(share.replace('%3D', '='));
+        let share_url = window.baseUrl + Base64.decode(share.replace('%3D', '='));
         localStorage.setItem("share_url", share_url);
     }
-    // title
-    if(to.meta.title){ document.title = to.meta.title; }
     // 判断微信
     let is_weixin = navigator.userAgent.toLowerCase().indexOf('micromessenger') !== -1;
     if(is_weixin){ wxConfig(to.query.id || "") }
@@ -69,7 +67,8 @@ function wxConfig(){
             jsApiList: [// 必填，需要使用的JS接口列表
                 'onMenuShareAppMessage',
                 'onMenuShareTimeline',
-                'chooseWXPay'
+                'chooseWXPay',
+                'scanQRCode',
             ]
         });
         wx.ready(() => {

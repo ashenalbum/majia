@@ -48,7 +48,7 @@ function hideSearch(){
     let hash = window.location.href.split("#")[1];
     // 1049
     // let url = "appid=0eeb7ac1db55d365f37175667e6dc80603b0d838&cowcms_userid=966661bd874db1cacac4bf36919d9646&sign=71f7b828a84fb995cc8ec4e54e6025e4dcb52be9&timestamp=1586570044&nonceStr=3dhOye";
-    if(hash.indexOf("?")==-1){return}
+    if((!hash) || hash.indexOf("?")==-1){return}
     let url = hash.split("?")[1];
 
     var data = GetUrl(url);            

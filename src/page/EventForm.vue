@@ -33,7 +33,7 @@
 
             <van-field label="原价" v-model="formData.price" required placeholder="请输入原价" @focus="inputFocusSel" type="number" input-align="right" class="form-input" />
             <van-field label="活动价格" v-model="formData.special_offer" required placeholder="请输入活动价格" @focus="inputFocusSel" type="number" input-align="right" class="form-input" />
-            <div class="guige">
+            <div v-if="formData.type!=0" class="guige">
                 <div class="guige-label df df-r ai-c just-c-bet">
                     <div class="title fs_32 c_33 fs_14px">产品规格</div>           
                     <van-button icon="plus" size="mini" color="#FF9B00" @click="showGuige=true"></van-button>
@@ -45,8 +45,8 @@
                     </div>
                 </div>
             </div>
-            <van-field label="虚拟浏览量" v-model="formData.browse_num" placeholder="请输入数量" @focus="inputFocusSel" type="number" input-align="right" class="form-input pl-4" />
-            <van-field label="虚拟购买量" v-model="formData.people_buy_num" placeholder="请输入数量" @focus="inputFocusSel" type="number" input-align="right" class="form-input pl-4" />
+            <van-field label="虚拟浏览量" v-model="formData.browse_times" placeholder="请输入数量" @focus="inputFocusSel" type="number" input-align="right" class="form-input pl-4" />
+            <van-field label="虚拟购买量" v-model="formData.bought_num" placeholder="请输入数量" @focus="inputFocusSel" type="number" input-align="right" class="form-input pl-4" />
             <van-field label="开始时间" v-model="formData.start_time" placeholder="请选择开始时间" @click="selTime('start_time')" left-icon="question-o" @click-left-icon.stop="leftIcon('starttime')" readonly input-align="right" class="form-input pl-4" />
             <van-field label="结束时间" v-model="formData.abort_time" placeholder="请选择结束时间" @click="selTime('abort_time')" left-icon="question-o" @click-left-icon.stop="leftIcon('endtime')" readonly input-align="right" class="form-input pl-4" />
             <van-field label="购买按钮文案" v-model="formData.pay_btn" placeholder="请输入，如:立即购买" @focus="inputFocusSel" left-icon="question-o" @click-left-icon.stop="leftIcon('paytxt')" input-align="right" class="pl-4" />
@@ -310,7 +310,8 @@ export default {
     created(){
         this.id = this.$route.query.id;
         this.isEdit = this.$route.query.isEdit;
-        this.showXieyi = Boolean(this.$route.query.xieyi);
+        this.showXieyi = Boolean(this.$route.query.xieyi && !sessionStorage.getItem("xieyi"));
+        if(this.showXieyi){sessionStorage.setItem("xieyi","true");}
         this.getData();
         this.getHy();
         this.getCj();
@@ -386,6 +387,8 @@ export default {
                     head_pic.push(data.data.head_pic_img[i].pic);
                 }
                 this.formData.head_pic = head_pic;
+                this.formData.browse_times = this.formData.browse_num;
+                this.formData.bought_num = this.formData.people_buy_num;
                 this.merchant_help_text = data.data.merchant_help_text;
             });
         },

@@ -13,6 +13,20 @@
         </div>
         
         <van-button class="submit" type="info" @click="submit">保存设置</van-button>
+
+        <!-- 提交完成提示 -->
+        <!-- <van-overlay :show="showTj"> -->
+        <van-popup v-model="showTj" @close="backList">
+            <div class="wrapper df df-c ai-c just-c-ct" @click="showTj=false">
+                <div class="tj-ok df df-c ai-c" @click.stop>
+                    <img src="~@/assets/event/submit_title.png" class="img" />
+                    <div class="mt-30 c_33 fs_28">设置完成</div>
+                    <van-button type="info" size="small" class="btn" @click="backList">我的活动</van-button>
+                </div>
+                <!-- <van-icon name="close" class="mt-30" size="0.6rem" color="#BFC4CE" /> -->
+            </div>
+        </van-popup>
+        <!-- </van-overlay> -->
     </div>
 </template>
 <script>
@@ -23,8 +37,10 @@ export default {
     data(){
         return {
             id: 0,
-            formList:[],
-            formData: []
+            formList: [],
+            formData: [],
+
+            showTj: false,
         }
     },
 	created(){
@@ -45,6 +61,25 @@ export default {
                     o[li.name+'_required'] = 0;
                     this.formData.push(o);
                 }
+                this.getSaveData();
+            })
+        },
+        getSaveData(){
+            axios({
+                url: "/activity/Apiactivity/getActivityForm",
+                params: {activity_id: this.id}
+            }).then((data)=>{
+                if(data.err!=0){return}
+                let s = data.data;
+                for(let j in s){
+                    for(let i in this.formList){
+                        if(s[j].name===this.formList[i].name){
+                            this.formData[i][s[j].name] = true;
+                            this.formData[i][s[j].name+"_required"] = s[j].is_required;
+                            break;
+                        }
+                    }
+                }
             })
         },
         submit(){
@@ -64,8 +99,11 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return false}
                 Toast("操作成功");
+                this.showTj = true;
             })
-        }
+        },
+        
+        backList(){this.$router.push({path:"/event_list"})},
     }
 }
 </script>
@@ -75,4 +113,9 @@ export default {
 .item .radio-group{padding-bottom:0.2rem;}
 .cell .van-cell__value{line-height:1;}
 .submit{border-radius:0.1rem; width:100%; margin:0.6rem 0 0.4rem;}
+
+.wrapper {display: flex; left:0; top:0; width:100%; height: 100%; z-index:99;}
+.wrapper .tj-ok{width:5.2rem; background:#ffffff; overflow:hidden;}
+.wrapper .tj-ok .img{width:100%; height:auto;}
+.wrapper .tj-ok .btn{margin:0.3rem 0;width:4.4rem;}
 </style>

@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="btns mt-40 df df-r ai-c just-c-aro">
-            <van-button size="small" class="btn" color="#999999" plain @click="createHb">预览并保存</van-button>
+            <van-button size="small" class="btn" color="#999999" plain @click="createHb">保存</van-button>
             <van-uploader :preview-image="false" :before-read="beforeRead">
                 <van-button size="small" class="btn" color="#FF9C00">上传(600*960)</van-button>
             </van-uploader>
@@ -37,6 +37,20 @@
         
         <canvas class="canvas" id="canvas" ref="canvas" style="display:none;"></canvas>
 
+        <!-- 提交完成提示 -->
+        <!-- <van-overlay :show="showTj"> -->
+        <van-popup v-model="showTj" @close="backList">
+            <div class="wrapper df df-c ai-c just-c-ct" @click="showTj=false">
+                <div class="tj-ok df df-c ai-c" @click.stop>
+                    <img src="~@/assets/event/submit_title.png" class="img" />
+                    <div class="mt-30 mb-30 c_33 fs_28">设置完成</div>
+                    <van-button type="info" size="small" class="btn" @click="toFormSet">表单设置</van-button>
+                    <van-button type="info" size="small" class="btn" @click="backList">返回我的活动</van-button>
+                </div>
+                <!-- <van-icon name="close" class="mt-30" size="0.6rem" color="#BFC4CE" /> -->
+            </div>
+        </van-popup>
+        <!-- </van-overlay> -->
         <!-- <van-popup v-model="showPopup" position="bottom">
             <div class="popup-box">
                 <div class="top-btn df df-r ai-c just-c-bet fs_26">
@@ -83,13 +97,15 @@ export default {
             bgimg: false,
             bgimgId: null,
             imgUrl: "",
+
+            showTj: false,
         }
     },
     created(){
         this.id = this.$route.query.id;
         // if(this.$route.query.share_url){localStorage.setItem("share_url",this.$route.query.share_url);}
         if(!localStorage.getItem("share_url")){
-            this.share_url = window.location.href;
+            this.share_url = window.baseUrl + "/dist/";
         }else{
             this.share_url =localStorage.getItem("share_url");
         }
@@ -106,6 +122,14 @@ export default {
                 if(data.err!=0){return}
                 this.info = data.data;
             })
+            
+            axios({
+                url: "/activity/Apiactivity/previewTemplateInfo",
+                params: {activity_id: this.id}
+            }).then((data)=>{
+                if(data.err!=0){return}
+                this.bgimg = data.data.sales_posterss;
+            });
         },
         createEwm(){
             let msg = document.getElementById('ewm');
@@ -137,16 +161,18 @@ export default {
                 context.imageSmoothingEnabled = false;
                 this.imgUrl = canvas.toDataURL("image/png");
                 this.showHb = true;
-                Toast("正在上传");
                 this.upDate();
             });
         },
         createHb(){
             // if(!this.bgimg){Toast("请先上传图片");return}
-            this.createImg();
+            // this.createImg();
+            if(!this.bgimgId){Toast("未修改或设置图片");return}
+            this.upDate();
         },
         upDate(){
-            if(!this.bgimg){Toast("请先上传图片");return}
+            // if(!this.bgimgId){return}
+            // Toast("正在上传");
             // 提交海报背景图片
             axios({
                 url: "/activity/Apiactivity/editActivity",
@@ -156,7 +182,8 @@ export default {
                 }
             }).then((data)=>{
                 if(data.err!=0){return}
-                Toast("上传成功,长按保存海报");
+                Toast("操作成功");
+                this.showTj = true;
             })
         },
         beforeRead(file){
@@ -170,14 +197,18 @@ export default {
                 this.bgimgId = data.data.content.fileid;
             })
         },
+
+        toFormSet(){this.$router.push({path:"/event_form_set", query:{id:this.id}})},
+        backList(){this.$router.push({path:"/event_list"})},
     }
 }
 </script>
 <style scoped>
+.mb-30{margin-bottom:0.3rem;}
 .cont{padding:0.4rem 0 0.1rem; user-select:none;}
 .bill{position:relative; width:6.32rem; height:10.1rem; background:#EEF0F5;}
 .bill .placehold{width:6.32rem; height:10.1rem;}
-.bill .bgimg{position:absolute; width:100%; height:100%; top:0; left:0;}
+.bill .bgimg{position:absolute; width:100%; height:100%; top:0; left:0; background:#ffffff;}
 .bill .user{position:absolute; left:0.64rem; top:0.64rem;}
 .bill .iconbox{width:1.15rem; height:1.15rem;}
 .bill .iconbox .icon-border{box-sizing:content-box; position:absolute; left:-3px; top:-3px; width:1.15rem; height:1.15rem; padding:3px; background-image:url(~@/assets/bill/iconborder.png); background-size:100% 100%;}
@@ -200,4 +231,8 @@ export default {
 
 .wrapper {display: flex; left:0; top:0; width:100%; height: 100%; z-index:99;}
 .canvas{display:block; width:6.32rem; height:10.01rem; background: #ffffff;}
+
+.wrapper .tj-ok{width:5.2rem; padding-bottom:0.3rem; background:#ffffff; overflow:hidden;}
+.wrapper .tj-ok .img{width:100%; height:auto;}
+.wrapper .tj-ok .btn{margin:0.1rem 0;width:4.4rem;}
 </style>

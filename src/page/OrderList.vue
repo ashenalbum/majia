@@ -33,6 +33,7 @@
                 </div>
                 <div class="btns mt-10 df df-r ai-c just-c-end">
                     <!-- <van-button plain round size="small" color="#9FA9C7" >查看物流</van-button> -->
+                    <van-button plain round size="small" color="#9FA9C7" @click="toPayAfter(item)">联系主办方</van-button>
                     <van-button plain round size="small" color="#FF9C00" @click="toDetail(item)">订单信息</van-button>
                 </div>
             </div>
@@ -81,6 +82,9 @@ export default {
         // 详情
         toDetail(item){
             this.$router.push({path:"/order_detail", query:{id: item.id}});
+        },
+        toPayAfter(item){
+            this.$router.push({path:"/pay_after", query:{id: item.activity_id}});
         },
     }
 }

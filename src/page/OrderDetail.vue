@@ -18,7 +18,7 @@
                     </div>
                 </div>
             </div>
-            <div v-if="data.scene==0" class="mt-40">
+            <div class="mt-40">
                 <div class="df df-r ai-c just-c-bet fs_28 c_33">
                     <span>订单信息</span>
                     <span>￥{{data.order_amount}}</span>
@@ -27,13 +27,31 @@
                     <span>订单号</span>
                     <span>{{data.order_sn}}</span>
                 </div>
-                <div class="mt-20 df df-r ai-c just-c-bet fs_24 c_ashen">
+                <div v-if="data.scene==0" class="mt-20 df df-r ai-c just-c-bet fs_24 c_ashen">
                     <span>运费</span>
                     <span>￥{{data.freight}}</span>
                 </div>
                 <div class="mt-20 df df-r ai-c just-c-bet fs_24 c_ashen">
                     <span>交易时间</span>
                     <span>{{data.addtime}}</span>
+                </div>
+                <div v-if="data.scene==0&&data.ship_status!=0">
+                    <div class="mt-20 df df-r ai-c just-c-bet fs_24 c_ashen">
+                        <span>快递公司</span>
+                        <span>{{data.excom}}</span>
+                    </div>
+                    <div class="mt-20 df df-r ai-c just-c-bet fs_24 c_ashen">
+                        <span>快递单号</span>
+                        <span id="excode" ref="excode" :data-clipboard-text="data.excode"><span class="c_o">{{data.excode}}</span> <span class="copy c_ff">复制</span></span>
+                    </div>
+                    <div class="mt-20 df df-r ai-c just-c-bet fs_24 c_ashen">
+                        <span>发货时间</span>
+                        <span>{{getTime(data.ship_time)}}</span>
+                    </div>
+                </div>
+                <div v-else-if="data.scene==1&&data.ship_status!=0" class="mt-20 df df-r ai-c just-c-bet fs_24 c_ashen">
+                    <span>兑换时间</span>
+                    <span>{{getTime(data.finish_time)}}</span>
                 </div>
             </div>
         </div>
@@ -66,23 +84,27 @@
             </div>
             <div v-else-if="data.scene==0" class="btns df df-r ai-c just-c-end">
                 <!-- <van-button size="small" plain round color="#B3B9CF" >查看物流</van-button> -->
-                <van-button v-if="data.order_status==0" size="small" round color="#FF9C00" @click="shouhuo">确认收货</van-button>
+                <span v-if="data.ship_status==0" class="c_red1 fs_26">未发货</span>
+                <van-button v-else-if="data.ship_status==1" size="small" round color="#FF9C00" @click="shouhuo">确认收货</van-button>
                 <span v-else class="c_red1 fs_26">已收货</span>
             </div>
-            <div v-else-if="data.ship_status==0" class="mt-20 df df-c ai-c just-c-ct">
-                <div class="wembox">
-                    <img :src="imgUrl" />
+            <div v-else >
+                <div v-if="data.ship_status==0" class="mt-20 df df-c ai-c just-c-ct">
+                    <div class="wembox">
+                        <img :src="imgUrl" />
+                    </div>
+                    <div class="txt_c fs_28 c_ashen">我的兑换码</div>
                 </div>
-                <div class="txt_c fs_28 c_ashen">我的兑换码</div>
-            </div>
-            <div v-else class="btns df df-r ai-c just-c-end">
-                <span class="c_red1">已兑换</span>
+                <div v-else class="btns df df-r ai-c just-c-end">
+                    <span class="c_red1">已兑换</span>
+                </div>
             </div>
         </div>
         <!-- 是商户 -->
         <div v-else class="fs_28">
             <div v-if="data.pay_status==0" class="btns df df-r ai-c just-c-end">
-                <van-button size="small" round color="#FF9C00" @click="yifukuan">确认已付款</van-button>
+                <!-- <van-button size="small" round color="#FF9C00" @click="yifukuan">确认已付款</van-button> -->
+                <span class="c_red1">买家未付款</span>
             </div>
             <div v-else-if="data.scene==0">
                 <div v-if="data.ship_status==0" class="btns df df-r ai-c just-c-end">
@@ -122,9 +144,10 @@
 </template>
 <script>
 import axios from "../utils/axios";
-import { Toast } from 'vant';
+import { Toast,Dialog } from 'vant';
 import QRCode from "qrcode";
 import wx from "weixin-js-sdk";
+import Clipboard from 'clipboard';
 
 export default {
     data(){
@@ -146,6 +169,14 @@ export default {
     },
     mounted(){
         this.getData();
+    },
+    updated(){
+        let copy = document.getElementById("excode");
+        if(copy){
+            let code = new Clipboard(copy);
+            code.on('success', ()=>{Toast("复制成功");});
+            code.on('error', ()=>{Toast("复制失败");});
+        }
     },
     methods: {
         getData(){
@@ -191,16 +222,20 @@ export default {
         },
         // 确认收货
         shouhuo(){
-            axios({
-                url: "/activity/Apiactivity/edit_order",
-                params: {
-                    order_id: this.data.id
-                }
-            }).then((data)=>{
-                if(data.err!=0){return;}
-                Toast("操作成功");
-                this.getData();
-            });
+            Dialog.confirm({
+                message: '请确认已收货'
+            }).then(() => {
+                axios({
+                    url: "/activity/Apiactivity/edit_order",
+                    params: {
+                        order_id: this.data.id
+                    }
+                }).then((data)=>{
+                    if(data.err!=0){return;}
+                    Toast("操作成功");
+                    this.getData();
+                });
+            }).catch(() => {});
         },
         // 生成二维码
         createEwm(){
@@ -271,6 +306,13 @@ export default {
                 }
             });
         },
+        // 格式化时间
+        getTime(time){
+            let d = new Date(time*1000);
+            let ymd = d.toISOString().slice(0,10);
+            let hms = d.toTimeString().slice(0,8);
+            return ymd + " " + hms;
+        },
     }
 }
 </script>
@@ -295,4 +337,6 @@ export default {
 
 .popup{padding:0.2rem 0.2rem 0.3rem;}
 .popup .input{padding:10px 2px; border-bottom:1px solid #dddddd;}
+
+.copy{padding:0 4px; border-radius:2px; background:#FFC402;}
 </style>

@@ -104,7 +104,7 @@ export default {
                     this.$router.push({name:"Auth",query:{id: id}});
                     return;
                 }
-                this.$router.push({name:"EventForm", query:{id: id}});
+                this.$router.push({name:"EventForm", query:{id:id, xieyi:1}});
             });
         }
     },

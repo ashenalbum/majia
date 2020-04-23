@@ -44,6 +44,7 @@ service.interceptors.response.use(
         return data;
     },
     error => {
+        Toast("error");
         return Promise.reject(error);
     }
 );

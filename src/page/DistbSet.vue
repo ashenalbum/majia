@@ -50,6 +50,20 @@
         </van-overlay>
 
         <van-action-sheet v-model="showSeltype" :actions="types" @select="selType" />
+
+        <!-- 提交完成提示 -->
+        <!-- <van-overlay :show="showTj"> -->
+        <van-popup v-model="showTj" @close="backList">
+            <div class="wrapper df df-c ai-c just-c-ct" @click="showTj=false">
+                <div class="tj-ok df df-c ai-c" @click.stop>
+                    <img src="~@/assets/event/submit_title.png" class="img" />
+                    <div class="mt-30 c_33 fs_28">设置完成</div>
+                    <van-button type="info" size="small" class="btn" @click="toBill">设置海报</van-button>
+                </div>
+                <!-- <van-icon name="close" class="mt-30" size="0.6rem" color="#BFC4CE" /> -->
+            </div>
+        </van-popup>
+        <!-- </van-overlay> -->
     </div>
 </template>
 <script>
@@ -73,7 +87,9 @@ export default {
             sales_info: [
                 {level:1, typeTxt:""},
                 {level:2, typeTxt:""},
-            ]
+            ],
+
+            showTj: false,
         }
     },
     created(){
@@ -96,6 +112,7 @@ export default {
                 if(!this.sales_info[0]){this.sales_info.push({level:1, typeTxt:""})}
                 if(!this.sales_info[1]){this.sales_info.push({level:2, typeTxt:""})}
             });
+            // 判断能不能设置直接金额
             axios({
                 url: "/activity/Apiactivity/previewTemplateInfo",
                 params: {activity_id: this.id}
@@ -126,14 +143,17 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 Toast("操作成功");
-                this.$router.push({path:"event_list"});
+                this.showTj = true;
             });
         },
         selType(o){
             this.showSeltype = false;
             this.sales_info[this.focusIndex].type = o.id;
             this.sales_info[this.focusIndex].typeTxt = o.name;
-        }
+        },
+        
+        toBill(){this.$router.push({path:"/bill", query:{id: this.id}})},
+        backList(){this.$router.push({path:"/event_list"})},
     }
 }
 </script>
@@ -156,4 +176,8 @@ export default {
 .wrapper .tishi .title .title-txt{padding-left:0.2rem;}
 .wrapper .tishi .tishi-body{padding-top:0.2rem;}
 .wrapper .tishi .tishi-body .img{width:3rem; height:1.68rem; margin-right:0.2rem;}
+
+.wrapper .tj-ok{width:5.2rem; background:#ffffff; overflow:hidden;}
+.wrapper .tj-ok .img{width:100%; height:auto;}
+.wrapper .tj-ok .btn{margin:0.3rem 0;width:4.4rem;}
 </style>

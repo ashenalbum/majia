@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="h-100vh">
       <HeadNav></HeadNav>
      <!-- 订单情况 -->
         <div class="main">
@@ -20,10 +20,9 @@
           </div>
           
             <div class="order_box" v-for="item in OrderData" :key="item.id" @click.stop="Go_details(item.id)" >
-              <div class="list_head">
-                <p class="list_time">
-                  {{item.addtime}}
-                </p>
+              <div class="list_head df df-r ai-c just-c-bet">
+                <p class="list_time">{{item.addtime}}</p>
+                <!-- <span class="fs_26 c_red1">{{item.status}}</span> -->
               </div>
               <div class="list_main">
                 <div class="list_left">
@@ -42,18 +41,16 @@
                     </div>
                 </div>
               </div>
-              <div class="good_bom">
-                  <div class="good_bom_l">
-                      <img :src="item.headpath" alt="">
-                  </div>
-                  <div class="good_bom_r">
-                     <span  class='title_3_pay'> 
-                      实付金额
-                      </span>
-                      <span style="color: #151515;font-size:0.28rem">
-                        ￥{{item.price}}
-                      </span>
-                  </div>
+              <div class="good_bom df df-r ai-c just-c-bet">
+                <div class="c_33 fs_26">
+                    <img :src="item.headpath" class="head-img" alt="">
+                    <span>{{item.user_name}}</span>
+                </div>
+                <div v-if="item.pay_status==1">
+                    <span  class='title_3_pay'>实付金额</span>
+                    <span style="color: #151515;font-size:0.28rem">￥{{item.price}}</span>
+                </div>
+                <div v-else class="c_red1">未付款</div>
               </div>
                <!-- <div class="btn_box">
                   <van-button round type="default" class="btn_style_cc" size="small">普通按钮</van-button>
@@ -93,7 +90,7 @@
                     <el-button size="mini" class="updata" >选择文件</el-button>
                   </el-upload> -->
                     <van-uploader :preview-image="false" accept=".csv" :before-read="UploadImage1">
-                        <van-button icon="photo" type="primary">上传文件</van-button>
+                        <span class="fs_28 c_blue">上传文件</span>
                     </van-uploader>
                 </li>
                 <li>
@@ -157,6 +154,10 @@ export default {
         this.getData();
     },
     methods: {
+        // 状态文字
+        getType(s){
+            return {0:"未确认", 1:"已确认", 2:"退款中", 3:"交易关闭", 4:"退货订单"}[s];
+        },
         getData(){
             return;
             // axios({
@@ -305,6 +306,7 @@ export default {
 }
 #app{
       background-color: #f7f7f7;
+      height:100vh;
 }
 /* 头部开始 */
 #app .van-nav-bar {
@@ -615,6 +617,7 @@ border-bottom: 1px solid #ccc;
     box-shadow: 0 3px 6px 0 rgba(242,39,12,.1);
 }
 .search_box{
+    box-sizing:border-box;
   width: 100%;
   margin: 0 auto;
   padding: 0.1rem;
@@ -642,10 +645,11 @@ border-bottom: 1px solid #ccc;
   width: 40%;
   text-align: left;
 }
-.good_bom_l img{
+.head-img{
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 50%;
+  margin-right: 6px;
 }
 .good_bom_r{
   width: 60%;

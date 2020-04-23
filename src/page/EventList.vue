@@ -16,7 +16,7 @@
                             <div>
                                 <van-button v-if="item.audit_type!=1" size="mini" color="#BBC1D4" @click="toEdit(item)">编辑</van-button>
                                 <!-- <van-button v-else size="mini" color="#FF9C00" @click="frames(item)">{{item.putaway==0?"上架":"下架"}}</van-button> -->
-                                <span v-else class="fs_26 c_99">进行中</span>
+                                <span v-else class="dib fs_26 c_o">进行中</span>
                             </div>
                         </div>
                         <div class="mt-10 df df-r ai-c fs_24 c_ashen">
@@ -165,6 +165,7 @@ export default {
 }
 </script>
 <style scoped>
+.dib{display:inline-block; white-space: nowrap;}
 .cont-list{width:6.7rem; margin:0 auto; padding-top:0.3rem;}
 .cont-list .item{margin-bottom:0.4rem;}
 .cont-list .ware{padding:0.2rem 0; border-bottom:1px solid #E2E6F1;}

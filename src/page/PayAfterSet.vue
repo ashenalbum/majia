@@ -17,17 +17,17 @@
                 <div v-for="(item,index) in detail" :key="index" class="mt-20">
                     <div v-if="item.type===1" class="txtbox">
                         <div class="txt c_33 fs_28">{{item.content}}</div>
-                        <van-icon name="clear" size="0.4rem" color="#D1D6E5" class="close"/>
+                        <van-icon @click="detailRemove(index)" name="clear" size="0.4rem" color="#D1D6E5" class="close"/>
                     </div>
                     <div v-else class="imgbox">
                         <img :src="item.content" class="img shadow" />
-                        <van-icon name="clear" size="0.4rem" color="#D1D6E5" class="close"/>
+                        <van-icon @click="detailRemove(index)" name="clear" size="0.4rem" color="#D1D6E5" class="close"/>
                     </div>
                     <img v-if="index < detail.length-1" @click="detailReverse(index)" src="~@/assets/event/reverse.png" class="reverse mt-20" />
                 </div>
             </div>
             <div ref="detailbtns" class="detail-inputbox mt-30 df df-c ai-c">
-                <van-field v-model="detailTxt" v-if="detailType===0" type="textarea" class="input" @blur="addDetails" @keyup.enter.native="addDetails" />
+                <van-field ref="input" v-model="detailTxt" v-if="detailType===0" type="textarea" class="input" @blur="addDetails" @keyup.enter.native="addDetails" />
                 <van-uploader v-else-if="detailType===1" :before-read="beforeRead" >
                     <div class="upfile fs_26 c_ashen df ai-c just-c-ct txt-c">宽度不得大于750px<br/>点击上传</div>
                 </van-uploader>
@@ -37,12 +37,26 @@
             <van-field v-model="after_pay_url" placeholder="请输入跳转链接" class="video-input pl-4" />
         </div>
         <van-button ref="btn" class="submit" block type="info" @click="checkForm">确认发布</van-button>
+        
+        <!-- 提交完成提示 -->
+        <!-- <van-overlay :show="showTj"> -->
+        <van-popup v-model="showTj" @close="backList">
+            <div class="wrapper df df-c ai-c just-c-ct" @click="showTj=false">
+                <div class="tj-ok df df-c ai-c" @click.stop>
+                    <img src="~@/assets/event/submit_title.png" class="img" />
+                    <div class="mt-30 c_33 fs_28">设置完成</div>
+                    <van-button type="info" size="small" class="btn" @click="toFenxiao">去设置分销</van-button>
+                </div>
+                <!-- <van-icon name="close" class="mt-30" size="0.6rem" color="#BFC4CE" /> -->
+            </div>
+        </van-popup>
+        <!-- </van-overlay> -->
     </div>
 </template>
 <script>
 import axios from "../utils/axios";
 import {upFile} from "../utils/axios";
-import { Toast } from 'vant';
+import { Toast,Dialog } from 'vant';
 
 export default {
     data(){
@@ -52,7 +66,9 @@ export default {
             after_pay_url: "", //跳转链接
             detailType: 0, //输入类型
             detailTxt: "", //输入内容
-            detail: []
+            detail: [],
+
+            showTj: false,
         }
     },
     created(){
@@ -78,7 +94,7 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 Toast("操作成功");
-                this.$router.push({path:"/distb_set",query:{id:this.id}});
+                this.showTj = true;
             });
         },
         getData(){
@@ -96,6 +112,9 @@ export default {
         addDetailType(type){
             this.detailType =  type;
             this.$refs.detailbtns.scrollIntoView();
+            if(type==0&&this.$refs.input){
+                this.$refs.input.focus();
+            }
         },
         // 活动详情交换
         detailReverse(index){
@@ -118,7 +137,18 @@ export default {
                 this.detail.push({type:2, content:data.data.content.url});
                 this.$refs.btn.scrollIntoView();
             }).catch((err)=>{Toast(err)})
-        }
+        },
+        // 活动详情删除
+        detailRemove(index){
+            Dialog.confirm({
+                message: '确定删除该内容吗？'
+            }).then(() => {
+                this.detail.splice(index,1);
+            }).catch(() => {});
+        },
+
+        toFenxiao(){this.$router.push({path:"/distb_set",query:{id:this.id}});},
+        backList(){this.$router.push({path:"/event_list"})},
     }
 }
 </script>
@@ -151,4 +181,9 @@ export default {
 .video-input{border:1px solid #E2E6F1; padding:6px 4px;}
 
 .submit{border-radius:0.1rem; width:6rem; margin:0.6rem auto 0.4rem;}
+
+.wrapper {display: flex; left:0; top:0; width:100%; height: 100%; z-index:99;}
+.wrapper .tj-ok{width:5.2rem; background:#ffffff; overflow:hidden;}
+.wrapper .tj-ok .img{width:100%; height:auto;}
+.wrapper .tj-ok .btn{margin:0.3rem 0;width:4.4rem;}
 </style>

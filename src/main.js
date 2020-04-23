@@ -27,9 +27,53 @@ new Vue({
 //     store.commit("setToken",JSON.parse(window.localStorage.getItem("token")));
 // })
 
+function GetUrl(Data) {
+    if (!Data) {return params;}
+    var param = Data.split("&");
+    var paramArray = [];
+    var params = {};
+    for (var i = 0; i < param.length; i++) {
+        if (param[i]) {
+            paramArray = param[i].split('=');
+            if (paramArray[0] != 'url') {
+                params[paramArray[0]] = paramArray[1]
+            }else {
+                params[paramArray[0]] = decodeURIComponent(decodeURIComponent(paramArray[1]))
+            }
+        }
+    }
+    return params;
+}
+function hideSearch(){
+    let hash = window.location.href.split("#")[1];
+    // 1049
+    // let url = "appid=0eeb7ac1db55d365f37175667e6dc80603b0d838&cowcms_userid=966661bd874db1cacac4bf36919d9646&sign=71f7b828a84fb995cc8ec4e54e6025e4dcb52be9&timestamp=1586570044&nonceStr=3dhOye";
+    if(hash.indexOf("?")==-1){return}
+    let url = hash.split("?")[1];
+
+    var data = GetUrl(url);            
+    if(data.appid){
+        let o = {
+            appid: data.appid,
+            cowcms_userid: data.cowcms_userid,
+            sign: data.sign,
+            timestamp: data.timestamp,
+            nonceStr: data.nonceStr,
+        }
+        localStorage.setItem("token",JSON.stringify(o));
+    }
+    
+    if (data.share) {
+        let share_url = window.baseUrl + Base64.decode(data.share.replace('%3D', '='));
+        localStorage.setItem("share_url", share_url);
+    }
+}
+// url
+hideSearch();
 
 // localStorage 储存 vuex
 store.commit("setToken",JSON.parse(window.localStorage.getItem("token")));
+
 
 // 跳转路由
 router.beforeEach(function (to, from, next) {

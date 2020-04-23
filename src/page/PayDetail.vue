@@ -3,7 +3,7 @@
         <div class="top">
             <van-swipe class="my-swipe" :autoplay="data.video_url?0:3000" indicator-color="white">
                 <van-swipe-item v-if="data.video_url">
-                    <video class="img" :src="data.video_url" controls autoplay muted></video>
+                    <video id="topvideo" class="img" :src="data.video_url" controls autoplay muted></video>
                 </van-swipe-item>
                 <van-swipe-item v-for="(item,index) in data.head_pic_img" :key="index">
                     <img :src="item.pic_img" class="img" />
@@ -110,8 +110,8 @@
                         </ul>
                         <img :src="sjInfo.headpath" class="icon" />
                     </div>
-                    <div v-if="sjInfo.code_wx" class="mt-40">
-                        <img :src="sjInfo.code_wx" class="img" />
+                    <div v-if="sjInfo.code_wx_img" class="mt-40">
+                        <img :src="sjInfo.code_wx_img" class="img" />
                     </div>
                     <div v-if="sjInfo.code_wx" class="linebox mt-20 df ai-c just-c-ct">
                         <div class="line"></div>
@@ -533,6 +533,16 @@ export default {
         newEvent(){
             window.location.href = this.data.tencent_url;
         },
+        stopVideo(){
+            let video = document.getElementById("topvideo");
+            if(!video){return}
+            video.pause();
+        },
+    },
+    watch:{
+        showHb(v){if(v){this.stopVideo()}},
+        showHbDom(v){if(v){this.stopVideo()}},
+        showSeller(v){if(v){this.stopVideo()}},
     },
     mounted(){
         let clipboard1 = new Clipboard(this.$refs.copytxt1);
@@ -620,7 +630,7 @@ export default {
 .maskSeller .ul li:nth-child(3){border-color:#FFC402}
 .maskSeller .copy{padding:0 4px; border-radius:2px; background:#FFC402;}
 .maskSeller .icon{width:1.2rem; height:1.2rem; border-radius:0.25rem;}
-.maskSeller .img{width:100%; height:auto;}
+.maskSeller .img{width:100%; height:5.6rem;}
 .maskSeller .linebox{position:relative; width:100%; margin:0.4rem auto 0;}
 .maskSeller .linebox .line{position:absolute; left:0; right:0; top:50%; border-bottom:1px solid #E3E3E3;}
 .maskSeller .linebox .txt{position:relative; padding:0 0.5rem; background:#ffffff;}

@@ -132,7 +132,7 @@ export default new Router({
     },{
         path: '/pay_after',
         name: 'PayAfter',
-        meta: {title: "支付成功"},
+        meta: {title: "联系主办方"},
         component: (resolve) =>require(['@/page/PayAfter.vue'],resolve)
     }]
 })

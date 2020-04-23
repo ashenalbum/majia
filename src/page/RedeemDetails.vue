@@ -35,50 +35,13 @@
         <div class="main_box">
           <div class="oder_box" v-if="OrderData.length!==0">
               <ul>
-                <li class="Coupon_title">
-                  订单信息
-                </li>
-                 <div class="line"></div>
-                <li>
-                  <p >
-                    订单编号
-                  </p>
-                  <p class="Coupon_text">
-                  {{OrderData.order_sn}}
-                  </p>
-                </li>
-                 <li>
-                  <p>
-                     商品名称
-                  </p>
-                  <p class="Coupon_text"> 
-                    {{OrderData.title}}
-                  </p>
-                </li>
-                <li>
-                  <p>
-                     购买人
-                  </p>
-                  <p class="Coupon_text"> 
-                    {{OrderData.nickname}}
-                  </p>
-                </li>
-                <li>
-                  <p>
-                     购买金额
-                  </p>
-                  <p class="Coupon_text"> 
-                    {{OrderData.order_amount}}元
-                  </p>
-                </li>
-                <li>
-                  <p >
-                    购买时间
-                  </p>
-                  <p class="Coupon_text">
-                  {{OrderData.addtime}}
-                  </p>
-                </li>
+                <li class="Coupon_title">订单信息</li>
+                <div class="line"></div>
+                <li><p >订单编号</p><p class="Coupon_text">{{OrderData.order_sn}}</p></li>
+                <li><p>商品名称</p><p class="Coupon_text">{{OrderData.title}}</p></li>
+                <li><p>购买人</p><p class="Coupon_text">{{OrderData.nickname}}</p></li>
+                <li><p>购买金额</p><p class="Coupon_text">{{OrderData.order_amount}}元</p></li>
+                <li><p >购买时间</p><p class="Coupon_text">{{OrderData.addtime}}</p></li>
               </ul>
               <br>
           </div>

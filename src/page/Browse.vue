@@ -8,8 +8,13 @@
                 :finished="over"
                 finished-text="没有更多数据了"
                 @load="getData"
-                class="fs_28 c_33"
+                class="fs_26 c_33"
             >
+                <van-row class="row">
+                    <van-col span="8" class="df df-r ai-c">浏览</van-col>
+                    <van-col span="6">推荐人</van-col>
+                    <van-col span="10">时间</van-col>
+                </van-row>
                 <van-row v-for="(item,index) in dataList" :key="index" class="row">
                     <van-col span="8" class="df df-r ai-c">
                         <img :src="item.headpath" class="img" />

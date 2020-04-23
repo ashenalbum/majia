@@ -8,8 +8,8 @@
         </div>
         <div class="formbox formbox1 shadow">
             <div class="title fs_32 c_33"><span class="c_red"> *</span>活动标题</div>
-            <van-field v-model="formData.title" placeholder="请输入主标题" class="form-input pl-4" />
-            <van-field v-model="formData.subhead" placeholder="请输入副标题" class="form-input pl-4" />
+            <van-field v-model="formData.title" @focus="inputFocusSel" placeholder="请输入主标题" class="form-input pl-4" />
+            <van-field v-model="formData.subhead" @focus="inputFocusSel" placeholder="请输入副标题" class="form-input pl-4" />
             <div class="ttbox df df-r c_ashen">
                 <span class="fs_30">上传头图：</span>
                 <van-radio-group v-model="fileType" class="radio-group df df-r" checked-color="#FF9C00">
@@ -31,8 +31,8 @@
             </div>
             <van-field v-else v-model="formData.video_url" placeholder="请输入视频播放地址" class="video-input mb-20 pl-4" />
 
-            <van-field label="原价" v-model="formData.price" required placeholder="请输入原价" type="number" input-align="right" class="form-input" />
-            <van-field label="活动价格" v-model="formData.special_offer" required placeholder="请输入活动价格" type="number" input-align="right" class="form-input" />
+            <van-field label="原价" v-model="formData.price" required placeholder="请输入原价" @focus="inputFocusSel" type="number" input-align="right" class="form-input" />
+            <van-field label="活动价格" v-model="formData.special_offer" required placeholder="请输入活动价格" @focus="inputFocusSel" type="number" input-align="right" class="form-input" />
             <div class="guige">
                 <div class="guige-label df df-r ai-c just-c-bet">
                     <div class="title fs_32 c_33 fs_14px">产品规格</div>           
@@ -45,11 +45,11 @@
                     </div>
                 </div>
             </div>
-            <van-field label="虚拟浏览量" v-model="formData.browse_num" placeholder="请输入数量" type="number" input-align="right" class="form-input pl-4" />
-            <van-field label="虚拟购买量" v-model="formData.people_buy_num" placeholder="请输入数量" type="number" input-align="right" class="form-input pl-4" />
+            <van-field label="虚拟浏览量" v-model="formData.browse_num" placeholder="请输入数量" @focus="inputFocusSel" type="number" input-align="right" class="form-input pl-4" />
+            <van-field label="虚拟购买量" v-model="formData.people_buy_num" placeholder="请输入数量" @focus="inputFocusSel" type="number" input-align="right" class="form-input pl-4" />
             <van-field label="开始时间" v-model="formData.start_time" placeholder="请选择开始时间" @click="selTime('start_time')" left-icon="question-o" @click-left-icon.stop="leftIcon('starttime')" readonly input-align="right" class="form-input pl-4" />
             <van-field label="结束时间" v-model="formData.abort_time" placeholder="请选择结束时间" @click="selTime('abort_time')" left-icon="question-o" @click-left-icon.stop="leftIcon('endtime')" readonly input-align="right" class="form-input pl-4" />
-            <van-field label="购买按钮文案" v-model="formData.pay_btn" placeholder="请输入，如:立即购买" left-icon="question-o" @click-left-icon.stop="leftIcon('paytxt')" input-align="right" class="pl-4" />
+            <van-field label="购买按钮文案" v-model="formData.pay_btn" placeholder="请输入，如:立即购买" @focus="inputFocusSel" left-icon="question-o" @click-left-icon.stop="leftIcon('paytxt')" input-align="right" class="pl-4" />
         </div>
         <div class="formbox formbox2 shadow">
             <van-field label="活动场景" v-model="formData.cj" required readonly placeholder="请选择活动场景" @click="cjShow=true" input-align="right" class="form-input pr-4" right-icon="arrow" />
@@ -118,7 +118,7 @@
         <van-popup v-model="showTtMould" round position="bottom">
             <div class="tt-mould">
                 <div class="title df df-r ai-c just-c-bet">
-                    <van-uploader v-model="imgList" :preview-image="false" multiple :before-read="beforeRead" accept="image/png, image/jpeg">
+                    <van-uploader v-model="imgList" multiple :preview-image="false" :before-read="beforeRead">
                         <van-button class="btn" size="mini" type="info"> 本地上传 </van-button>
                     </van-uploader>
                     <span class="fs_26 c_blue" @click="topMouldSelOk">确定</span>
@@ -262,7 +262,7 @@ export default {
             showGuige: false,
             guigeData: { name: "", price: "", offerPic: "", stock: ""},
             // 协议
-            showXieyi: true,
+            showXieyi: false,
             checkXieyi: false,
             xieyi:"",
             // 提示
@@ -298,8 +298,8 @@ export default {
                 head_pic: [], //头图id
                 huzhu: false, //商家互助
                 danmu: false, //弹幕
-                startTime: "", //开始时间
-                endTime: "", //结束时间
+                start_time: "", //开始时间
+                abort_time: "", //结束时间
                 details: [], //详情
                 spec_content: [], //规格
             },
@@ -310,6 +310,7 @@ export default {
     created(){
         this.id = this.$route.query.id;
         this.isEdit = this.$route.query.isEdit;
+        this.showXieyi = Boolean(this.$route.query.xieyi);
         this.getData();
         this.getHy();
         this.getCj();
@@ -328,6 +329,7 @@ export default {
                 {b:data.head_pic_img.length==0, t:"请上传头图"},
                 {b:data.video_url!=""&&(!testUrl.test(data.video_url)), t:"视频路径格式有误"},
                 {b:data.video_url!=""&&(!videoText.test(data.video_url)), t:"视频格式只能为mp4"},
+                {b:data.start_time&&data.abort_time&&data.start_time>data.abort_time, t:"开始时间不能大于结束时间"},
                 {b:/^\s*$/.test(data.price), t:"请输入原价"},
                 {b:/^\s*$/.test(data.special_offer), t:"请输入活动价"},
                 {b:data.scene===undefined, t:"请选择活动场景"},
@@ -344,7 +346,6 @@ export default {
         // 提交表单
         formSubmit(){
             this.showXieyi = false;
-            this.showTj = true;
             let url = this.isEdit?"/activity/Apiactivity/editActivity":"/activity/Apiactivity/addActivity";
             this.formData.activity_id = this.formData.id;
             delete this.formData.id;
@@ -551,7 +552,7 @@ export default {
         // 本地上传头图
         beforeRead(file){
             this.showTtMould = false;
-            Toast("正在上传");
+            Toast("正在上传...");
             if(file instanceof Array){
                 for(let i in file){                    
                     this.upImg(file[i]).then((data)=>{
@@ -599,6 +600,8 @@ export default {
                 })
             }
         },
+        // 输入框获得焦点全选
+        inputFocusSel(e){e.target.select()},
         // 显示帮助
         leftIcon(type){
             this.showTishi = true;
@@ -698,7 +701,7 @@ export default {
 .wrapper .tishi .tishi-body{padding-top:0.2rem;}
 .wrapper .tishi .tishi-body .img{width:3rem; height:1.68rem; margin-right:0.2rem;}
 
-.wrapper .tj-ok{width:5.2rem; border-radius:0.1rem; background:#ffffff; overflow:hidden;}
+.wrapper .tj-ok{width:5.2rem; background:#ffffff; overflow:hidden;}
 .wrapper .tj-ok .img{width:100%; height:auto;}
 .wrapper .tj-ok .btn{margin:0.3rem 0;width:4.4rem;}
 .fixed-submit{width:auto;}

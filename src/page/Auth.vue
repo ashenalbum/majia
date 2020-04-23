@@ -74,6 +74,7 @@ export default {
                 if(data.err!=0){return;}
                 this.formData = data.data;
                 if(!this.formData.contact_type){this.formData.contact_type = 0;}
+                if(this.formData.code_wx_img){this.ewmImg = this.formData.code_wx_img;}
             })
         },
         checkForm(){

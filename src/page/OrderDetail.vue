@@ -27,10 +27,10 @@
                     <span>订单号</span>
                     <span>{{data.order_sn}}</span>
                 </div>
-                <div v-if="data.scene==0" class="mt-20 df df-r ai-c just-c-bet fs_24 c_ashen">
+                <!-- <div v-if="data.scene==0" class="mt-20 df df-r ai-c just-c-bet fs_24 c_ashen">
                     <span>运费</span>
                     <span>￥{{data.freight}}</span>
-                </div>
+                </div> -->
                 <div class="mt-20 df df-r ai-c just-c-bet fs_24 c_ashen">
                     <span>交易时间</span>
                     <span>{{data.addtime}}</span>

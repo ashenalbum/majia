@@ -214,6 +214,7 @@ export default {
     data(){
         return {
             id: null,
+            urlQuery: {},
             data: {},
             userInfo: {},
             showAd: false,
@@ -255,6 +256,7 @@ export default {
         window.location.reload();
     },
     created(){
+        this.urlQuery = this.$route.query;
         if(this.$route.query.showPoter){
             // this.$router.replace({path:"/bill",query:this.$route.query});
             this.autoCreateHb = true;
@@ -484,6 +486,12 @@ export default {
                     price: this.buyMoney,
                     num: this.buyNum,
                     ty_form: ty_form,
+                    recommendid: this.urlQuery.recommendid || 0,
+                    recommendid1: this.urlQuery.recommendid1 || 0,
+                    recommendid2: this.urlQuery.recommendid2 || 0,
+                    recommendid3: this.urlQuery.recommendid3 || 0,
+                    channelid: this.urlQuery.channelid || 0,
+                    activity_id1: this.urlQuery.activity_id1 || 0,
                 }
             }).then((data)=>{
                 if(data.err!=0){return;}

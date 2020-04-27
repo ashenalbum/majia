@@ -17,6 +17,7 @@
                 <div v-for="(item,index) in detail" :key="index" class="mt-20">
                     <div v-if="item.type===1" class="txtbox">
                         <div class="txt c_33 fs_28">{{item.content}}</div>
+                        <textarea class="txt c_33 fs_28" v-model="item.content"></textarea>
                         <van-icon @click="detailRemove(index)" name="clear" size="0.4rem" color="#D1D6E5" class="close"/>
                     </div>
                     <div v-else class="imgbox">
@@ -163,15 +164,19 @@ export default {
 .btnbox{padding:0.1rem 0.75rem; background:#ffffff;}
 .btnbox>*{margin-right:0.2rem;}
 .van-sticky--fixed .btnbox{box-shadow: 0px 0px 6px 0px rgba(187, 187, 187, 0.8);}
+
 .detail-list{width:6rem; margin-left:auto; margin-right:auto;}
 .detail-list .close{position:absolute; top:-0.3rem; right:-0.3rem; padding:0.1rem;}
-.detail-list .txtbox{position:relative;border:1px solid #D1D6E5;}
-.detail-list .txtbox .txt{padding:4px;}
+.detail-list .reverse{width:0.44rem; height:auto; }
+.detail-list .txtbox{position:relative; border:1px solid #D1D6E5;}
+.detail-list .txtbox .txt{visibility:hidden; box-sizing:border-box; width:100%; padding:4px; white-space: pre-line;}
+.detail-list .txtbox textarea.txt{visibility:visible; position: absolute; left: 0;top: 0; right:0; height: 100%; resize:none;}
 .detail-list .imgbox{position:relative; width:100%; margin-left:auto; margin-right:auto;}
 .detail-list .videobox{position:relative; width:100%; height:3.2rem; margin-left:auto; margin-right:auto;}
 .detail-list .imgbox .img{width:100%;}
 .detail-list .videobox .video{width:100%; height:100%; background:#000;}
-.detail-list .reverse{width:0.44rem; height:auto; }
+.detail-inputbox .input{border:1px solid #CCD0DD;}
+.detail-inputbox .upfile{border:1px solid #CCD0DD; width:4.82rem; height:2.1rem;}
 
 .detail-inputbox{width:6rem; margin-left:auto; margin-right:auto;}
 .detail-inputbox .input{border:1px solid #CCD0DD;}

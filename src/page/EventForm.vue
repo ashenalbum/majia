@@ -86,6 +86,7 @@
                 <div v-for="(item,index) in formData.details" :key="index">
                     <div v-if="item.type==1" class="txtbox mt-20">
                         <div class="txt c_33 fs_28">{{item.content}}</div>
+                        <textarea class="txt c_33 fs_28" v-model="item.content"></textarea>
                         <van-icon @click="detailRemove(index)" name="cross" size="0.2rem" color="#ffffff" class="close"/>
                     </div>
                     <div v-if="item.type==2" class="imgbox mt-20">
@@ -179,7 +180,7 @@
                     </div>
                     <div class="mt-30 df df-r ai-c just-c-bet">
                         <van-button size="small" type="info" @click="back">返回</van-button>
-                        <van-button size="small" type="info" @click="agreeXieyi">继续</van-button>
+                        <van-button size="small" type="info" @click="agreeXieyi">同意</van-button>
                     </div>
                 </div>
                 <!-- <van-icon name="close" class="close" size="0.6rem" color="#BFC4CE" /> -->
@@ -676,8 +677,9 @@ export default {
 
 .detail-list .close{position:absolute; top:-0.2rem; right:-0.2rem; padding:0.1rem; background:#D1D6E5; border-radius:50%;}
 .detail-list .reverse{width:0.44rem; height:auto; }
-.detail-list .txtbox{position:relative;border:1px solid #D1D6E5;}
-.detail-list .txtbox .txt{padding:4px;}
+.detail-list .txtbox{position:relative; border:1px solid #D1D6E5;}
+.detail-list .txtbox .txt{visibility:hidden; box-sizing:border-box; width:100%; padding:4px; white-space: pre-line;}
+.detail-list .txtbox textarea.txt{visibility:visible; position: absolute; left: 0;top: 0; right:0; height: 100%; resize:none;}
 .detail-list .imgbox{position:relative; width:100%; margin-left:auto; margin-right:auto;}
 .detail-list .videobox{position:relative; width:100%; height:3.2rem; margin-left:auto; margin-right:auto;}
 .detail-list .imgbox .img{width:100%;}

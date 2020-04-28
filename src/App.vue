@@ -40,7 +40,8 @@ export default {
 </script>
 
 <style>
-#app {font-family: Avenir, Helvetica, Arial, sans-serif;-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;}
+html,body{height:100%;}
+#app {height:100%; font-family: Avenir, Helvetica, Arial, sans-serif;-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;}
 
 .fs_20{font-size:0.20rem;}
 .fs_22{font-size:0.22rem;}
@@ -61,12 +62,14 @@ export default {
 .mt-46{margin-top:0.46rem;}
 .mt-50{margin-top:0.50rem;}
 .ml-20{margin-left:0.2rem;}
+.ml-40{margin-left:0.4rem;}
 .pl-10{padding-left:0.1rem;padding-right:0.1rem;}
 .pl-20{padding-left:0.2rem;padding-right:0.2rem;}
 .pl-40{padding-left:0.4rem;padding-right:0.4rem;}
 .pl-50{padding-left:0.5rem;padding-right:0.5rem;}
 
 .c_o{color:#FF9C00}
+.c_y{color:#FA7E00;}
 .c_red{color:#FF0000;}
 .c_red1{color:#F32323;}
 .c_ashen{color:#9FA9C7;}

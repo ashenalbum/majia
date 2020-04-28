@@ -11,11 +11,10 @@
                     <div class="nickname one-hide">{{this.inforData.nickname}}</div>
                     <div class="mt-20 df df-r ai-c">
                         <van-icon name="star" />
-                        <span> {{this.inforData.group_name}}</span>
+                        <span style="padding-left:4px;">{{this.inforData.group_name}}</span>
                     </div>
                     <div v-if="End_time!==0 || true" class="mt-10 df df-r ai-c">
-                        <span>会员到期时间：</span>
-                        <span>{{End_time}}</span>
+                        <span>会员到期时间：{{End_time}}</span>
                         <!-- <van-notice-bar class="c_ff" :speed="30" :text="End_time+''"/> -->
                     </div>
                 </div>
@@ -44,25 +43,24 @@
                     </ul>
                 </div>
             </div>
-            <div class="member_box">
+            <div class="member_box c_33 fs_28">
                 <div class="member_box_content">
                     <div v-html="this.describe"></div>
                 </div>
             </div>
         </div>
         <van-tabbar v-model="Active" v-show="isShow" class="bottom_main" fixed active-color="#E13E3F">
-            <van-tabbar-item>
+            <van-tabbar-item class="c_33">
                 <p class="time">{{this.LastName}}</p>
                 <p class="btm">
                     <span class="span btm_money">{{this.Lastmoney}}</span>
                     <span class="span"> {{this.Last_danwei}}</span>
                 </p>
             </van-tabbar-item>
-            <van-tabbar-item @click="Give_friends()" icon>
+            <!-- <van-tabbar-item @click="Give_friends()" icon>
                 <van-button size="small" type="info" color="#FA7D00" round>赠送好友</van-button>
-                <!-- <button class="buying_btn">赠送好友</button> -->
-            </van-tabbar-item>
-            <van-tabbar-item @click="buy()" icon>
+            </van-tabbar-item> -->
+            <van-tabbar-item @click="buy" icon>
                 <van-button size="small" color="#FA7D00" round>立即抢购</van-button>
                 <!-- <button class="buying_btn">立即抢购</button> -->
             </van-tabbar-item>
@@ -87,6 +85,36 @@
         <!-- <GiveFriendPopup ref="selectfood"></GiveFriendPopup> -->
         <!-- 漂浮菜单 -->
         <!-- <BackHome></BackHome> -->
+        <van-popup v-model="showQuan" position="bottom">
+            <div class="sel-quan-list df df-c ai-c just-c-ct">
+                <div class="ht-60 df df-r ai-c just-c-bet fs_28">
+                    <span @click="showQuan=false">取消</span>
+                    <span class="c_blue" @click="selQuanOk">确定</span>
+                </div>
+                <ul class="list-box f1 df df-c ai-c">
+                    <li v-for="(val,index) in quanList" :key="index" @click="selQuan(val,index)">
+                        <div class="item df df-r ai-c just-c-bet" :class="{odd:index%2, c_y:index%2, c_blue:index%2==0}">
+                            <div class="left df df-c ai-c just-c-ct fs_26">
+                                <p class="num" v-if="val.type !== 2"><span>￥</span>{{val.discount}}</p>
+                                <p class="num" v-if="val.type == 2">{{(val.discount/100)}}<span>折</span></p>
+                                <p class="text">全场通用</p>
+                            </div>
+                            <div class="center c_33 df df-c just-c-ct">
+                                <p class="kuanghuan">{{val.title}}</p>
+                                <p class="man" v-if="val.type !== 2">满{{val.full_reduction}}减{{Math.floor(val.discount)}}</p>
+                                <p class="man" v-if="val.type == 2">满{{val.full_reduction}}打{{(val.discount/100)}}折</p>
+                            </div>
+                            <div class="right df ai-c just-c-ct">
+                                <p class="c_ff">未<br/>使<br/>用</p>
+                            </div>
+                            <div v-if="quanId===val.id" class="use-area">
+                                <div class="t">√</div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </van-popup>
     </div>
 </template>
 
@@ -131,6 +159,11 @@ export default {
             group_id: "",
             dis_bool: false,
             // zIndex: 999
+            // 选择优惠券
+            quanList: [],
+            showQuan: false,
+            quanId: null,
+            quanIndex: "",
         };
     },
     methods: {
@@ -201,7 +234,7 @@ export default {
                 if (JsonData.endtime == 0) {
                     this.End_time = 0;
                 } else {
-                    let date= new Date(JsonData.endtime);
+                    let date= new Date(JsonData.endtime*1000);
                     this.End_time = date.toISOString().slice(0,10) + " " + date.toTimeString().slice(0,5);
                 }
                 if (data.data.group_name == "") { JsonData.group_name = "普通会员"; }
@@ -212,6 +245,24 @@ export default {
             if (this.LastName!="" && this.Lastmoney!="" && this.Last_danwei!="") {
                 this.Payshow = true;
                 this.isGive = 1;
+            }
+        },
+        // 选择优惠券
+        selQuan(val,index){
+            if(this.quanId === val.id){
+                this.quanIndex = null;
+                this.quanId = "";
+            }else{
+                this.quanIndex = index;
+                this.quanId = val.id;
+            }
+        },
+        selQuanOk(){
+            this.showQuan = false;
+            if (this.LastName != "" && this.Lastmoney != "" && this.Last_danwei != "") {
+                this.radio = "WX";
+                this.Payshow = true;
+                this.isGive = 0;
             }
         },
         confirmPay() {
@@ -225,9 +276,12 @@ export default {
                     interval_unit: this.prdoct_danwei,
                     isGive: this.isGive,
                     pay_type: this.radio,
-                    repeat: 1
+                    repeat: 1,
+                    couponid: this.quanId,
                 }
             }).then((data)=>{
+                this.quanId = null;
+                this.quanIndex = "";
                 if (data.data && data.data.pay_type == "Balance") {
                     Toast("支付成功");
                     this.$router.push("./my_center");
@@ -257,11 +311,26 @@ export default {
             if (this.required_id < this.group_id) {
                 Toast("无法购买低级别会员");
             } else {
-                if (this.LastName != "" && this.Lastmoney != "" && this.Last_danwei != "") {
-                    this.radio = "WX";
-                    this.Payshow = true;
-                    this.isGive = 0;
-                }
+                axios({
+                    url: "/coupon/Apicoupon/member_use_coupon_list_no_page",
+                    params: {
+                        groupid: this.required_id,
+                        price: this.MoneyData[0].money,
+                    }
+                }).then((data)=>{
+                    if(!data.data || data.data.length==0){
+                        if (this.LastName != "" && this.Lastmoney != "" && this.Last_danwei != "") {
+                            this.radio = "WX";
+                            this.Payshow = true;
+                            this.isGive = 0;
+                        }
+                    }else{
+                        this.showQuan = true;
+                        this.quanList = data.data;
+                    }
+                    ////
+                })
+                return;
             }
         },
         tab(index,item) {
@@ -306,6 +375,14 @@ export default {
             this.Last_danwei = item.Last_danwei;
         }
     },
+    watch:{
+        showQuan(val){
+            if(val){
+                this.quanId = null;
+                this.quanIndex = "";
+            }
+        }
+    },
     created() {
         this.page_id = this.$route.query.page_id;
         this.getData();
@@ -315,6 +392,39 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.sel-quan-list{padding:0.2rem 0; height:8rem; overflow-y:auto;}
+.ht-60{width:7.1rem; margin:auto; height:0.6rem; padding-bottom:0.2rem;}
+.list-box{width:7.1rem; height:7.2rem; overflow-y:auto; margin:auto;}
+.list-box .item{position:relative; box-sizing:border-box; padding:0.1rem; margin-bottom:0.14rem; width:100%; height:2.1rem; background: url(~@/assets/mycoupon/lingquan_blue.png) no-repeat center center/100% 100%;}
+.list-box .item.odd{background: url(~@/assets/mycoupon/lingquan_orange.png) no-repeat center center/100% 100%;}
+.list-box .item .left{width:2rem;}
+.list-box .item .center{flex:1; padding-left:0.3rem;}
+.list-box .item .right{width:1rem;}
+.list-box .item .num{font-size:0.4rem;}
+.list-box .item .use-area{
+  position: absolute;
+  left:0.1rem;
+  bottom:0.1rem;
+  width: 0rem;
+  height: 0rem;
+  border-left:0.3rem solid #F32323;
+  border-bottom:0.3rem solid #F32323;
+  border-right:0.3rem solid transparent;
+  border-top:0.3rem solid transparent;
+  color: #fff;
+  border-radius:0 0 0 0.1rem;
+}
+.list-box .item .use-area .t{
+    position: absolute;
+    display: block;
+    left: -0.3rem;
+    top: 0;
+    width: 0.3rem;
+    height: 0.3rem;
+    text-align: center;
+    line-height: 0.3rem;
+}
+
 .van-nav-bar {
   background-color: #eee;
   /* letter-spacing: 0.1rem; */

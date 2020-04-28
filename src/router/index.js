@@ -134,5 +134,10 @@ export default new Router({
         name: 'PayAfter',
         meta: {title: "联系主办方"},
         component: (resolve) =>require(['@/page/PayAfter.vue'],resolve)
-    }]
+    },{
+        path: '/my_coupon',
+        name: 'MyCoupon',
+        meta: {title: "我的优惠券"},
+        component: (resolve) =>require(['@/page/MyCoupon.vue'],resolve)
+    },]
 })

@@ -60,6 +60,7 @@ export default {
 .fixed_box{
     width: 100%;
     position: fixed;
+    top:0;
     height: 46px;
     line-height: 46px;
     text-align: center;

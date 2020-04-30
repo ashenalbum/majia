@@ -61,6 +61,9 @@ function hideSearch(){
             nonceStr: data.nonceStr,
         }
         localStorage.setItem("token",JSON.stringify(o));
+        setTimeout(()=>{
+            window.location.href = window.location.href.split("?")[0];
+        },800)
     }
     
     if (data.share) {

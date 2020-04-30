@@ -16,13 +16,13 @@
             </div>
             <router-link to="/wxCashOut">
                 <div class="ti_weixin">
-                    <p class="text">提现到微信钱包</p>
+                    <p class="text fs_30">提现到微信钱包</p>
                     <van-icon name="arrow" />
                 </div>
             </router-link>
 
              <div class="contanier">
-                <van-tabs v-model="active" style="margin:0.2rem 0;background:#fff" @click="onClick">
+                <van-tabs v-model="active" style="margin-top:0.2rem;padding-bottom:0.2rem;background:#fff" @click="onClick">
                     <van-tab title="冻结资金记录">
                         <ul class="list_box">
                             <li class="list" v-for="item in incomeData" :key="item.id"> 

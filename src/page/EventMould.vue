@@ -37,6 +37,7 @@
                 </van-list>
             </div>
         </div>
+        <!-- <van-button class="fixed-submit" type="info" @click="toNewForm">不使用模板</van-button> -->
     </div>
 </template>
 <script>
@@ -108,6 +109,9 @@ export default {
                 }
                 this.$router.push({name:"EventForm", query:{id:id, xieyi:1}});
             });
+        },
+        toNewForm(){
+            this.$router.push("event_form");
         }
     },
     created(){
@@ -129,4 +133,6 @@ export default {
 .listul .item .imgbox .img{width:100%; height:100%;}
 .listul .item .imgbox .txt{position:absolute; bottom:0; right:0; padding:2px 0.16rem; line-height:0.36rem; background:rgba(0,0,0,0.5); border-radius:4px 0 0 0;}
 .listul .item .title{height:0.78rem; line-height:0.78rem; padding:0 4px;}
+
+.fixed-submit{bottom:1rem; width:auto;}
 </style>

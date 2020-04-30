@@ -97,7 +97,7 @@ export default {
                 if(data.data.group_name == ''|| data.data.group_id == 1|| data.data.group_name == '普通会员'){data.data.group_name = "普通会员";}
                 
                 if(data.data.endtime){
-                    let date= new Date(data.data.endtime);
+                    let date= new Date(data.data.endtime*1000);
                     this.End_time = '会员到期日:' + date.toISOString().slice(0,10) + " " + date.toTimeString().slice(0,5);
                 }else{
                     this.End_time = ""

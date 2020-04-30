@@ -38,7 +38,15 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     response => {
         const data = response.data;
-        if(data.err!==0 && data.content){
+        if(data.err===0){
+            return data;
+        }else if(data.code==10207){
+            Toast(data.content);
+            setTimeout(() => {
+                let route = window.location.href.split("#")[1];
+                window.location.href = window.baseUrl + '/public/index.php/activity/info/index?file='+route;
+            }, 800);
+        }else if(data.content){
             Toast(data.content);
         }
         return data;
@@ -50,5 +58,3 @@ service.interceptors.response.use(
 );
 
 export default service;
-
-

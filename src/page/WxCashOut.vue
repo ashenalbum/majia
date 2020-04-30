@@ -19,9 +19,9 @@
       </div>
       <p class="tixian_text">提现金额</p> 
       <van-cell-group>
+          <!-- @input.native="Check_number($event)" -->
         <van-field
           v-model="cashoutNum"
-          @input.native="Check_number($event)"
           clearable
           placeholder="请输入提现金额"
           @click-right-icon="$toast('question')"
@@ -32,7 +32,7 @@
       <p class="shouxufei" v-if="item.proceduresType == 0 && item.point_type == pointType">收取 ( <span>{{(item.proceduresNum*cashoutNum).toFixed(item.point_decimal)}}{{item.point_unit}}</span> )手续费 实际到账金额为 <span v-if="cashoutNum">{{((cashoutNum-item.proceduresNum*cashoutNum)*item.ratio).toFixed(item.point_decimal)}}{{item.point_unit}}</span><span v-else>0{{item.point_unit}}</span></p>
             
       <p class="shouxufei" v-if="item.proceduresType == 1 && item.point_type == pointType">收取{{item.proceduresNum}}%（<span>{{(cashoutNum*(item.proceduresNum)/100).toFixed(item.point_decimal)}}{{item.point_unit}}</span> )手续费 实际到账金额为 <span>{{((cashoutNum-cashoutNum*(item.proceduresNum)/100)*item.ratio).toFixed(item.point_decimal)}}{{item.point_unit}}</span></p>
-
+      <p class="mt-10 c_99 fs_24">提现金额最低0.3元最高5000元，每日限提现一次</p>
       <van-button class="querenBtn" round type="danger" @click="toCash()">确认提现</van-button>
     </main>
     </div>
@@ -57,14 +57,16 @@ export default {
             cashoutNum:'',
             btnData:[],
             radio:0,
-            pointType:""
+            pointType:"",
+
+            btnTaching: false,
         };
     },
     methods: {
         Check_number(e) {
-            let flag = new RegExp("^[1-9]([0-9])*$").test(e.target.value);
+            let flag = /^\d+(\.\d{1,2})?$/.test(e.target.value);
             if (!flag) {
-                Toast("请输入正整数");
+                Toast("请输入正数");
                 e.target.value = "";
             }
         },
@@ -82,18 +84,28 @@ export default {
             this.cashoutNum = n;
         },
         toCash(){
+            if(this.btnTaching){return}
+            let flag = /^\d+(\.\d{1,2})?$/.test(this.cashoutNum);
+            if (!flag) {Toast("请输入正确的金额");return}
+            this.btnTaching = true;
             // 微信提现
             axios({
                 url: "/accounts/Apipoint/member_submit_withdrawal",
-                params: { 
+                params: {
                     point: this.cashoutNum,
                     point_type:this.pointType,
                     type:1,
                 }
             }).then((data)=>{
-                console.log(data);
+                this.btnTaching = false;
+                if(data.err!=0){
+                    Toast(data.content);
+                    return
+                }
                 Toast("已申请提现");
                 this.$router.push("./profit");
+            }).catch(()=>{
+                this.btnTaching = false;
             })
         }
     },
@@ -234,7 +246,7 @@ body{
   color:rgba(20,20,24,1);
   line-height:.4rem;
   margin-top: .32rem;
-  margin-left: .1rem;
+  /* margin-left: .1rem; */
 }
 .shouxufei span{
   color: #FA7D00;

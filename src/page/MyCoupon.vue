@@ -130,6 +130,7 @@ body{
 }
 .main{box-sizing:border-box; height:100%; padding-top:1rem;}
 .noCoupon_bg{width:3.6rem; height:auto;}
+.nodata{margin-top:60px;}
 
 .list-box-height{position:relative;}
 .list-box{position:absolute; top:0; bottom:0; left:0; right:0; overflow-y:auto; padding:0 0.2rem;}

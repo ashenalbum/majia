@@ -15,7 +15,7 @@
                     </div>
                     <span class="c_status fs_26">{{getType(item.order_status)}}</span>
                 </div>
-                <div class="ware df df-r">
+                <div class="ware df df-r" @click="toEventDetail(item)">
                     <img :src="item.pic" class="img" />
                     <div class="detail">
                         <div class="df df-r ai-c just-c-bet">
@@ -82,6 +82,10 @@ export default {
         // 详情
         toDetail(item){
             this.$router.push({path:"/order_detail", query:{id: item.id}});
+        },
+        // 活动详情
+        toEventDetail(item){
+            this.$router.push({path:"/pay_detail", query:{id: item.activity_id}});
         },
         toPayAfter(item){
             this.$router.push({path:"/pay_after", query:{id: item.activity_id}});

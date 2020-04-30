@@ -7,7 +7,8 @@
             </div>
         </div>
         <div class="formbox formbox1 shadow">
-            <div class="title fs_32 c_33"><span class="c_red"> *</span>活动标题</div>
+            <div class="fs_20 c_red">活动上线需要审核哦，请您先编辑活动信息，然后联系客服{{kefu}}}帮您启动活动</div>
+            <div class="mt-30 title fs_32 c_33"><span class="c_red"> *</span>活动标题</div>
             <van-field v-model="formData.title" @focus="inputFocusSel" placeholder="请输入主标题" class="form-input pl-4" />
             <van-field v-model="formData.subhead" @focus="inputFocusSel" placeholder="请输入副标题" class="form-input pl-4" />
             <div class="ttbox df df-r c_ashen">
@@ -101,7 +102,7 @@
                 </div>
             </div>
             <div ref="detailbtns" class="detail-inputbox mt-30 df df-c ai-c">
-                <van-field v-if="detailType===0" v-model="detailTxt" type="textarea" class="input" @blur="addDetails" @keyup.enter.native="addDetails" />
+                <van-field v-if="detailType===0" v-model="detailTxt" placeholder="请输入文案内容" type="textarea" class="input" @blur="addDetails" @keyup.enter.native="addDetails" />
                 <van-uploader v-model="detailImg" v-else-if="detailType===1" multiple :preview-image="false" :before-read="detailRead">
                     <div class="upfile fs_26 c_ashen df ai-c just-c-ct txt-c">宽度不得大于750px<br/>点击上传</div>
                 </van-uploader>
@@ -306,6 +307,7 @@ export default {
             },
             merchant_help_text: "",
             toId: null,
+            kefu: "",
         }
     },
     created(){
@@ -318,6 +320,7 @@ export default {
         this.getCj();
         this.getXieyi();
         this.getTopImg();
+        this.getKefu();
     },
     methods: {
         // 提交表单
@@ -329,8 +332,8 @@ export default {
                 {b:/^\s*$/.test(data.title), t:"请输入标题"},
                 // {b:/^\s*$/.test(data.subhead), t:"请输入副标题"},
                 {b:data.head_pic_img.length==0, t:"请上传头图"},
-                {b:data.video_url!=""&&(!testUrl.test(data.video_url)), t:"视频路径格式有误"},
-                {b:data.video_url!=""&&(!videoText.test(data.video_url)), t:"视频格式只能为mp4"},
+                {b:data.video_url&&(!testUrl.test(data.video_url)), t:"视频路径格式有误"},
+                {b:data.video_url&&(!videoText.test(data.video_url)), t:"视频格式只能为mp4"},
                 {b:data.start_time&&data.abort_time&&data.start_time>data.abort_time, t:"开始时间不能大于结束时间"},
                 {b:/^\s*$/.test(data.price), t:"请输入原价"},
                 {b:/^\s*$/.test(data.special_offer), t:"请输入活动价"},
@@ -366,6 +369,7 @@ export default {
         },
         // 获取内容
         getData(){
+            if(!this.id){return;}
             axios({
                 url: "/activity/Apiactivity/previewTemplateInfo",
                 params: {activity_id: this.id}
@@ -392,6 +396,14 @@ export default {
                 this.formData.bought_num = this.formData.people_buy_num;
                 this.merchant_help_text = data.data.merchant_help_text;
             });
+        },
+        // 获取客服
+        getKefu(){
+            axios({
+                url: "/activity/Apiactivity/getSystemService"
+            }).then((data)=>{
+                this.kefu = "（微信号："+data.service_wx+"）";
+            })
         },
         // 获取行业
         getHy(){
@@ -486,7 +498,7 @@ export default {
                 this.merchant_help_b = false;
                 this.formData.merchant_help = 0;
                 this.$dialog.confirm({
-                    message: this.merchant_help_text,
+                    message: this.merchant_help_text || "开启商家互助后，商家会收取10%的佣金",
                 }).then(()=>{
                     this.merchant_help_b = true;
                     this.formData.merchant_help = 1;

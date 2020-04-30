@@ -1,7 +1,7 @@
 <template>
     <div class="cont">
         <div class="item df df-c">
-            <div class="ware df df-r">
+            <div class="ware df df-r" @click="toEventDetail">
                 <img :src="data.pic" class="img shadow" />
                 <div class="detail df df-c just-c-bet">
                     <div>
@@ -189,6 +189,9 @@ export default {
                 this.pay_info = data.pay_info;
                 this.createEwm();
             })
+        },
+        toEventDetail(){
+            this.$router.push({path:"/pay_detail", query:{id:this.data.activity_id}});
         },
         getInfo(type){
             let location = "";

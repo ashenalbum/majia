@@ -52,9 +52,11 @@ html,body{height:100%;}
 .fs_32{font-size:0.32rem;}
 .fs_34{font-size:0.34rem;}
 .fs_36{font-size:0.36rem;}
+.fs_40{font-size:0.40rem;}
 .fs_44{font-size:0.44rem;}
 .fs_50{font-size:0.50rem;}
 .mt-10{margin-top:0.1rem;}
+.mt-16{margin-top:0.16rem;}
 .mt-20{margin-top:0.2rem;}
 .mt-30{margin-top:0.3rem;}
 .mt-36{margin-top:0.36rem;}

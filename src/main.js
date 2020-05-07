@@ -65,6 +65,7 @@ function hideSearch(){
         localStorage.setItem("token",JSON.stringify(o));
     }
     // 没有存储的cowcms_userid
+    token = JSON.parse(localStorage.getItem("token"));
     if((!token) || (!token.cowcms_userid)){
         let route = window.location.href.split("#")[1];
         window.location.href = window.baseUrl + '/public/index.php/activity/info/index?file='+route;

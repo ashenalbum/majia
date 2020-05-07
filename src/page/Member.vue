@@ -1,109 +1,84 @@
 <template>
-    <div id="app">
-        <HeadNav></HeadNav>
-        <div class="header_box">
-            <div class="header_cont df df-r ai-c">
-                <div class="header_left">
-                    <img :src="this.inforData.headpath" alt />
-                </div>
-                <div class="header_right c_ff">
-                    <!-- <van-notice-bar class="nickname" :text="inforData.nickname+''" /> -->
-                    <div class="nickname one-hide">{{this.inforData.nickname}}</div>
-                    <div class="mt-20 df df-r ai-c">
-                        <van-icon name="star" />
-                        <span style="padding-left:4px;">{{this.inforData.group_name}}</span>
-                    </div>
-                    <div v-if="End_time!==0 || true" class="mt-10 df df-r ai-c">
-                        <span>会员到期时间：{{End_time}}</span>
-                        <!-- <van-notice-bar class="c_ff" :speed="30" :text="End_time+''"/> -->
+    <div id="content">
+        <div class="top">
+            <div class="nav df df-r ai-c fs_32 c_ff">
+                <van-icon name="arrow-left back-btn" @click="back" />
+                <div class="nav-txt f1 df ai-c just-c-ct">会员中心</div>
+            </div>
+            <div class="card mt-20 df df-r ai-c">
+                <img :src="infoData.headpath" alt="" class="img" />
+                <div class="r-box f1 df df-c c_ff">
+                    <div class="df_34">{{infoData.nickname}}</div>
+                    <div v-if="end_time" class="mt-16 fs_26">有效期 {{end_time}}</div>
+                    <div class="mt-16 fs_26 df df-r ai-c">
+                        <van-icon name="star" class="star" />
+                        <span>{{infoData.group_name}}</span>
                     </div>
                 </div>
             </div>
-            <div class="tab-bar">
-                <a href="javascript:;" @click="tab(index,item)"
-                    :key="index"
-                    v-for="(item,index) in MemberData"
-                    :class="{active : index===curId}"
-                >
-                    <span class="icon_box"></span>
-                    <span>{{item.groupname}}</span>
-                </a>
-                <div class="line_box"></div>
+        </div>
+        <van-tabs v-model="vipLv" color="#FFC261" class="tabs" @click="changeTab">
+            <van-tab v-for="(item,index) in vipList" :key="index" :title="item.groupname+'会员'">
+                <div class="mt-30 fs_30 c_33">选择开通时长</div>
+                <div class="sel-year-box mt-30 df df-r df-w-w">
+                    <div v-for="(itm,idx) in item.buy_price" :key="idx" @click="selYear=idx" class="sel-year c_ashen df ai-c just-c-ct" :class="{active:selYear==idx}">
+                        <div class="df df-r ai-e">
+                            <span class="fs_30">￥</span>
+                            <span class="fs_50">{{itm.point}}/</span>
+                            <span class="fs_30">{{itm.num==1?"":itm.num}}{{itm.type=="year"?"年":""}}</span>
+                        </div>
+                    </div>
+                    <div class="html fs_30 c_33" v-html="item.describe"></div>
+                </div>
+            </van-tab>
+        </van-tabs>
+        <div class="tequan mt-40 c_33">
+            <div class="tt fs_36 df ai-c just-c-ct">会员专享特权</div>
+            <div class="tq-box mt-30 df df-r df-w-w">
+                <div class="tq-item df df-r ai-c just-c-ct">
+                    <img src="~@/assets/member/i1.png" class="img" />
+                    <div>
+                        <div class="fs_28">功能免费</div>
+                        <div class="fs_22 c_ashen mt_20">不限次数、类型使用</div>
+                    </div>
+                </div>
+                <div class="tq-item df df-r ai-c just-c-ct">
+                    <img src="~@/assets/member/i2.png" class="img" />
+                    <div>
+                        <div class="fs_28">在线指导</div>
+                        <div class="fs_22 c_ashen mt_20">一对一在线指导</div>
+                    </div>
+                </div>
+                <div class="tq-item df df-r ai-c just-c-ct">
+                    <img src="~@/assets/member/i3.png" class="img" />
+                    <div>
+                        <div class="fs_28">策划制作</div>
+                        <div class="fs_22 c_ashen mt_20">一次专属策划制作</div>
+                    </div>
+                </div>
+                <div class="tq-item df df-r ai-c just-c-ct">
+                    <img src="~@/assets/member/i4.png" class="img" />
+                    <div>
+                        <div class="fs_28">优先使用</div>
+                        <div class="fs_22 c_ashen mt_20">新模板上线提醒</div>
+                    </div>
+                </div>
             </div>
         </div>
-        <!-- 选项卡 -->
-        <div class="main2">
-            <div class="tab_content">
-                <div class="box">
-                    <ul>
-                        <li v-for="(item,index) in this.MoneyData" :key="index" @click="Sel_list(index,item)">
-                            <p class="money_box" v-if="curId===0"> <img src="~@/assets/member/member_new1.png" alt /></p>
-                            <p class="money_box" v-else> <img src="~@/assets/member/member_new2.png" alt /> </p>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="member_box c_33 fs_28">
-                <div class="member_box_content">
-                    <div v-html="this.describe"></div>
-                </div>
-            </div>
+        <div class="bot-height"></div>
+        <div class="bot-box df df-r">
+            <div class="money f1 fs_40 df ai-c just-c-ct">￥{{moneyData.point}} / {{moneyData.num==1?"":moneyData.num}}{{moneyData.type=="year"?"年":""}}</div>
+            <div class="buybtn f1 fs_40 c_ff df ai-c just-c-ct" @click="buy">立即购买</div>
         </div>
-        <van-tabbar v-model="Active" v-show="isShow" class="bottom_main" fixed active-color="#E13E3F">
-            <van-tabbar-item class="c_33">
-                <p class="time">{{this.LastName}}</p>
-                <p class="btm">
-                    <span class="span btm_money">{{this.Lastmoney}}</span>
-                    <span class="span"> {{this.Last_danwei}}</span>
-                </p>
-            </van-tabbar-item>
-            <!-- <van-tabbar-item @click="Give_friends()" icon>
-                <van-button size="small" type="info" color="#FA7D00" round>赠送好友</van-button>
-            </van-tabbar-item> -->
-            <van-tabbar-item @click="selYear" icon>
-                <van-button size="small" color="#FA7D00" round>立即抢购</van-button>
-                <!-- <button class="buying_btn">立即抢购</button> -->
-            </van-tabbar-item>
-        </van-tabbar>
-        <van-popup round class="pay_btn" v-model="Payshow">
-            <div class="pay_main">
-                <van-radio-group v-model="radio">
-                    <van-cell-group>
-                        <van-cell title="微信支付" icon="chat" clickable>
-                            <van-radio slot="right-icon" checked-color="#FA7D00" name="WX" />
-                        </van-cell>
-                        <!-- <van-cell title="账户余额" icon="card" clickable>
-                            <van-radio slot="right-icon" checked-color="#FA7D00" name="Balance" />
-                        </van-cell>-->
-                    </van-cell-group>
-                </van-radio-group>
-                <div class="pay_Sign_btn df ai-c just-c-ct" @click="confirmPay()">
-                    <button>确认支付</button>
-                </div>
-            </div>
-        </van-popup>
-        
-        <van-popup v-model="showSelYear" position="bottom">
-            <div class="df df-c just-c-ct">
-                <div class="ht-60 df df-r ai-c just-c-bet fs_28">
-                    <span @click="showSelYear=false">取消</span>
-                    <span class="c_blue" @click="selYearOk">确定</span>
-                </div>
-                <van-radio-group v-model="active" class="sel-year">
-                    <van-radio v-for="(item,index) in MoneyData" :key="index" :name="index" class="sel-year-radio" checked-color="#FA7D00">{{ item.money+item.danwei+" / "+item.num+item.type2}}</van-radio>
-                </van-radio-group>
-            </div>
-        </van-popup>
-        <!-- <GiveFriendPopup ref="selectfood"></GiveFriendPopup> -->
-        <!-- 漂浮菜单 -->
-        <!-- <BackHome></BackHome> -->
+
+        <!-- 使用优惠券 -->
         <van-popup v-model="showQuan" position="bottom">
             <div class="sel-quan-list df df-c ai-c just-c-ct">
                 <div class="ht-60 df df-r ai-c just-c-bet fs_28">
                     <span @click="showQuan=false">取消</span>
                     <span class="c_blue" @click="selQuanOk">确定</span>
                 </div>
-                <ul class="list-box f1 df df-c ai-c">
+                <ul class="list-box f1 df df-c">
                     <li v-for="(val,index) in quanList" :key="index" @click="selQuan(val,index)">
                         <div class="item df df-r ai-c just-c-bet" :class="{odd:index%2, c_y:index%2, c_blue:index%2==0}">
                             <div class="left df df-c ai-c just-c-ct fs_26">
@@ -132,44 +107,25 @@
 
 <script>
 import { Toast } from "vant";
-import HeadNav from "../components/HeadNav"; //头部菜单
 import axios from "../utils/axios";
 import wx from "weixin-js-sdk";
 
 // import BackHome from "../components/BackHome"; //漂浮菜单
 export default {
     name: "",
-    components: { HeadNav },
     data() {
         return {
-            curId: 0,
-            describe: "", //会员组描述
-            required_id: "", //会员组
-            Payshow: false,
-            inforData: [],
-            MemberData: [],
-            MoneyData: [],
-            radio: "WX",
-            HeaderBool: false,
-            MoneyBool: "A",
-            isShow: true,
-            Active: 0,
-            LastName: "",
-            Lastmoney: "",
-            Last_danwei: "",
-            prdoct_num: "",
-            prdoct_danwei: "",
-            payType: "",
-            num1: "",
-            isGive: 0,
-            showDlg: false,
-            page_id: "",
-            member_name: "",
-            End_time: null,
-            isbuy: "",
-            group_id: "",
-            dis_bool: false,
-            
+            id: null,
+            // vip等级
+            vipList: [],
+            vipLv: 0, // 选中的选项卡下标
+            selYear: 0, // 选择年限的下标
+            moneyData: {}, // 选中的buy_price
+            required_id: 0, // 选中的会员级别
+
+            infoData: {}, // 用户信息
+            group_id: 0, // 用户会员级别
+            end_time: "", // 用户会员到期时间
             // 选择优惠券
             quanList: [],
             showQuan: false,
@@ -181,6 +137,22 @@ export default {
 
         };
     },
+    created() {
+        this.id = this.$route.query.page_id;
+        this.getData();
+    },
+    watch: {        
+        showQuan(val){
+            if(val){ this.quanId = null; this.quanIndex = ""; }
+        },
+        vipLv(val){
+            this.moneyData = this.vipList[val].buy_price[this.selYear];
+            this.required_id = this.vipList[val].id;
+        },
+        selYear(val){
+            this.moneyData = this.vipList[this.vipLv].buy_price[val];
+        }
+    },
     methods: {
         getData() {
             // 获取会员列表
@@ -190,127 +162,45 @@ export default {
                 if(data.err!=0){return;}
                 // 暂无更好级别会员
                 if(data.data.length == 0){return}
-                var JsonData = data.data;
-                this.isbuy = JsonData[0].is_buy;
-                this.describe = JsonData[0].describe; //会员描述第一个
-                this.MemberData = JsonData;
-                let first_JsonData = []; //存放结算订单第一个的数组
-                let index_num = "";
-                for (let i in JsonData) {
-                    if (this.page_id == JsonData[i].id) {
-                        index_num = i;
-                        this.curId = i;
-                        return;
-                    }
-                }
-                if (!this.page_id) {
-                    this.MoneyData = JsonData[0].buy_price;
-                    this.required_id = JsonData[0].id; //默认第一个id
-                    first_JsonData = this.MoneyData[0];
-                } else {
-                    this.MoneyData = JsonData[index_num].buy_price;
-                    this.required_id = this.page_id;
-                    first_JsonData = this.MoneyData[0];
-                }
-                for (let i in this.MoneyData) {
-                    if (this.MoneyData[i].type == "year") {this.MoneyData[i]["type2"] = "年";}
-                    if (this.MoneyData[i].type == "month") {this.MoneyData[i]["type2"] = "月";}
-                    if (this.MoneyData[i].type == "day") {this.MoneyData[i]["type2"] = "日";}
-                    this.MoneyData[i]["Last_danwei"] = "/" + this.MoneyData[i]["type2"];
-                    this.MoneyData[i]["month"] = this.MoneyData[i].num + this.MoneyData[i]["type2"]; //几年
-                    this.MoneyData[i]["money"] = this.MoneyData[i].point; //积分或钱钱
-                    this.MoneyData[i]["danwei"] = this.MoneyData[i].point_unit; //单位
-                    this.MoneyData[i]["Average"] = (this.MoneyData[i].point / this.MoneyData[i].num).toFixed(2) + "/" + this.MoneyData[i]["type2"]; // 平均数
-                }
-                // 默认选中第一
-                if (!first_JsonData) {
-                    this.LastName = "";
-                    this.Lastmoney = "";
-                    this.Last_danwei = "";
-                    this.prdoct_num = "";
-                    this.prdoct_danwei = "";
-                } else {
-                    this.LastName = first_JsonData.month + "会员";
-                    this.Lastmoney = "￥" + first_JsonData.money;
-                    this.Last_danwei = first_JsonData.Last_danwei;
-                    this.prdoct_num = first_JsonData.num; //时长
-                    this.prdoct_danwei = first_JsonData.type; //时长
+                this.vipList = data.data;
+                this.required_id = this.vipList[this.vipLv].id;
+                if(this.vipList[this.vipLv].buy_price.length){
+                    this.moneyData = this.vipList[this.vipLv].buy_price[this.selYear];
                 }
             });
 
             axios({
                 url: "/member/Apimember/member_getInfo"
             }).then((data)=>{
-                let JsonData = data.data;
-                this.group_id = JsonData.group_id;
-                if (JsonData.endtime == 0) {
-                    this.End_time = 0;
-                } else {
-                    let date= new Date(JsonData.endtime*1000);
-                    this.End_time = date.toISOString().slice(0,10) + " " + date.toTimeString().slice(0,5);
+                if(data.err!==0){return;}
+                this.group_id = data.data.group_id;
+                if (data.data.endtime != 0){
+                    let date= new Date(data.data.endtime*1000);
+                    this.end_time = date.toISOString().slice(0,10) + " " + date.toTimeString().slice(0,5);
                 }
-                if (data.data.group_name == "") { JsonData.group_name = "普通会员"; }
-                this.inforData = JsonData;
+                if (data.data.group_name == "") { data.data.group_name = "普通会员"; }
+                this.infoData = data.data;
             })
         },
-        Give_friends() {
-            if (this.LastName!="" && this.Lastmoney!="" && this.Last_danwei!="") {
-                // this.Payshow = true;                
-                this.isGive = 1;
-                this.confirmPay();
-            }
-        },
-        // 设置会员期限
-        selYear(){
-            if(this.MoneyData.length && this.MoneyData.length>1){
-               this.showSelYear = true;
-            }else{
-                this.buy();
-            }
-        },
-        selYearOk(){
-            this.showSelYear = false;
-            this.Sel_list(this.active,this.MoneyData[this.active]);
-            this.buy();
-        },
-        Sel_list(index,item) {
-            this.prdoct_num = item.num; //购买时长
-            this.prdoct_danwei = item.type; //购买时长单位
-            // this.active = index;
-            this.LastName = item.month + "会员";
-            this.Lastmoney = "￥" + item.money;
-            this.Last_danwei = item.Last_danwei;
-        },
-        // 选择优惠券
-        selQuan(val,index){
-            if(this.quanId === val.id){
-                this.quanIndex = null;
-                this.quanId = "";
-            }else{
-                this.quanIndex = index;
-                this.quanId = val.id;
-            }
-        },
-        selQuanOk(){
-            this.showQuan = false;
-            if (this.LastName != "" && this.Lastmoney != "" && this.Last_danwei != "") {
-                this.radio = "WX";
-                // this.Payshow = true;
-                this.isGive = 0;
-                this.confirmPay();
-            }
-        },
         confirmPay() {
-            this.Payshow = false;
+            // alert(JSON.stringify({
+            //     id: this.required_id,
+            //     interval: this.moneyData.num,
+            //     interval_unit: this.moneyData.type,
+            //     isGive: 0,
+            //     pay_type: "WX",
+            //     repeat: 1,
+            //     couponid: this.quanId,
+            // }))
             // 确认支付
             axios({
                 url: "/member/Apimember/member_group_pay",
                 params: {
                     id: this.required_id,
-                    interval: this.prdoct_num,
-                    interval_unit: this.prdoct_danwei,
-                    isGive: this.isGive,
-                    pay_type: this.radio,
+                    interval: this.moneyData.num,
+                    interval_unit: this.moneyData.type,
+                    isGive: 0,
+                    pay_type: "WX",
                     repeat: 1,
                     couponid: this.quanId,
                 }
@@ -338,90 +228,93 @@ export default {
                     });
                     this.getData();
                 }
-            })
+            });
         },
         buy() {
-            // console.log(this.required_id); //选项卡选中时的id
-            // console.log(this.group_id); // 当前会员级别
             if (this.required_id < this.group_id) {
                 Toast("无法购买低级别会员");
             } else {
+                // alert(JSON.stringify({
+                //     groupid: this.required_id,
+                //     price: this.moneyData.point,
+                // }))
                 axios({
                     url: "/coupon/Apicoupon/member_use_coupon_list_no_page",
                     params: {
                         groupid: this.required_id,
-                        price: this.MoneyData[this.active].money,
+                        price: this.moneyData.point,
                     }
                 }).then((data)=>{
                     if(!data.data || data.data.length==0){
-                        if (this.LastName != "" && this.Lastmoney != "" && this.Last_danwei != "") {
-                            this.radio = "WX";
-                            // this.Payshow = true;
-                            this.isGive = 0;
-                            this.confirmPay();
-                        }
+                        this.confirmPay();
                     }else{
                         this.showQuan = true;
                         this.quanList = data.data;
                     }
-                    ////
                 })
                 return;
             }
         },
-        // vip or svip
-        tab(index,item) {
-            // this.sel_group_id = id;
-            this.isbuy = item.is_buy;
-            this.active = 0;
-            this.required_id = item.id;
-            this.describe = item.describe;
-            this.curId = index;
-            this.MoneyData = this.MemberData[index].buy_price;
-            for (let i in this.MoneyData) {
-                this.MoneyData[i]["isbuy"] = this.MemberData[index].is_buy;
-                if (this.MoneyData[i].type == "year") { this.MoneyData[i]["type2"] = "年"; }
-                if (this.MoneyData[i].type == "month") { this.MoneyData[i]["type2"] = "月"; }
-                if (this.MoneyData[i].type == "day") { this.MoneyData[i]["type2"] = "日"; }
-                this.MoneyData[i]["Last_danwei"] = "/" + this.MoneyData[i]["type2"];
-                this.MoneyData[i]["month"] = this.MoneyData[i].num + this.MoneyData[i]["type2"]; //几年
-                this.MoneyData[i]["money"] = this.MoneyData[i].point; //积分或钱钱
-                this.MoneyData[i]["danwei"] = this.MoneyData[i].point_unit; //单位
-                this.MoneyData[i]["Average"] = (this.MoneyData[i].point / this.MoneyData[i].num).toFixed(2) + "/" + this.MoneyData[i]["type2"]; // 平均数
-            }
-            if (this.MoneyData[0] == undefined) {
-                this.LastName = "";
-                this.Lastmoney = "";
-                this.Last_danwei = "";
-                Toast("该会员组暂无内容");
-            } else {
-                this.LastName = this.MoneyData[0].month + "会员";
-                this.Lastmoney = "￥" + this.MoneyData[0].money;
-                this.Last_danwei = this.MoneyData[0].Last_danwei;
-                this.prdoct_num = this.MoneyData[0].num; //时长
-                this.prdoct_danwei = this.MoneyData[0].type; //时长
+        // 切换vip
+        changeTab(){
+            this.selYear = 0;
+        },
+        // 选择优惠券
+        selQuan(val,index){
+            if(this.quanId === val.id){
+                this.quanIndex = null;
+                this.quanId = "";
+            }else{
+                this.quanIndex = index;
+                this.quanId = val.id;
             }
         },
-    },
-    watch:{
-        showQuan(val){
-            if(val){
-                this.quanId = null;
-                this.quanIndex = "";
+        selQuanOk(){
+            this.showQuan = false;
+            if (this.LastName != "" && this.Lastmoney != "" && this.Last_danwei != "") {
+                this.radio = "WX";
+                // this.Payshow = true;
+                this.isGive = 0;
+                this.confirmPay();
             }
-        }
+        },
+        back(){
+            this.$router.go(-1);
+        },
     },
-    created() {
-        this.page_id = this.$route.query.page_id;
-        this.getData();
-    }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.sel-year{padding:0.2rem 0.5rem 0.1rem;}
-.sel-year .sel-year-radio{margin-bottom:0.3rem;}
+.top{background:url(~@/assets/member/topbg.png) no-repeat center top; background-size:100% auto;}
+.top .nav{height:1.2rem;}
+.top .back-btn{width:0.32rem; margin:0 0.2rem;}
+.top .nav-txt{padding-right:0.72rem;}
+.top .card{box-sizing:border-box; width:7.1rem; height:3.5rem; padding:0 0.6rem; margin-left:auto; margin-right:auto; border-radius:0.3rem; background:url(~@/assets/member/bg.png) no-repeat; background-size:100% 100%;}
+.top .card .img{width:1.6rem; height:1.6rem; border-radius:50%;}
+.top .card .r-box{margin-left:0.3rem;}
+.top .card .star{margin-right:0.1rem;}
+
+.tabs{width:6.4rem; margin-left:auto; margin-right:auto;}
+.tabs .sel-year{box-sizing:border-box; width:3rem; height:1.8rem; border:1px solid #D4D9E7; border-radius:0.1rem; margin:0 0.07rem 0.2rem;}
+.tabs .sel-year.active{color:#EAC66B; border-color:#EAC66B; background:#fffbf1;}
+.tabs .sel-year .fs_50{line-height:0.5rem;}
+.tabs .html{height:100%;}
+.tabs .html>>>p{box-sizing:border-box; width:100%; font-size:0.3rem; color:#333333;}
+.tabs .html>>>img{width:100%; height:auto;}
+
+.tequan{width:6.8rem; margin-left:auto; margin-right:auto;}
+.tequan .tt{width:4rem; height:0.6rem; margin:auto; background:url(~@/assets/member/tt.png) no-repeat center center; background-size:100% 40%;}
+.tequan .tq-box .tq-item{width:50%; margin-bottom:0.2rem;}
+.tequan .tq-box .tq-item .img{width:0.72rem; height:0.72rem; margin-right:0.2rem;}
+
+.bot-height{height:1.3rem;}
+
+.bot-box{position:fixed; bottom:0; left:0; height:1.2rem; width:100%; background:#424242 linear-gradient(#424242, #585858); border-radius:0.6rem 0 0 0;}
+.bot-box .money{height:100%; color:#E3BC65;}
+.bot-box .buybtn{border-radius:0.6rem 0 0 0; background:#E3BC65;}
+
 .sel-quan-list{padding:0.2rem 0; height:8rem; overflow-y:auto;}
 .ht-60{width:7.1rem; margin:auto; height:0.6rem; padding-bottom:0.2rem;}
 .list-box{width:7.1rem; height:7.2rem; overflow-y:auto; margin:auto;}
@@ -455,344 +348,4 @@ export default {
     line-height: 0.3rem;
 }
 
-.van-nav-bar {
-  background-color: #eee;
-  /* letter-spacing: 0.1rem; */
-}
-.van-nav-bar__title {
-  color: #000;
-}
-.van-nav-bar .van-icon {
-  color: #000;
-}
-#app {
-  border: 1px solid transparent;
-}
-
-.header_box {
-  width: 100%;
-  margin: 0 auto;
-  margin-top: 46px;
-  background: #297fff url("~@/assets/member/member_bg.png") no-repeat center center/cover;
-}
-.header_cont {
-  width: 90%;
-  height: 3.4rem;
-  margin:auto;
-}
-.header_left{margin-right: 0.4rem;}
-.header_left img {
-  width: 1.4rem;
-  height: 1.4rem;
-  border-radius: 50%;
-}
-.header_right {
-  width: 5.5rem;
-}
-.header_right .nickname {
-  font-size: 0.32rem;
-  font-family: MicrosoftYaHei;
-  font-weight: bold;
-}
-.header_right p {
-  /* height: 0.23rem; */
-  height: 0.4rem;
-  line-height: 0.35rem;
-  font-size: 0.22rem;
-  font-family: MicrosoftYaHei;
-  font-weight: 400;
-  /* color: #fa7d00; */
-  color: #fff;
-}
-
-.tab-bar {
-  width: 90%;
-  margin: 0 auto;
-  display: flex;
-  border-radius: 0.2rem;
-  position: relative;
-}
-/* 中间横线 */
-.line_box {
-  width: 1px;
-  height: 1rem;
-  background-color: #fff;
-  position: absolute;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  margin: auto;
-  z-index: 99;
-}
-
-.tab-bar a:first-child {
-  margin-left: 0;
-}
-.tab-bar a {
-  width: 100%;
-  /* height: 1rem;
-  line-height: 1rem; */
-  height: 1.5rem;
-  line-height: 2rem;
-  text-align: center;
-  font-size: 0.26rem;
-  text-decoration: none;
-  /* border-radius: 0.2rem; */
-  /* border: 2px solid rgba(151, 151, 159, 1); */
-  position: relative;
-  z-index: 5;
-  /* color: #000; */
-  color: #fff;
-  /* background: #edeaea; */
-  background-image: url("~@/assets/member/vip_iconA.png");
-  background-repeat: no-repeat;
-  background-size: 0.7rem 0.7rem;
-  background-position: 50% 0;
-  background-color: #398af6;
-}
-.icon_box img {
-  width: 0.7rem;
-  height: 0.7rem;
-  position: absolute;
-  left: 50%;
-  margin-left: -0.35rem;
-  top: 0.1rem;
-}
-.tab-bar i {
-  height: 1rem;
-  line-height: 1rem;
-}
-.tab-bar .active {
-  z-index: 50;
-  /* background-color: #fff; */
-  background-color: #398af6;
-  border-bottom: none;
-  background-image: url("~@/assets/member/vip_iconB.png");
-  background-repeat: no-repeat;
-  background-size: 0.7rem 0.7rem;
-  background-position: 50% 0;
-}
-.clearfix {
-  zoom: 1;
-}
-.clearfix:after {
-  display: block;
-  content: "";
-  clear: both;
-}
-/* 选项卡内容 */
-.tab_content {
-  width: 98%;
-  margin: 0 auto;
-  /* margin-left: 0.2rem; */
-  border-bottom: 0.03rem solid #f4f6fa;
-}
-.tab_content .time {
-  width: 100%;
-  font-size: 0.3rem;
-  height: 1rem;
-  line-height: 1rem;
-  font-family: MicrosoftYaHei;
-  font-weight: 400;
-  color: rgba(20, 20, 24, 1);
-  background-color: #fff;
-  padding: 0 0.1rem;
-  position: relative;
-  top: -0.2rem;
-  left: -0.2rem;
-  z-index: 999;
-}
-
-ul {
-  white-space: nowrap;
-  /* overflow-x: auto; */
-  width: 100%;
-  margin: 0 auto;
-}
-ul::-webkit-scrollbar {
-  display: none;
-}
-ul li {
-  display: inline-block;
-  width: 100%;
-  margin: 0 auto;
-  /* height: 1.8rem;
-    line-height: 1.8rem; */
-  /* background-color: #56ccf2; */
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  /* border-radius: 20px; */
-  /* margin-right: 0.08rem; */
-  font-family: MicrosoftYaHei;
-  font-weight: 400;
-  text-align: center;
-  border-radius: 10%;
-}
-.mouth {
-  font-size: 0.3rem;
-  color: #141418;
-  margin-top: 0.5rem;
-}
-.money_box span {
-  color: #fff;
-  font-size: 0.6rem;
-  font-weight: bold;
-}
-.money_box img {
-  width: 90%;
-  height: 100%;
-  border-radius: 0.5rem;
-  margin-bottom: 0.3rem;
-}
-.money_box .money {
-  color: #fa7d00;
-  font-size: 0.6rem;
-  font-weight: bold;
-}
-.one_money {
-  color: #97979f;
-  padding-top: 0.2rem;
-  font-size: 0.3rem;
-}
-/* 当前选中的样式 */
-/* .addclass {
-  background: rgba(255, 250, 245, 1);
-  border: 2px solid #fa7d00;
-} */
-.member_box {
-  width: 7.5rem;
-  margin: 0.05rem auto 1.5rem auto;
-  box-sizing: border-box;
-}
-.member_box h1 {
-  font-size: 0.3rem;
-  height: 0.7rem;
-  line-height: 0.7rem;
-  text-align: center;
-  font-family: MicrosoftYaHei;
-  font-weight: bold;
-  color: #141418;
-}
-.member_box_content {
-  width: 7.5rem;
-  margin: 0.2rem auto;
-  box-sizing: border-box;
-  overflow: hidden;
-  padding: 0.1rem;
-}
-.member_box_content >>> p {
-  width: 100%;
-}
-.member_box_content >>> img {
-  width: 95%;
-  object-fit: cover;
-  margin: 0 auto;
-  text-align: center;
-}
-.bottom_main {
-  border-top: 2px solid #e8ebf0;
-}
-.bottom_main .buying_btn {
-  width: 2.1rem;
-  text-align: center;
-  height: 0.7rem;
-  color: #fff;
-  line-height: 0.7rem;
-  background: rgba(250, 125, 0, 1);
-  border-radius: 40px;
-  font-size: 0.3rem;
-  font-family: MicrosoftYaHei;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 1);
-}
-.bottom_main .time {
-  font-size: 0.22rem;
-  font-family: MicrosoftYaHei;
-  font-weight: 400;
-  color: #141418;
-}
-.bottom_main .btm {
-  margin-top: 0.15em;
-}
-.bottom_main .span {
-  color: #97979f;
-}
-.bottom_main .btm_money {
-  font-size: 0.3rem;
-  font-family: MicrosoftYaHei;
-  font-weight: 400;
-  color: #fa7d00;
-}
-.pay_main {
-  width: 90%;
-  margin: 0 auto;
-  padding: 0.1rem 0;
-}
-.pay_btn {
-  width: 87%;
-  box-sizing: border-box;
-  border-radius: 0.5rem;
-}
-.pay_content {
-  width: 6.9rem;
-  margin: 0 auto;
-  padding: 0.3rem;
-  display: flex;
-}
-.pay_con_left {
-  width: 2.06rem;
-}
-.pay_con_left img {
-  width: 2.06rem;
-  height: 1.48rem;
-}
-.pay_con_right {
-  width: 5.05rem;
-  font-size: 28px;
-  padding-top: 0.15rem;
-  padding-left: 0.15rem;
-  font-family: MicrosoftYaHei;
-  font-weight: 400;
-}
-.pay_con_right h1 {
-  font-size: 0.28rem;
-  color: #141418;
-}
-.pay_con_right h2 {
-  font-size: 0.28rem;
-  color: #fa7d00;
-  margin-top: 0.7rem;
-}
-.pay_Sign_btn {
-  width: 3.5rem;
-  margin: 0.2rem auto;
-  height: 0.7rem;
-  background: rgba(250, 125, 0, 1);
-  border-radius: 0.5rem;
-  text-align: center;
-  line-height: 0.6rem;
-}
-.pay_Sign_btn button {
-  font-size: 0.3rem;
-  color: #fff;
-  background: rgba(250, 125, 0, 1);
-}
-.main2 {
-  width: 95%;
-  padding: 0.1rem 0;
-  margin: 0.3rem auto;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-.main2 h1 {
-  font-size: 0.4rem;
-  font-weight: bold;
-  text-align: center;
-  color: #8d8585;
-}
-#app >>> .van-notice-bar {
-  background-color: transparent;
-}
 </style>

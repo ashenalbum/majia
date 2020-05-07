@@ -8,16 +8,7 @@ export default new Router({
     // mode: 'history',
     routes: [{
         path: '/', redirect: '/pay_list'
-    },
-    
-    {
-
-        path: '/sjhy',
-        meta: { title: "测试升级会员"},
-        component: (resolve) =>require(['@/page/_testMember.vue'],resolve)
-    },
-
-    {
+    },{
         path: '/all_path',
         name: 'AllPath',
         component: AllPath

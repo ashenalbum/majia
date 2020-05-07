@@ -78,7 +78,7 @@
                     <span @click="showQuan=false">取消</span>
                     <span class="c_blue" @click="selQuanOk">确定</span>
                 </div>
-                <ul class="list-box f1 df df-c ai-c">
+                <ul class="list-box f1 df df-c ">
                     <li v-for="(val,index) in quanList" :key="index" @click="selQuan(val,index)">
                         <div class="item df df-r ai-c just-c-bet" :class="{odd:index%2, c_y:index%2, c_blue:index%2==0}">
                             <div class="left df df-c ai-c just-c-ct fs_26">
@@ -147,8 +147,8 @@ export default {
             group_id: 0, // 用户会员级别
             end_time: "", // 用户会员到期时间
             // 选择优惠券
-            quanList: [],
-            showQuan: false,
+            quanList: [123,123],
+            showQuan: true,
             quanId: null,
             quanIndex: "",
             // 选择几年会员

@@ -41,7 +41,7 @@ service.interceptors.response.use(
         if(data.err===0){
             return data;
         }else if(data.code==10207){
-            Toast(data.content);
+            // Toast(data.content);
             setTimeout(() => {
                 let route = window.location.href.split("#")[1];
                 window.location.href = window.baseUrl + '/public/index.php/activity/info/index?file='+route;
@@ -52,7 +52,7 @@ service.interceptors.response.use(
         return data;
     },
     error => {
-        Toast("error");
+        // Toast("error");
         return Promise.reject(error);
     }
 );

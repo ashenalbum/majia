@@ -53,6 +53,10 @@
                     <span>兑换时间</span>
                     <span>{{getTime(data.finish_time)}}</span>
                 </div>
+                <div v-for="(item,index) in form_info" :key="index" class="mt-20 df df-r ai-c just-c-bet fs_24 c_ashen">
+                    <span>{{item.write_name}}</span>
+                    <span>{{item.value}}</span>
+                </div>
             </div>
         </div>
         <div class="location" v-if="data.content && data.content.lenth">
@@ -157,6 +161,7 @@ export default {
             data: {},
             imgUrl: "",
             pay_info: [],
+            form_info: [],
 
             showKd: false,
             kdgs: "",
@@ -187,6 +192,7 @@ export default {
                 if(data.err!=0){return}
                 this.data = data.data;
                 this.pay_info = data.pay_info;
+                this.form_info = data.data.content;
                 this.createEwm();
             })
         },

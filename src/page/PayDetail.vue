@@ -253,7 +253,7 @@ export default {
     beforeRouteUpdate(to,from,next){
         next();
         // this.$router.go(0);
-        window.location.reload();
+        if(to.query.id!=from.query.id){window.location.reload();}
     },
     created(){
         this.urlQuery = this.$route.query;
@@ -275,7 +275,10 @@ export default {
         getData(){
             axios({
                 url: "/activity/Apiactivity/previewTemplateInfo",
-                params: {activity_id: this.id}
+                params: {
+                    activity_id: this.id,
+                    ...this.$route.query,
+                }
             }).then((data)=>{
                 if(data.err!=0){return}
                 this.data = data.data;
@@ -448,7 +451,11 @@ export default {
         buyNext(){
             if(this.data.spec_content.length && this.data.spec_content[this.guigeId].stock<this.buyNum){Toast("当前规格库存不足");return}
             this.showGuige = false;
-            this.showUserInfo = true;
+            if(this.buyFormLs.length){
+                this.showUserInfo = true;
+            }else{
+                this.buySubmit();
+            }
         },
         // 点击购买
         buyBtnClick(){
@@ -459,7 +466,6 @@ export default {
                 if((!this.buyFormLs)|| this.buyFormLs.length==0){
                     this.buySubmit();
                 }else{
-                    
                     this.showUserInfo = true;
                 }
             }else{
@@ -470,6 +476,7 @@ export default {
         buySubmit(){
             for(let i in this.buyFormLs){
                 let name = this.buyFormLs[i].name;
+                if(this.buyFormLs[i].is_required!=0){continue;}
                 if(!this.buyFormData[name]){Toast(this.buyFormLs[i].write_explain);return}
                 if(name=="mobile" && !/^1\d{10}$/.test(this.buyFormData[name])){Toast("请输入正确的手机号");return}
             }

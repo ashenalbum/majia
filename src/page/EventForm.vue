@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="formbox formbox1 shadow">
-            <div class="fs_20 c_red">活动上线需要审核哦，请您先编辑活动信息，然后联系客服{{kefu}}}帮您启动活动</div>
+            <div class="fs_20 c_red">活动上线需要审核哦，请您先编辑活动信息，然后联系客服(客服微信：{{kefu}}）帮您启动活动<span id="kefu" :data-clipboard-text="kefu" class="txt_line">点击复制微信号</span></div>
             <div class="mt-30 title fs_32 c_33"><span class="c_red"> *</span>活动标题</div>
             <van-field v-model="formData.title" @focus="inputFocusSel" placeholder="请输入主标题" class="form-input pl-4" />
             <van-field v-model="formData.subhead" @focus="inputFocusSel" placeholder="请输入副标题" class="form-input pl-4" />
@@ -146,7 +146,7 @@
         <van-action-sheet v-model="hyShow" :actions="hyData" @select="selHy" />
         <!-- 选择时间 -->
         <van-popup v-model="showSelTime" position="bottom">
-            <van-datetime-picker v-model="nowDate" @confirm="selTimeOk" @cancel="showSelTime=false" type="datetime"/>
+            <van-datetime-picker v-model="nowDate" @confirm="selTimeOk" @cancel="showSelTime=false" type="date"/>
         </van-popup>
         <!-- 添加规格 -->
         <van-popup v-model="showGuige" position="bottom">
@@ -241,6 +241,7 @@
 import {Toast,Dialog} from "vant";
 import {upFile} from "../utils/axios";
 import axios from "../utils/axios";
+import Clipboard from 'clipboard';
 // import vuedraggable from 'vuedraggable';
 
 export default {
@@ -322,6 +323,11 @@ export default {
         this.getTopImg();
         this.getKefu();
     },
+    mounted(){
+        let kefu = new Clipboard("#kefu");
+        kefu.on('success', ()=>{Toast("复制成功"); this.showOperate=false});
+        kefu.on('error', ()=>{Toast("复制失败"); this.showOperate=false});
+    },
     methods: {
         // 提交表单
         checkForm(){
@@ -402,7 +408,7 @@ export default {
             axios({
                 url: "/activity/Apiactivity/getSystemService"
             }).then((data)=>{
-                this.kefu = "（微信号："+data.service_wx+"）";
+                this.kefu = data.service_wx;
             })
         },
         // 获取行业
@@ -527,14 +533,20 @@ export default {
         // 确定选择时间
         selTimeOk(date){
             this.showSelTime = false;
-            this.formData[this.focusName] = date.toISOString().slice(0,10) + " " + date.toTimeString().slice(0,5);
+            console.log(date);
+            let y = date.getFullYear();
+            let m = date.getMonth()+1;
+            m = m<10?"0"+m:m;
+            let d = date.getDate();
+            d = d<10?"0"+d:d;
+            this.formData[this.focusName] = y+"-"+m+"-"+d;// + " " + date.toTimeString().slice(0,5);
         },
         // 格式化时间
         setTime(time){
             let date = new Date(time*1000);
             let ymd = date.toISOString().slice(0,10);
-            let hm = date.toTimeString().slice(0,5);
-            return ymd + " " + hm;
+            // let hm = date.toTimeString().slice(0,5);
+            return ymd;// + " " + hm;
         },
         // 切换内容类型
         changeDetailType(id){
@@ -631,6 +643,7 @@ export default {
 }
 </script>
 <style scoped>
+.txt_line{padding-left:5px;}
 .w_62{width:6.2rem; margin-left:auto; margin-right:auto;}
 .fs_14px{font-size:14px;}
 .cont{background:#F6F5F8;}
@@ -696,6 +709,7 @@ export default {
 .detail-list .videobox{position:relative; width:100%; height:3.2rem; margin-left:auto; margin-right:auto;}
 .detail-list .imgbox .img{width:100%;}
 .detail-list .videobox .video{width:100%; height:100%; background:#000;}
+.detail-inputbox{margin-bottom:0.2rem;}
 .detail-inputbox .input{border:1px solid #CCD0DD;}
 .detail-inputbox .upfile{border:1px solid #CCD0DD; width:4.82rem; height:2.1rem;}
 

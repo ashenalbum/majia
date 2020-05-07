@@ -103,6 +103,7 @@ html,body{height:100%;}
 .f1{flex:1;}
 .one-hide{display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:1; overflow:hidden; text-overflow:ellipsis;}
 .two-hide{display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; text-overflow:ellipsis;}
+.txt_line{text-decoration:underline;}
 
 .van-radio__label{color:inherit!important;}
 .van-list__loading{width:100%;}

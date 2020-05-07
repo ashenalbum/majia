@@ -104,6 +104,8 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 this.sales_info = data.data;
+                this.btnTxt = data.poster_btn;
+                this.onswitch = Boolean(data.is_sales);
                 if(!(this.sales_info instanceof Array)){
                     this.sales_info = [];
                 }else if(this.sales_info.length==2){

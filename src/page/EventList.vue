@@ -1,6 +1,6 @@
 <template>
     <div class="cont df df-c">
-        <div class="top-alert fs_20 c_red">活动上线需要审核哦，请您先编辑活动信息，然后联系客服{{kefu}}帮您启动活动</div>
+        <div class="top-alert fs_20 c_red">活动上线需要审核哦，请您先编辑活动信息，然后联系客服(客服微信：{{kefu}}）帮您启动活动<span id="kefu" :data-clipboard-text="kefu" class="txt_line">点击复制微信号</span></div>
         <van-list
             v-model="loading"
             :finished="over"
@@ -100,6 +100,10 @@ export default {
         let copyDj = new Clipboard("#duijiang");
         copyDj.on('success', ()=>{Toast("复制成功"); this.showOperate=false});
         copyDj.on('error', ()=>{Toast("复制失败"); this.showOperate=false});
+
+        let kefu = new Clipboard("#kefu");
+        kefu.on('success', ()=>{Toast("复制成功"); this.showOperate=false});
+        kefu.on('error', ()=>{Toast("复制失败"); this.showOperate=false});
     },
     created(){
         this.getKefu();
@@ -126,7 +130,7 @@ export default {
             axios({
                 url: "/activity/Apiactivity/getSystemService"
             }).then((data)=>{
-                this.kefu = "（微信号："+data.service_wx+"）";
+                this.kefu = data.service_wx;
             })
         },
         // 操作
@@ -185,9 +189,10 @@ export default {
 }
 </script>
 <style scoped>
-.top-alert{width:6.7rem; padding-top:0.2rem; margin-left:auto; margin-right:auto;}
+.txt_line{padding-left:5px;}
+.top-alert{width:6.7rem; padding-top:0.3rem; margin-left:auto; margin-right:auto;}
 .dib{display:inline-block; white-space: nowrap;}
-.cont-list{width:6.7rem; margin:0 auto; padding-top:0.1rem;}
+.cont-list{width:6.7rem; margin:0.3rem auto 0; padding-top:0;}
 .cont-list .item{margin-bottom:0.4rem;}
 .cont-list .ware{padding:0.2rem 0; border-bottom:1px solid #E2E6F1;}
 .cont-list .ware .img{width:2.66rem; height:1.84rem;}

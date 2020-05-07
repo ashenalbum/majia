@@ -60,7 +60,7 @@
             <!-- <van-tabbar-item @click="Give_friends()" icon>
                 <van-button size="small" type="info" color="#FA7D00" round>赠送好友</van-button>
             </van-tabbar-item> -->
-            <van-tabbar-item @click="buy" icon>
+            <van-tabbar-item @click="selYear" icon>
                 <van-button size="small" color="#FA7D00" round>立即抢购</van-button>
                 <!-- <button class="buying_btn">立即抢购</button> -->
             </van-tabbar-item>
@@ -80,6 +80,18 @@
                 <div class="pay_Sign_btn df ai-c just-c-ct" @click="confirmPay()">
                     <button>确认支付</button>
                 </div>
+            </div>
+        </van-popup>
+        
+        <van-popup v-model="showSelYear" position="bottom">
+            <div class="df df-c just-c-ct">
+                <div class="ht-60 df df-r ai-c just-c-bet fs_28">
+                    <span @click="showSelYear=false">取消</span>
+                    <span class="c_blue" @click="selYearOk">确定</span>
+                </div>
+                <van-radio-group v-model="active" class="sel-year">
+                    <van-radio v-for="(item,index) in MoneyData" :key="index" :name="index" class="sel-year-radio" checked-color="#FA7D00">{{ item.money+item.danwei+" / "+item.num+item.type2}}</van-radio>
+                </van-radio-group>
             </div>
         </van-popup>
         <!-- <GiveFriendPopup ref="selectfood"></GiveFriendPopup> -->
@@ -140,7 +152,6 @@ export default {
             radio: "WX",
             HeaderBool: false,
             MoneyBool: "A",
-            active: "",
             isShow: true,
             Active: 0,
             LastName: "",
@@ -150,7 +161,7 @@ export default {
             prdoct_danwei: "",
             payType: "",
             num1: "",
-            isGive: "",
+            isGive: 0,
             showDlg: false,
             page_id: "",
             member_name: "",
@@ -158,12 +169,16 @@ export default {
             isbuy: "",
             group_id: "",
             dis_bool: false,
-            // zIndex: 999
+            
             // 选择优惠券
             quanList: [],
             showQuan: false,
             quanId: null,
             quanIndex: "",
+            // 选择几年会员
+            showSelYear: false,
+            active: 0,
+
         };
     },
     methods: {
@@ -173,11 +188,8 @@ export default {
                 url: "/member/Apimember/member_group_list",
             }).then((data)=>{
                 if(data.err!=0){return;}
-                if(data.data.length == 0){
-                    // 暂无更好级别会员
-                    console.log(data); 
-                    return;
-                }
+                // 暂无更好级别会员
+                if(data.data.length == 0){return}
                 var JsonData = data.data;
                 this.isbuy = JsonData[0].is_buy;
                 this.describe = JsonData[0].describe; //会员描述第一个
@@ -243,9 +255,31 @@ export default {
         },
         Give_friends() {
             if (this.LastName!="" && this.Lastmoney!="" && this.Last_danwei!="") {
-                this.Payshow = true;
+                // this.Payshow = true;                
                 this.isGive = 1;
+                this.confirmPay();
             }
+        },
+        // 设置会员期限
+        selYear(){
+            if(this.MoneyData.length && this.MoneyData.length>1){
+               this.showSelYear = true;
+            }else{
+                this.buy();
+            }
+        },
+        selYearOk(){
+            this.showSelYear = false;
+            this.Sel_list(this.active,this.MoneyData[this.active]);
+            this.buy();
+        },
+        Sel_list(index,item) {
+            this.prdoct_num = item.num; //购买时长
+            this.prdoct_danwei = item.type; //购买时长单位
+            // this.active = index;
+            this.LastName = item.month + "会员";
+            this.Lastmoney = "￥" + item.money;
+            this.Last_danwei = item.Last_danwei;
         },
         // 选择优惠券
         selQuan(val,index){
@@ -261,8 +295,9 @@ export default {
             this.showQuan = false;
             if (this.LastName != "" && this.Lastmoney != "" && this.Last_danwei != "") {
                 this.radio = "WX";
-                this.Payshow = true;
+                // this.Payshow = true;
                 this.isGive = 0;
+                this.confirmPay();
             }
         },
         confirmPay() {
@@ -306,8 +341,8 @@ export default {
             })
         },
         buy() {
-            console.log(this.required_id); //选项卡选中时的id
-            console.log(this.group_id); // 当前会员级别
+            // console.log(this.required_id); //选项卡选中时的id
+            // console.log(this.group_id); // 当前会员级别
             if (this.required_id < this.group_id) {
                 Toast("无法购买低级别会员");
             } else {
@@ -315,14 +350,15 @@ export default {
                     url: "/coupon/Apicoupon/member_use_coupon_list_no_page",
                     params: {
                         groupid: this.required_id,
-                        price: this.MoneyData[0].money,
+                        price: this.MoneyData[this.active].money,
                     }
                 }).then((data)=>{
                     if(!data.data || data.data.length==0){
                         if (this.LastName != "" && this.Lastmoney != "" && this.Last_danwei != "") {
                             this.radio = "WX";
-                            this.Payshow = true;
+                            // this.Payshow = true;
                             this.isGive = 0;
+                            this.confirmPay();
                         }
                     }else{
                         this.showQuan = true;
@@ -333,6 +369,7 @@ export default {
                 return;
             }
         },
+        // vip or svip
         tab(index,item) {
             // this.sel_group_id = id;
             this.isbuy = item.is_buy;
@@ -341,7 +378,6 @@ export default {
             this.describe = item.describe;
             this.curId = index;
             this.MoneyData = this.MemberData[index].buy_price;
-            // console.log(this.MemberData);
             for (let i in this.MoneyData) {
                 this.MoneyData[i]["isbuy"] = this.MemberData[index].is_buy;
                 if (this.MoneyData[i].type == "year") { this.MoneyData[i]["type2"] = "年"; }
@@ -366,14 +402,6 @@ export default {
                 this.prdoct_danwei = this.MoneyData[0].type; //时长
             }
         },
-        Sel_list(index,item) {
-            this.prdoct_num = item.num; //购买时长
-            this.prdoct_danwei = item.type; //购买时长单位
-            this.active = index;
-            this.LastName = item.month + "会员";
-            this.Lastmoney = "￥" + item.money;
-            this.Last_danwei = item.Last_danwei;
-        }
     },
     watch:{
         showQuan(val){
@@ -392,6 +420,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.sel-year{padding:0.2rem 0.5rem 0.1rem;}
+.sel-year .sel-year-radio{margin-bottom:0.3rem;}
 .sel-quan-list{padding:0.2rem 0; height:8rem; overflow-y:auto;}
 .ht-60{width:7.1rem; margin:auto; height:0.6rem; padding-bottom:0.2rem;}
 .list-box{width:7.1rem; height:7.2rem; overflow-y:auto; margin:auto;}

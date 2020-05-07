@@ -37,7 +37,7 @@
                 </van-list>
             </div>
         </div>
-        <!-- <van-button class="fixed-submit" type="info" @click="toNewForm">不使用模板</van-button> -->
+        <van-button class="fixed-submit" type="info" @click="toNewForm">创建新活动</van-button>
     </div>
 </template>
 <script>
@@ -111,7 +111,7 @@ export default {
             });
         },
         toNewForm(){
-            this.$router.push("event_form");
+            this.zhizuo(1);
         }
     },
     created(){

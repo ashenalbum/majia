@@ -28,10 +28,10 @@ new Vue({
 // })
 
 function GetUrl(Data) {
+    var params = {};
     if (!Data) {return params;}
     var param = Data.split("&");
     var paramArray = [];
-    var params = {};
     for (var i = 0; i < param.length; i++) {
         if (param[i]) {
             paramArray = param[i].split('=');
@@ -45,31 +45,51 @@ function GetUrl(Data) {
     return params;
 }
 function hideSearch(){
-    let hash = window.location.href.split("#")[1];
+    let hash = window.location.hash;
     // 1049
     // let url = "appid=0eeb7ac1db55d365f37175667e6dc80603b0d838&cowcms_userid=966661bd874db1cacac4bf36919d9646&sign=71f7b828a84fb995cc8ec4e54e6025e4dcb52be9&timestamp=1586570044&nonceStr=3dhOye";
     if((!hash) || hash.indexOf("?")==-1){return}
     let url = hash.split("?")[1];
-
-    var data = GetUrl(url);            
+    let data = GetUrl(url);
+    let token = JSON.parse(localStorage.getItem("token"));
+    // 保存token
     if(data.appid){
+        let cowcms_userid = token && token.cowcms_userid;
         let o = {
             appid: data.appid,
-            cowcms_userid: data.cowcms_userid,
+            cowcms_userid: data.cowcms_userid || cowcms_userid,
             sign: data.sign,
             timestamp: data.timestamp,
             nonceStr: data.nonceStr,
         }
         localStorage.setItem("token",JSON.stringify(o));
-        setTimeout(()=>{
-            window.location.href = window.location.href.split("?")[0];
-        },800)
     }
-    
+    // 没有存储的cowcms_userid
+    if((!token) || (!token.cowcms_userid)){
+        let route = window.location.href.split("#")[1];
+        window.location.href = window.baseUrl + '/public/index.php/activity/info/index?file='+route;
+    }
+
     if (data.share) {
         let share_url = window.baseUrl + Base64.decode(data.share.replace('%3D', '='));
         localStorage.setItem("share_url", share_url);
     }
+    
+    if(data.cowcms_userid){
+        let path = hash.slice(1,hash.indexOf("?"));
+        let urldt = "";
+        delete data.cowcms_userid;
+        for(let i in data){
+            urldt = urldt + (urldt?"&":"") + i + "=" + data[i];
+        }
+        let url = window.location.href.split("#")[0]+"#"+path+"?"+urldt;
+        setTimeout(function(){
+            window.location.href = url;
+        },200);
+        return;
+    }
+    
+    wxConfig();
 }
 // url
 hideSearch();
@@ -87,7 +107,8 @@ router.beforeEach(function (to, from, next) {
     }
     // 判断微信
     let is_weixin = navigator.userAgent.toLowerCase().indexOf('micromessenger') !== -1;
-    if(is_weixin){ wxConfig(to.query.id || "") }
+    // let querys = GetUrl(window.location.hash)
+    if(is_weixin){ wxConfig() }
 
     let titlePage = [];
     if(is_weixin==false && titlePage.indexOf(to.name)>-1){to.meta.showHeader = true;}
@@ -119,11 +140,16 @@ function wxConfig(){
             ]
         });
         wx.ready(() => {
+            var querys = GetUrl(window.location.hash.split("?")[1]);
+            delete querys.cowcms_userid;
+            // alert(JSON.stringify(querys))
             axios({
                 url: "/activity/Apiactivity/sharing_getInfo",
-                // params: {id: Page_id}
+                params: querys,
             }).then((data)=>{
                 if(data.err!=0){return;}
+                // alert(page_id);
+                // alert(JSON.stringify(data.data))
                 //分享朋友圈
                 wx.onMenuShareTimeline({
                     title: data.data.title, // 分享标题
@@ -151,4 +177,3 @@ function wxConfig(){
         wx.error((res)=>{ console.log('err', res) });
     })
 }
-wxConfig();

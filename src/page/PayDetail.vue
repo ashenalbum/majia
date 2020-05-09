@@ -173,7 +173,7 @@
         </van-popup>
         <!-- 生成海报 -->
         <van-overlay :show="showHbDom" class="df ai-c just-c-ct" @click="showHbDom=false">
-            <div id="bill" ref="bill" class="bill shadow" @click.stop>        
+            <div id="bill" ref="bill" class="bill shadow" @click.stop>
                 <canvas class="canvas" id="canvas" ref="canvas"></canvas>
                 <!-- <van-uploader :disabled="disabled" :preview-image="false" :before-read="beforeRead">
                     <div class="placehold df df-c ai-c just-c-ct c_99">
@@ -182,14 +182,14 @@
                     </div>
                 </van-uploader> -->
                 <img ref="bgimgDom" v-if="bgimg" :src="bgimg" crossOrigin='anonymous' class="bgimg" />
-                <div class="user">
+                <div class="user" :style="{left:data.sales_posterss_coords && data.sales_posterss_coords.headx+'rem', top:data.sales_posterss_coords && data.sales_posterss_coords.heady+'rem'}">
                     <div class="name fs_24 c_99">{{info.nickname}}</div>
                     <div class="iconbox">
-                        <img :src="info.headpath" crossOrigin='anonymous' class="icon" />
                         <div class="icon-border"></div>
+                        <img :src="info.headpath" crossOrigin='anonymous' class="icon" />
                     </div>
                 </div>
-                <div class="ewmbox">
+                <div class="ewmbox" :style="{left:data.sales_posterss_coords && data.sales_posterss_coords.erweix+'rem', top:data.sales_posterss_coords && data.sales_posterss_coords.erweiy+'rem'}">
                     <canvas id="ewm" ref="ewm" class="ewm"></canvas>
                 </div>
             </div>
@@ -248,6 +248,8 @@ export default {
             bgimg: false,
             imgUrl: "",
             disabled: false,
+
+            haibaoToast: null,
         }
     },
     beforeRouteUpdate(to,from,next){
@@ -347,7 +349,11 @@ export default {
         // 制作海报
         toHaibao(){
             this.showHbDom = true;
-            Toast("生成海报中...");
+            this.haibaoToast = Toast.loading({
+                message: "正在生成海报，请稍候...",
+                forbidClick: true,
+                duration: 0,
+            });
             window.scrollTo(0,0);
             setTimeout(this.createImg,100);
             // this.$router.push({path:"/bill", query:{img:this.data.sales_posterss||true}});
@@ -378,9 +384,11 @@ export default {
                 this.imgUrl = canvas.toDataURL("image/png");
                 this.showHb = true;
                 this.showHbDom = false;
+                this.haibaoToast && this.haibaoToast.clear();
                 Toast("已生成海报，长按图片保存");
             }).catch(()=>{
-                Toast("error");
+                Toast("生成海报失败");
+                this.haibaoToast && this.haibaoToast.clear();
                 this.showHb = false;
                 this.showHbDom = false;
             });
@@ -671,7 +679,7 @@ export default {
 .user-info .input{border-bottom:1px solid #C7CDDF;}
 .user-info .next-btn{width:2.7rem;}
 
-.bill{position:relative;width:6.32rem; height:10.1rem; background:#EEF0F5;}
+.bill{position:relative;width:6.32rem; height:10.1rem; overflow:hidden; background:#EEF0F5;}
 .bill .placehold{width:6.32rem; height:10.1rem;}
 .bill .bgimg{position:absolute; width:100%; height:100%; top:0; left:0;}
 .bill .user{position:absolute; left:0.64rem; top:0.64rem;}

@@ -8,14 +8,14 @@
                 </div>
             </van-uploader>
             <img v-if="bgimg" :src="bgimg" crossOrigin='anonymous' class="bgimg" />
-            <div class="user">
+            <div ref="user" class="user" :style="{left:userIconPst.left+'rem', top:userIconPst.top+'rem'}">
                 <div class="name fs_24 c_99">{{info.nickname}}</div>
                 <div class="iconbox">
-                    <img :src="info.headpath" crossOrigin='anonymous' class="icon" />
                     <div class="icon-border"></div>
+                    <img :src="info.headpath" crossOrigin='anonymous' class="icon" />
                 </div>
             </div>
-            <div class="ewmbox">
+            <div ref="ewmbox" class="ewmbox" :style="{left:ewmPst.left+'rem', top:ewmPst.top+'rem'}">
                 <canvas id="ewm" ref="ewm" class="ewm"></canvas>
             </div>
         </div>
@@ -25,6 +25,7 @@
                 <van-button size="small" class="btn" color="#FF9C00">上传(600*960)</van-button>
             </van-uploader>
         </div>
+        <div class="mt-30 fs_28 c_99 df df-r just-c-ct">拖拽头像或二维码调整位置</div>
         <!-- <div v-else class="btns mt-40">
             <van-button block size="small" type="info" @click="upDate">提交</van-button>
         </div> -->
@@ -83,7 +84,7 @@
 import axios from "../utils/axios";
 import {upFile} from "../utils/axios";
 import QRCode from "qrcode";
-import html2canvas from 'html2canvas';
+// import html2canvas from 'html2canvas';
 import { Toast } from 'vant';
 
 
@@ -99,6 +100,16 @@ export default {
             imgUrl: "",
 
             showTj: false,
+            // 拖拽
+            userIconPst: {left:0.64, top:0.64 },
+            ewmPst: {left:3.92, top:7.9},
+            touchRef: "",
+            touchRefPst: {left:0, top:0},
+            billPst: {left:0, top:0},
+            startPst: {left:0, top:0},
+            movePst: {left:0, top:0},
+
+            haibaoToast: null,
         }
     },
     created(){
@@ -113,6 +124,10 @@ export default {
     },
     mounted(){
         this.createEwm();
+        
+        this.billPst = {left:this.$refs.bill.offsetLeft, top:this.$refs.bill.offsetTop};
+        this.$refs.user.addEventListener("touchstart",(event)=>{this.touchStart(event,"user")});
+        this.$refs.ewmbox.addEventListener("touchstart",(event)=>{this.touchStart(event,"ewmbox")});
     },
     methods: {
         getInfo(){
@@ -137,37 +152,9 @@ export default {
             msg.style.width = "100%";
             msg.style.height = "100%";
         },
-        createImg(){
-            let bill = this.$refs.bill;
-            let width = bill.offsetWidth;
-            let height = bill.offsetHeight;
-            let canvas = this.$refs.canvas;
-            let scale = 2;
-            canvas.width = width * scale;
-            canvas.height = height * scale;
-            
-            html2canvas(bill,{
-                allowTaint: true,
-                canvas: canvas,
-                width: width,
-                height: height,
-                useCORS: true,
-                scale: scale,
-            }).then(()=>{
-                let context = canvas.getContext('2d');
-                context.mozImageSmoothingEnabled = false;
-                context.webkitImageSmoothingEnabled = false;
-                context.msImageSmoothingEnabled = false;
-                context.imageSmoothingEnabled = false;
-                this.imgUrl = canvas.toDataURL("image/png");
-                this.showHb = true;
-                this.upDate();
-            });
-        },
         createHb(){
             // if(!this.bgimg){Toast("请先上传图片");return}
-            // this.createImg();
-            if(!this.bgimgId){Toast("未修改或设置图片");return}
+            // if(!this.bgimgId){Toast("未修改或设置图片");return}
             this.upDate();
         },
         upDate(){
@@ -179,6 +166,10 @@ export default {
                 params: {
                     activity_id: this.id,
                     sales_posterss: this.bgimgId,
+                    headx: this.userIconPst.left,
+                    heady: this.userIconPst.top,
+                    erweix: this.ewmPst.left,
+                    erweiy: this.ewmPst.top,
                 }
             }).then((data)=>{
                 if(data.err!=0){return}
@@ -190,12 +181,58 @@ export default {
             let formdata = new FormData();
             formdata.append("file",file);
             formdata.append("sales_posterss",this.id);
-            Toast("正在上传");
+            this.haibaoToast = Toast.loading({
+                message: "正在上传，请稍候...",
+                forbidClick: true,
+                duration: 0,
+            });
             upFile(formdata).then((data)=>{
-                if(data.data.err!=0){return}
+                this.haibaoToast.clear();
+                if(data.data.err!=0){Toast(data.content);return}
+                Toast("上传成功");
                 this.bgimg = data.data.content.url;
                 this.bgimgId = data.data.content.fileid;
+            }).catch(()=>{
+                this.haibaoToast.clear();
+                Toast("上传失败");
             })
+        },
+        // 拖拽
+        touchStart(event,ref){
+            this.touchRef = ref;
+            let thisLeft = event.target.offsetWidth/2;
+            let thisTop = event.target.offsetHeight/2;
+            this.touchRefPst = {left:thisLeft, top:thisTop};
+            this.$refs.bill.addEventListener("touchmove",this.touchMove);
+            this.$refs.bill.addEventListener("touchend",this.touchEnd);
+        },
+        touchMove(event){
+            let p = event.targetTouches[0];
+            let left = p.pageX - this.billPst.left - this.touchRefPst.left;
+            let top = p.pageY - this.billPst.top - this.touchRefPst.top;
+            let bill = this.$refs.bill;
+            let billW = bill.offsetWidth;
+            let billH = bill.offsetHeight;
+            let leftRem = 6.32*left/billW;
+            let topRem = 10.1*top/billH;
+            leftRem = leftRem<0?0:leftRem;
+            topRem = topRem<0?0:topRem;
+            if(this.touchRef=="user"){
+                let cz = 1.15;
+                leftRem = leftRem>(6.32-cz)?(6.32-cz):leftRem;
+                topRem = topRem>(10.1-cz)?(10.1-cz):topRem;
+                this.userIconPst = {left:leftRem, top:topRem};
+            }else if(this.touchRef=="ewmbox"){
+                let cz = 1.76;
+                leftRem = leftRem>(6.32-cz)?(6.32-cz):leftRem;
+                topRem = topRem>(10.1-cz)?(10.1-cz):topRem;
+                this.ewmPst = {left:leftRem, top:topRem};
+            }
+            event.preventDefault();
+        },
+        touchEnd(){
+            this.$refs.bill.removeEventListener("touchmove",this.touchMove);
+            this.$refs.bill.removeEventListener("touchend",this.touchEnd);
         },
 
         toFormSet(){this.$router.push({path:"/event_form_set", query:{id:this.id}})},
@@ -206,7 +243,7 @@ export default {
 <style scoped>
 .mb-30{margin-bottom:0.3rem;}
 .cont{padding:0.4rem 0 0.1rem; user-select:none;}
-.bill{position:relative; width:6.32rem; height:10.1rem; background:#EEF0F5;}
+.bill{position:relative; width:6.32rem; height:10.1rem; background:#EEF0F5; overflow:hidden;}
 .bill .placehold{width:6.32rem; height:10.1rem;}
 .bill .bgimg{position:absolute; width:100%; height:100%; top:0; left:0; background:#ffffff;}
 .bill .user{position:absolute; left:0.64rem; top:0.64rem;}
@@ -214,7 +251,7 @@ export default {
 .bill .iconbox .icon-border{box-sizing:content-box; position:absolute; left:-3px; top:-3px; width:1.15rem; height:1.15rem; padding:3px; background-image:url(~@/assets/bill/iconborder.png); background-size:100% 100%;}
 .bill .iconbox .icon{position:absolute; left:0; top:0; width:1.15rem; height:1.15rem; border-radius:50%;}
 .bill .user .name{position:absolute; left:1rem; top:0; bottom:0; margin:auto; padding:0 0.2rem 0 0.3rem; height:0.44rem; line-height:0.44rem; background:url(~@/assets/bill/name.png); background-size:100% 100%; white-space:nowrap;}
-.bill .ewmbox{position:absolute; right:0.64rem; bottom:0.45rem; box-sizing:border-box; width:1.76rem; height:1.76rem; padding:0.08rem; background:url(~@/assets/bill/ewmbg.png); background-size:100% 100%;}
+.bill .ewmbox{position:absolute; left:3.92rem; bottom:7.9rem; box-sizing:border-box; width:1.76rem; height:1.76rem; padding:0.08rem; background:url(~@/assets/bill/ewmbg.png); background-size:100% 100%;}
 .bill .ewmbox .ewm{width:100%; height:100%;}
 #qrcode{width:100%; height:100%;}
 #qrcode img{width:100%;height:100%;}

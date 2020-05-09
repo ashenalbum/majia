@@ -39,14 +39,14 @@
                     <img src="~@/assets/member/i1.png" class="img" />
                     <div>
                         <div class="fs_28">功能免费</div>
-                        <div class="fs_22 c_ashen mt_20">不限次数、类型使用</div>
+                        <div class="fs_22 c_ashen mt_20">不限制次数和类型</div>
                     </div>
                 </div>
                 <div class="tq-item df df-r ai-c just-c-ct">
                     <img src="~@/assets/member/i2.png" class="img" />
                     <div>
                         <div class="fs_28">在线指导</div>
-                        <div class="fs_22 c_ashen mt_20">一对一在线指导</div>
+                        <div class="fs_22 c_ashen mt_20">一对一的在线指导</div>
                     </div>
                 </div>
                 <div class="tq-item df df-r ai-c just-c-ct">
@@ -60,7 +60,7 @@
                     <img src="~@/assets/member/i4.png" class="img" />
                     <div>
                         <div class="fs_28">优先使用</div>
-                        <div class="fs_22 c_ashen mt_20">新模板上线提醒</div>
+                        <div class="fs_22 c_ashen mt_20">新模板上线后提醒</div>
                     </div>
                 </div>
             </div>
@@ -131,10 +131,6 @@ export default {
             showQuan: false,
             quanId: null,
             quanIndex: "",
-            // 选择几年会员
-            showSelYear: false,
-            active: 0,
-
         };
     },
     created() {
@@ -318,7 +314,7 @@ export default {
 .sel-quan-list{padding:0.2rem 0; height:8rem; overflow-y:auto;}
 .ht-60{width:7.1rem; margin:auto; height:0.6rem; padding-bottom:0.2rem;}
 .list-box{width:7.1rem; height:7.2rem; overflow-y:auto; margin:auto;}
-.list-box .item{position:relative; box-sizing:border-box; padding:0.1rem; margin-bottom:0.14rem; width:100%; height:2.1rem; background: url(~@/assets/mycoupon/lingquan_blue.png) no-repeat center center/100% 100%;}
+.list-box .item{position:relative; box-sizing:border-box; padding:0.1rem; margin:0 auto 0.14rem; width:7.1rem; height:2.1rem; background: url(~@/assets/mycoupon/lingquan_blue.png) no-repeat center center/100% 100%;}
 .list-box .item.odd{background: url(~@/assets/mycoupon/lingquan_orange.png) no-repeat center center/100% 100%;}
 .list-box .item .left{width:2rem;}
 .list-box .item .center{flex:1; padding-left:0.3rem;}

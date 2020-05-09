@@ -401,6 +401,7 @@ export default {
                 this.formData.browse_times = this.formData.browse_num;
                 this.formData.bought_num = this.formData.people_buy_num;
                 this.merchant_help_text = data.data.merchant_help_text;
+                if(!data.data.details){this.formData.details = [];}
             });
         },
         // 获取客服
@@ -582,7 +583,7 @@ export default {
             this.showTtMould = false;
             Toast("正在上传...");
             if(file instanceof Array){
-                for(let i in file){                    
+                for(let i in file){
                     this.upImg(file[i]).then((data)=>{
                         if(data.data.err!=0){return}
                         Toast("上传成功")

@@ -134,7 +134,7 @@ body{
 
 .list-box-height{position:relative;}
 .list-box{position:absolute; top:0; bottom:0; left:0; right:0; overflow-y:auto; padding:0 0.2rem;}
-.list-box .item{position:relative; box-sizing:border-box; padding:0.1rem; margin-bottom:0.14rem; width:100%; height:2.1rem; background: url(~@/assets/mycoupon/lingquan_blue.png) no-repeat center center/100% 100%;}
+.list-box .item{position:relative; box-sizing:border-box; padding:0.1rem; margin:0 auto 0.14rem; width:7.1rem; height:2.1rem; background: url(~@/assets/mycoupon/lingquan_blue.png) no-repeat center center/100% 100%;}
 .list-box .item.odd{background: url(~@/assets/mycoupon/lingquan_orange.png) no-repeat center center/100% 100%;}
 .list-box .item .left{width:2rem;}
 .list-box .item .center{flex:1; padding-left:0.3rem;}

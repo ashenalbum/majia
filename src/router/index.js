@@ -139,5 +139,15 @@ export default new Router({
         name: 'MyCoupon',
         meta: {title: "我的优惠券"},
         component: (resolve) =>require(['@/page/MyCoupon.vue'],resolve)
+    },{
+        path: '/exchange',
+        name: 'Exchange',
+        meta: { title: "兑换码", showHeader: true, },
+        component: (resolve) =>require(['@/page/Exchange.vue'],resolve)
+    },{
+        path: '/giveRecords',
+        name: 'GiveRecords',
+        meta: { title: "赠送记录", showHeader: true, },
+        component: (resolve) =>require(['@/page/GiveRecords.vue'],resolve)
     },]
 })

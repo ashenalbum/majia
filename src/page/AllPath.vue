@@ -20,6 +20,8 @@
         <router-link to="/redeem_details"><div>/redeem_details</div></router-link>
         <router-link to="/channel"><div>/channel</div></router-link>
         <router-link to="/browse"><div>/browse</div></router-link>
+        <router-link to="/exchange"><div>/exchange</div></router-link>
+        <router-link to="/giveRecords"><div>/giveRecords</div></router-link>
 
         <van-uploader :before-read="beforeRead" />
 

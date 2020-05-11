@@ -182,14 +182,16 @@
                     </div>
                 </van-uploader> -->
                 <img ref="bgimgDom" v-if="bgimg" :src="bgimg" crossOrigin='anonymous' class="bgimg" />
-                <div class="user" :style="{left:data.sales_posterss_coords && data.sales_posterss_coords.headx+'rem', top:data.sales_posterss_coords && data.sales_posterss_coords.heady+'rem'}">
-                    <div class="name fs_24 c_99">{{info.nickname}}</div>
+                
+                <div ref="name" class="name fs_24 c_99" :style="{left:testIsTrue('namex'), top:testIsTrue('namex')}">{{info.nickname}}</div>
+                <div class="user" :style="{left:testIsTrue('headx'), top:testIsTrue('heady')}">
+                    <!-- <div class="name fs_24 c_99">{{info.nickname}}</div> -->
                     <div class="iconbox">
                         <div class="icon-border"></div>
                         <img :src="info.headpath" crossOrigin='anonymous' class="icon" />
                     </div>
                 </div>
-                <div class="ewmbox" :style="{left:data.sales_posterss_coords && data.sales_posterss_coords.erweix+'rem', top:data.sales_posterss_coords && data.sales_posterss_coords.erweiy+'rem'}">
+                <div class="ewmbox" :style="{left:testIsTrue('erweix'), top:testIsTrue('erweiy')}">
                     <canvas id="ewm" ref="ewm" class="ewm"></canvas>
                 </div>
             </div>
@@ -272,6 +274,9 @@ export default {
         this.getData();
         this.getOrganizer();
         this.getActivityForm();
+    },
+    destroyed(){
+        if(this.haibaoToast){this.haibaoToast.clear();}
     },
     methods: {
         getData(){
@@ -561,11 +566,18 @@ export default {
             if(!video){return}
             video.pause();
         },
+        testIsTrue(name){
+            if(!this.data){return false;}
+            if(!this.data.sales_posterss_coords){return false;}
+            if(!this.data.sales_posterss_coords[name] && this.data.sales_posterss_coords[name]!==0){return false;}
+            return this.data.sales_posterss_coords[name] + 'rem';
+        }
     },
     watch:{
         showHb(v){if(v){this.stopVideo()}},
         showHbDom(v){if(v){this.stopVideo()}},
         showSeller(v){if(v){this.stopVideo()}},
+        // data(v){if(v.title){document.title = v.title + "  详情";}}
     },
     mounted(){
         let clipboard1 = new Clipboard(this.$refs.copytxt1);
@@ -686,7 +698,8 @@ export default {
 .bill .iconbox{width:1.15rem; height:1.15rem;}
 .bill .iconbox .icon-border{box-sizing:content-box; position:absolute; left:-3px; top:-3px; width:1.15rem; height:1.15rem; padding:3px; background-image:url(~@/assets/bill/iconborder.png); background-size:100% 100%;}
 .bill .iconbox .icon{position:absolute; left:0; top:0; width:1.15rem; height:1.15rem; border-radius:50%;}
-.bill .user .name{position:absolute; left:1rem; top:0; bottom:0; margin:auto; padding:0 0.2rem 0 0.3rem; height:0.44rem; line-height:0.44rem; background:url(~@/assets/bill/name.png); background-size:100% 100%; white-space:nowrap;}
+/* .bill .user .name{position:absolute; left:1rem; top:0; bottom:0; margin:auto; padding:0 0.2rem 0 0.3rem; height:0.44rem; line-height:0.44rem; background:url(~@/assets/bill/name.png); background-size:100% 100%; white-space:nowrap;} */
+.bill .name{position:absolute; left:1.64rem; top:0.995rem; bottom:0; padding:0 0.2rem 0 0.3rem; height:0.44rem; line-height:0.44rem; background:url(~@/assets/bill/name.png); background-size:100% 100%; white-space:nowrap;}
 .bill .ewmbox{position:absolute; right:0.64rem; bottom:0.45rem; box-sizing:border-box; width:1.76rem; height:1.76rem; padding:0.08rem; background:url(~@/assets/bill/ewmbg.png); background-size:100% 100%;}
 .bill .ewmbox .ewm{width:100%; height:100%;}
 #qrcode{width:100%; height:100%;}

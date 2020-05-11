@@ -335,16 +335,16 @@ export default {
             let videoText = /\.mp4$/;
             let data = this.formData;
             let testArr = [
-                {b:/^\s*$/.test(data.title), t:"请输入标题"},
+                {b:/^\s*$/.test(data.title)||!data.title, t:"请输入标题"},
                 // {b:/^\s*$/.test(data.subhead), t:"请输入副标题"},
                 {b:data.head_pic_img.length==0, t:"请上传头图"},
                 {b:data.video_url&&(!testUrl.test(data.video_url)), t:"视频路径格式有误"},
                 {b:data.video_url&&(!videoText.test(data.video_url)), t:"视频格式只能为mp4"},
                 {b:data.start_time&&data.abort_time&&data.start_time>data.abort_time, t:"开始时间不能大于结束时间"},
-                {b:/^\s*$/.test(data.price), t:"请输入原价"},
-                {b:/^\s*$/.test(data.special_offer), t:"请输入活动价"},
+                {b:/^\s*$/.test(data.price)||!data.price, t:"请输入原价"},
+                {b:/^\s*$/.test(data.special_offer)||!data.special_offer, t:"请输入活动价"},
                 {b:data.scene===undefined, t:"请选择活动场景"},
-                {b:data.genre_id===undefined, t:"请选择行业类型"},
+                {b:data.genre_id===undefined||data.genre_id==null, t:"请选择行业类型"},
                 {b:data.details.length==0, t:"请填写活动详情"},
             ];
             for(let i in testArr){if(testArr[i]['b']){Toast(testArr[i]['t']);return}}

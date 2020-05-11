@@ -79,6 +79,7 @@ export default {
             showSeltype: false, //选择方式
             types: [
                 {id:0, name:"百分比"},
+                {id:1, name:"直接金额"},
             ],
             focusIndex: 0,
             
@@ -115,15 +116,15 @@ export default {
                 if(!this.sales_info[1]){this.sales_info.push({level:2, typeTxt:""})}
             });
             // 判断能不能设置直接金额
-            axios({
-                url: "/activity/Apiactivity/previewTemplateInfo",
-                params: {activity_id: this.id}
-            }).then((data)=>{
-                if(data.err!=0){return}
-                if(data.data.type==0){
-                    this.types.push({id:1, name:"直接金额"})
-                }
-            })
+            // axios({
+            //     url: "/activity/Apiactivity/previewTemplateInfo",
+            //     params: {activity_id: this.id}
+            // }).then((data)=>{
+            //     if(data.err!=0){return}
+            //     if(data.data.type==0){
+            //         this.types.push({id:1, name:"直接金额"})
+            //     }
+            // })
         },
         checkForm(){
             if(this.sales_info[0].type===undefined){Toast("请选择分成方式");return}

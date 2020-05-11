@@ -81,8 +81,11 @@
                 <div class="fs_26 c_ashen f1">发货地址：陕西省西安市某某区 某某街道  某某小区  2号楼5单元402</div>
             </div>
         </div> -->
+        <div v-if="data.order_status==3" class="btns df df-r ai-c just-c-end">
+            <span class="c_red1 fs_26">订单已失效</span>
+        </div>
         <!-- 是用户 -->
-        <div v-if="!is_pos">
+        <div v-else-if="!is_pos">
             <div v-if="data.pay_status==0" class="btns df df-r ai-c just-c-end">
                 <van-button size="small" round color="#FF9C00" @click="fukuan">付款</van-button>
             </div>
@@ -160,7 +163,7 @@ export default {
             is_pos: false,
             data: {},
             imgUrl: "",
-            pay_info: [],
+            // pay_info: [],
             form_info: [],
 
             showKd: false,
@@ -191,7 +194,7 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 this.data = data.data;
-                this.pay_info = data.pay_info;
+                // this.pay_info = data.pay_info;
                 this.form_info = data.data.content;
                 this.createEwm();
             })
@@ -211,8 +214,20 @@ export default {
         },
         // 付款
         fukuan(){
-            this.wxpay(this.pay_info);
-        },// 支付
+            axios({
+                url: "/activity/Apiactivity/order_pay",
+                params: {id: this.id}
+            }).then((data)=>{
+                if(data.err!=0){
+                    if(data.err==1){setTimeout(()=>{window.location.reload();},500)}
+                    return;
+                }
+                // this.wxpay(this.pay_info);
+            }).catch(()=>{
+                Toast("pay error");
+            })
+        },
+        // 支付
         wxpay(obj) {
             let obj1 = obj[0];
             wx.chooseWXPay({

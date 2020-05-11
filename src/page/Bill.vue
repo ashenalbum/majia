@@ -7,9 +7,10 @@
                     <span class="mt-20 fs_24">600 * 960</span>
                 </div>
             </van-uploader>
-            <img v-if="bgimg" :src="bgimg" crossOrigin='anonymous' class="bgimg" />
+            <img v-if="bgimg" :src="bgimg" crossOrigin='anonymous' class="bgimg"  />
+
+            <div ref="name" class="name fs_24 c_99" :style="{left:namePst.left+'rem', top:namePst.top+'rem'}">{{info.nickname}}</div>
             <div ref="user" class="user" :style="{left:userIconPst.left+'rem', top:userIconPst.top+'rem'}">
-                <div class="name fs_24 c_99">{{info.nickname}}</div>
                 <div class="iconbox">
                     <div class="icon-border"></div>
                     <img :src="info.headpath" crossOrigin='anonymous' class="icon" />
@@ -101,6 +102,7 @@ export default {
 
             showTj: false,
             // 拖拽
+            namePst: {left:1.64, top:0.995},
             userIconPst: {left:0.64, top:0.64 },
             ewmPst: {left:3.92, top:7.9},
             touchRef: "",
@@ -126,8 +128,12 @@ export default {
         this.createEwm();
         
         this.billPst = {left:this.$refs.bill.offsetLeft, top:this.$refs.bill.offsetTop};
+        this.$refs.name.addEventListener("touchstart",(event)=>{this.touchStart(event,"name")});
         this.$refs.user.addEventListener("touchstart",(event)=>{this.touchStart(event,"user")});
         this.$refs.ewmbox.addEventListener("touchstart",(event)=>{this.touchStart(event,"ewmbox")});
+    },
+    destroyed(){
+        if(this.haibaoToast){this.haibaoToast.clear();}
     },
     methods: {
         getInfo(){
@@ -170,6 +176,8 @@ export default {
                     heady: this.userIconPst.top,
                     erweix: this.ewmPst.left,
                     erweiy: this.ewmPst.top,
+                    namex: this.namePst.left,
+                    namey: this.namePst.top,
                 }
             }).then((data)=>{
                 if(data.err!=0){return}
@@ -227,6 +235,11 @@ export default {
                 leftRem = leftRem>(6.32-cz)?(6.32-cz):leftRem;
                 topRem = topRem>(10.1-cz)?(10.1-cz):topRem;
                 this.ewmPst = {left:leftRem, top:topRem};
+            }else if(this.touchRef=="name"){
+                let cz = 0.22;
+                leftRem = leftRem>(6.32-cz)?(6.32-cz):leftRem;
+                topRem = topRem>(10.1-cz)?(10.1-cz):topRem;
+                this.namePst = {left:leftRem, top:topRem};
             }
             event.preventDefault();
         },
@@ -247,10 +260,10 @@ export default {
 .bill .placehold{width:6.32rem; height:10.1rem;}
 .bill .bgimg{position:absolute; width:100%; height:100%; top:0; left:0; background:#ffffff;}
 .bill .user{position:absolute; left:0.64rem; top:0.64rem;}
-.bill .iconbox{width:1.15rem; height:1.15rem;}
-.bill .iconbox .icon-border{box-sizing:content-box; position:absolute; left:-3px; top:-3px; width:1.15rem; height:1.15rem; padding:3px; background-image:url(~@/assets/bill/iconborder.png); background-size:100% 100%;}
-.bill .iconbox .icon{position:absolute; left:0; top:0; width:1.15rem; height:1.15rem; border-radius:50%;}
-.bill .user .name{position:absolute; left:1rem; top:0; bottom:0; margin:auto; padding:0 0.2rem 0 0.3rem; height:0.44rem; line-height:0.44rem; background:url(~@/assets/bill/name.png); background-size:100% 100%; white-space:nowrap;}
+.bill .user .iconbox{width:1.15rem; height:1.15rem;}
+.bill .user .iconbox .icon-border{box-sizing:content-box; position:absolute; left:-3px; top:-3px; width:1.15rem; height:1.15rem; padding:3px; background-image:url(~@/assets/bill/iconborder.png); background-size:100% 100%;}
+.bill .user .iconbox .icon{position:absolute; left:0; top:0; width:1.15rem; height:1.15rem; border-radius:50%;}
+.bill .name{position:absolute; left:1.64rem; top:0.995rem; bottom:0; padding:0 0.2rem 0 0.3rem; height:0.44rem; line-height:0.44rem; background:url(~@/assets/bill/name.png); background-size:100% 100%; white-space:nowrap;}
 .bill .ewmbox{position:absolute; left:3.92rem; bottom:7.9rem; box-sizing:border-box; width:1.76rem; height:1.76rem; padding:0.08rem; background:url(~@/assets/bill/ewmbg.png); background-size:100% 100%;}
 .bill .ewmbox .ewm{width:100%; height:100%;}
 #qrcode{width:100%; height:100%;}

@@ -115,7 +115,7 @@ export default {
 .search-title .van-search{padding:10px 0.2rem;}
 
 .listul-box{position:relative; width:6.7rem; margin-left:auto; margin-right:auto;}
-.listul{position:absolute; top:0; bottom:0; left:0; right:0; overflow:auto; display:flex; flex-direction:row; justify-content:space-between; flex-wrap:wrap; }
+.listul{position:absolute; top:0; bottom:0; left:0; right:0; overflow:auto; display:flex; flex-direction:row; justify-content:space-between; flex-wrap:wrap; align-content:flex-start; }
 .listul .item{box-sizing:border-box; margin-bottom:0.25rem; width:3.24rem; height:3.52rem; border-radius:0.15rem; overflow:hidden;}
 .listul .item .imgbox{position:relative; width:100%; height:2.08rem; border-bottom:1px solid #f1f1f1;}
 .listul .item .imgbox .img{width:100%; height:100%;}

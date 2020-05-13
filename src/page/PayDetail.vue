@@ -59,7 +59,7 @@
             <div v-html="data.instructions"></div>
         </div>
         <div class="bottom-btns df df-r fs_34">
-            <div class="btn1 f1 df df-c ai-c just-c-ct" @click="newEvent">制作新活动</div>
+            <div class="btn1 f1 df df-c ai-c just-c-ct" @click.stop="showGzhEwm=true">制作新活动</div>
             <div class="btn2 f1 df df-c ai-c just-c-ct" :class="{ashen:data.audit_type!=1}" @click="buyBtnClick">
                 <span>{{data.audit_type==1?data.pay_btn:"活动未开始"}}</span>
                 <span v-if="data.audit_type==1&&showLastTime" class="fs_26">{{lastTime}}</span>
@@ -172,7 +172,7 @@
             <van-area :area-list="area" @confirm="selAreaOk" @cancel="showSelarea=false"/>
         </van-popup>
         <!-- 生成海报 -->
-        <van-overlay :show="showHbDom" class="df ai-c just-c-ct" @click="showHbDom=false">
+        <van-overlay :show="showHbDom" class="df df-c ai-c just-c-ct" @click="showHbDom=false">
             <div id="bill" ref="bill" class="bill shadow" @click.stop>
                 <canvas class="canvas" id="canvas" ref="canvas"></canvas>
                 <!-- <van-uploader :disabled="disabled" :preview-image="false" :before-read="beforeRead">
@@ -196,8 +196,26 @@
                 </div>
             </div>
         </van-overlay>
-        <van-overlay :show="showHb" @click="showHb=false" class="df ai-c just-c-ct">
+        <van-overlay :show="showHb" @click="showHb=false" class="df df-c ai-c just-c-bet">
+            <div class="hb-title df df-r ai-c just-c-bet fs_26" @click.stop>
+                <div class="df df-r ai-c">
+                    <van-icon name="bullhorn-o c_red1" />
+                    <span>关注公众号</span>
+                    <span class="c_red1">及时接收奖励金到账通知</span>
+                </div>
+                <van-button plain size="mini" color="#F32323" @click="showGzhEwm=true;">关注公众号</van-button>
+            </div>
             <img class="hb-img" :src="imgUrl" @click.stop/>
+            <div class="hb-footer df df-c ai-c just-c-ct c_66 fs_28 mt-20" @click.stop>推广成功后获得佣金</div>
+        </van-overlay>
+        <!-- 关注公众号 -->
+        <van-overlay :show="showGzhEwm" class="df ai-c just-c-ct"  @click="showGzhEwm=false;">
+            <div class="gzhewmbox df df-c ai-c just-c-ct" @click.stop>
+                <div class="ewm-bg">
+                    <img :src="sjInfo.url" />
+                </div>
+                <div class="c_o fs_30 mt-30">关注公众号 即刻发布活动</div>
+            </div>
         </van-overlay>
     </div>
 </template>
@@ -252,6 +270,8 @@ export default {
             disabled: false,
 
             haibaoToast: null,
+
+            showGzhEwm: false,
         }
     },
     beforeRouteUpdate(to,from,next){
@@ -324,6 +344,7 @@ export default {
                 params: {activity_id: this.id}
             }).then((data)=>{
                 if(data.err!=0){return}
+
                 this.sjInfo = data.content;
             })
         },
@@ -390,7 +411,7 @@ export default {
                 this.showHb = true;
                 this.showHbDom = false;
                 this.haibaoToast && this.haibaoToast.clear();
-                Toast("已生成海报，长按图片保存");
+                Toast("已生成海报，长按图片保存或转发");
             }).catch(()=>{
                 Toast("生成海报失败");
                 this.haibaoToast && this.haibaoToast.clear();
@@ -559,7 +580,8 @@ export default {
             this.$router.push({name:"PayDetail", query:{id: id}});
         },
         newEvent(){
-            window.location.href = this.data.tencent_url;
+            this.showGzhEwm = true;
+            // window.location.href = this.data.tencent_url;
         },
         stopVideo(){
             let video = document.getElementById("topvideo");
@@ -717,4 +739,10 @@ export default {
 
 .canvas{position:absolute; top:0; left:0; z-index:-1; width:6.32rem; height:10.01rem; background:#ffffff;}
 .hb-img{width:6.32rem; height:10.01rem;}
+.hb-title{box-sizing:border-box; width:100%; padding:0.3rem; background:#fcdcdf;}
+.hb-footer{box-sizing:border-box; width:100%; padding:0.3rem; background:#ffffff;}
+
+.gzhewmbox{width:5.4rem; height:6.25rem; background:#ffffff; border-radius:0.25rem;}
+.gzhewmbox .ewm-bg{box-sizing:border-box; padding:0.4rem; width:4.2rem; height:4.2rem; background:url(~@/assets/other/ewm-border.png) no-repeat; background-size:100% 100%;}
+.gzhewmbox .ewm-bg img{width:100%; height:100%;}
 </style>

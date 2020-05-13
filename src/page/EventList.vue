@@ -1,43 +1,45 @@
 <template>
     <div class="cont df df-c">
         <div class="top-alert fs_20 c_red">活动上线需要审核哦，请您先编辑活动信息，然后联系客服(客服微信：{{kefu}}）帮您启动活动<span id="kefu" :data-clipboard-text="kefu" class="txt_line">点击复制微信号</span></div>
-        <van-list
-            v-model="loading"
-            :finished="over"
-            finished-text="没有更多数据了"
-            @load="getList"
-            class="cont-list c_33"
-        >
-            <div v-for="(item,index) in dataList" :key="index" class="item df df-c" @click="toView(item)">
-                <div class="ware df df-r">
-                    <img :src="item.head_pic" class="img" />
-                    <div class="detail">
-                        <div class="df df-r ai-c just-c-bet">
-                            <div class="one-hide fs_32">{{item.title}}</div>
-                            <div>
-                                <!-- <van-button v-if="item.audit_type!=1" size="mini" color="#BBC1D4" @click="toEdit(item)">编辑</van-button> -->
-                                <!-- <van-button v-else size="mini" color="#FF9C00" @click="frames(item)">{{item.putaway==0?"上架":"下架"}}</van-button> -->
-                                <span v-if="item.audit_type==1" class="dib fs_26 c_o">进行中</span>
+        <div class="list-box f1">
+            <van-list
+                v-model="loading"
+                :finished="over"
+                finished-text="没有更多数据了"
+                @load="getList"
+                class="cont-list c_33"
+            >
+                <div v-for="(item,index) in dataList" :key="index" class="item df df-c" @click="toView(item)">
+                    <div class="ware df df-r">
+                        <img :src="item.head_pic" class="img" />
+                        <div class="detail">
+                            <div class="df df-r ai-c just-c-bet">
+                                <div class="one-hide fs_32">{{item.title}}</div>
+                                <div>
+                                    <!-- <van-button v-if="item.audit_type!=1" size="mini" color="#BBC1D4" @click="toEdit(item)">编辑</van-button> -->
+                                    <!-- <van-button v-else size="mini" color="#FF9C00" @click="frames(item)">{{item.putaway==0?"上架":"下架"}}</van-button> -->
+                                    <span v-if="item.audit_type==1" class="dib fs_26 c_o">进行中</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="mt-10 df df-r ai-c fs_24 c_ashen">
-                            <van-icon name="underway-o" size="0.3rem"/>
-                            <span class="one-hide pl-10">{{computedTime(item)}}</span>
-                        </div>
-                        <div class="mt-10 df df-r ai-c fs_24 c_ashen">
-                            <van-icon name="friends-o" size="0.3rem"/>
-                            <span class="label">{{item.people_buy_num}}</span>
-                            <van-icon name="eye-o" size="0.3rem"/>
-                            <span class="label">{{item.browse_num}}</span>
-                        </div>
-                        <div class="mt-20 df df-r just-c-bet fs_26">
-                            <span class="c_status">{{getTypeTxt(item)}}</span>
-                            <span class="c_ashen" @click.stop="openOperate(item)">操作</span>
+                            <div class="mt-10 df df-r ai-c fs_24 c_ashen">
+                                <van-icon name="underway-o" size="0.3rem"/>
+                                <span class="one-hide pl-10">{{computedTime(item)}}</span>
+                            </div>
+                            <div class="mt-10 df df-r ai-c fs_24 c_ashen">
+                                <van-icon name="friends-o" size="0.3rem"/>
+                                <span class="label">{{item.people_buy_num}}</span>
+                                <van-icon name="eye-o" size="0.3rem"/>
+                                <span class="label">{{item.browse_num}}</span>
+                            </div>
+                            <div class="mt-20 df df-r just-c-bet fs_26">
+                                <span class="c_status">{{getTypeTxt(item)}}</span>
+                                <span class="c_ashen" @click.stop="openOperate(item)">操作</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </van-list>
+            </van-list>
+        </div>
         <!-- <div class="kefu">
             <div class="txt shadow c_ashen fs_32">联系客服</div>
             <img src="~@/assets/event/kefu.png" class="icon" />
@@ -189,10 +191,12 @@ export default {
 }
 </script>
 <style scoped>
+.cont{height:100%;}
+.list-box{overflow-y:auto; margin-top:0.3rem;}
 .txt_line{padding-left:5px;}
 .top-alert{width:6.7rem; padding-top:0.3rem; margin-left:auto; margin-right:auto;}
 .dib{display:inline-block; white-space: nowrap;}
-.cont-list{width:6.7rem; margin:0.3rem auto 0; padding-top:0;}
+.cont-list{width:6.7rem; margin:0 auto 0; padding-top:0;}
 .cont-list .item{margin-bottom:0.4rem;}
 .cont-list .ware{padding:0.2rem 0; border-bottom:1px solid #E2E6F1;}
 .cont-list .ware .img{width:2.66rem; height:1.84rem;}

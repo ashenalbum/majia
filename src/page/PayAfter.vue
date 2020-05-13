@@ -1,6 +1,14 @@
 <template>
     <div class="cont">
-        <div class="box">
+        <div class="hb-title df df-r ai-c just-c-bet fs_26" @click.stop>
+            <div class="df df-r ai-c">
+                <van-icon name="bullhorn-o c_red1" />
+                <span>关注公众号</span>
+                <span class="c_red1">及查看订单详情</span>
+            </div>
+            <van-button plain size="mini" color="#F32323" @click="showGzhEwm=true;">关注公众号</van-button>
+        </div>
+        <div class="box mt-30">
             <div v-for="(item,index) in data" :key="index">
                 <div v-if="item.type==1" class="txt t-indent c_ashen">{{item.content}}</div>
                 <img v-if="item.type==2" class="img" :src="item.content" />
@@ -34,6 +42,15 @@
                 </div>
             </div>
         </van-overlay>
+        <!-- 关注公众号 -->
+        <van-overlay :show="showGzhEwm" class="df ai-c just-c-ct"  @click="showGzhEwm=false;">
+            <div class="gzhewmbox df df-c ai-c just-c-ct" @click.stop>
+                <div class="ewm-bg">
+                    <img :src="sjInfo.url" />
+                </div>
+                <div class="c_o fs_30 mt-30">关注公众号</div>
+            </div>
+        </van-overlay>
     </div>
 </template>
 <script>
@@ -49,6 +66,7 @@ export default {
 
             showSeller: false,
             sjInfo: {},
+            showGzhEwm: false,
         }
     },
     created(){
@@ -122,5 +140,10 @@ export default {
 .maskSeller .linebox .line{position:absolute; left:0; right:0; top:50%; border-bottom:1px solid #E3E3E3;}
 .maskSeller .linebox .txt{position:relative; padding:0 0.5rem; background:#ffffff;}
 
+.hb-title{box-sizing:border-box; width:100%; padding:0.3rem; background:#fcdcdf;}
 .fixed-submit{bottom:2.4rem; width:auto;}
+
+.gzhewmbox{width:5.4rem; height:6.25rem; background:#ffffff; border-radius:0.25rem;}
+.gzhewmbox .ewm-bg{box-sizing:border-box; padding:0.4rem; width:4.2rem; height:4.2rem; background:url(~@/assets/other/ewm-border.png) no-repeat; background-size:100% 100%;}
+.gzhewmbox .ewm-bg img{width:100%; height:100%;}
 </style>

@@ -90,10 +90,10 @@
           <div class="item df df-r shadow" v-for="(item,index) in dhmList" :key="index">
                 <div class="itm-cont f1 df df-c just-c-bet fs_30">
                   <div>{{item.destructionkey}}</div>
-                  <div class="mt-10 fs_28">时长：{{getLongTime(item.param)}}</div>
+                  <div class="mt-10 fs_28">兑换码有效期：{{getLongTime(item.param)}}</div>
                   <div class="mt-10 fs_28" :class="{c_red1:item.issue==0,c_99:item.issue!=0}">{{item.issue==0?"未使用":"已使用"}}</div>
                 </div>
-                <div class="btn-box df ai-c">
+                <div v-if="item.issue==0" class="btn-box df ai-c">
                     <button
                         ref="copy"
                         class="lr back-confirm btn give_btn"
@@ -101,6 +101,10 @@
                         @click="copy"
                         id="copy_text"
                     >复制</button>
+                </div>
+                <div v-else-if="item.issue==1" class="namebox df df-c ai-c just-c-ct">
+                    <img :src="item.headpath" class="icon" />
+                    <div class="mt-10 one-hide fs_26">{{item.nickname}}</div>
                 </div>
           </div>
         </div>
@@ -180,7 +184,7 @@ export default {
               case "month":dw="月";break;
               case "day":dw="日";break;
           }
-          return item.giveNum + dw;
+          return item.interval + dw;
       },
     onClickLeft() {
       history.go(-1);
@@ -332,8 +336,10 @@ export default {
 </script>
 <style scoped>
 .item{border-radius:0.1rem; margin-bottom:0.2rem;}
-.item .itm-cont{padding:0.1rem 0.1rem 0.1rem 0.2rem;}
+.item .itm-cont{padding:0.2rem;}
 .item .btn-box{padding:0 8px;}
+.item .namebox{max-width:2.6rem;padding-right:0.2rem;}
+.item .namebox .icon{width:0.5rem; height:0.5rem; border-radius:50%;}
 body {
   background: #f4f6fa;
   /* padding: .88rem 0 1rem; */

@@ -224,6 +224,8 @@ export default {
                     });
                     this.getData();
                 }
+            }).catch(()=>{
+                Toast("error");
             });
         },
         buy() {

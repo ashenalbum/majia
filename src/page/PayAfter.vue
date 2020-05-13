@@ -11,6 +11,7 @@
             <van-button type="info" @click="lxsj" block>联系商家</van-button>
         </div>
         
+        <van-button class="fixed-submit" type="info" @click="toMyCenter">返回个人中心</van-button>
         <!-- 商家信息 -->
         <van-overlay :show="showSeller" @click="showSeller=false">
             <div class="maskSeller">
@@ -120,4 +121,6 @@ export default {
 .maskSeller .linebox{position:relative; width:100%; margin:0.4rem auto 0;}
 .maskSeller .linebox .line{position:absolute; left:0; right:0; top:50%; border-bottom:1px solid #E3E3E3;}
 .maskSeller .linebox .txt{position:relative; padding:0 0.5rem; background:#ffffff;}
+
+.fixed-submit{bottom:2.4rem; width:auto;}
 </style>

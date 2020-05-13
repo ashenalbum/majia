@@ -21,7 +21,7 @@
             <div v-if="fileType===1" class="upimgbox df df-r">
                 <!-- <vuedraggable v-model="formData.head_pic_img" class="df df-r df-w-w"> -->
                     <div v-for="(item,index) in formData.head_pic_img" :key="index" class="imgbox shadow df ai-c just-c-ct">
-                        <img :src="item.pic_img" class="img" />
+                        <img :src="item.pic_img" class="img" @click="head_pic_arr_id=index;showTtMould=true;" />
                         <van-icon v-if="!item.loading" @click="ttimgRemove(index)" name="cross" size="0.2rem" color="#ffffff" class="close"/>
                     </div>
                     <div class="addimg df df-c ai-c just-c-ct c_ashen" @click="showTtMould=true">
@@ -282,6 +282,7 @@ export default {
 
             fileType: 1, //头图类型
             imgList: [], //头图列表
+            head_pic_arr_id: null, // 是否修改图片，id
             detailType: 0, //活动，文字/图片/视频
             detailImg: [], //详情上传图片
             detailTxt: "",
@@ -381,7 +382,7 @@ export default {
                 params: {activity_id: this.id}
             }).then((data)=>{
                 if(data.err!=0){return}
-                this.formData = data.data;
+                this.formData = JSON.parse(JSON.stringify(data.data));
                 if(typeof this.formData.start_time=="number"){
                     this.formData.start_time = this.setTime(this.formData.start_time);
                 }
@@ -393,16 +394,29 @@ export default {
                 if(this.cjData.length){this.fillSheet(this.formData.scene,this.cjData,"cj")}
                 this.merchant_help_b = Boolean(this.formData.merchant_help);
                 this.bullet_sw_b = Boolean(this.formData.bullet_sw);
-                let head_pic = [];
+                // 头图
+                this.formData.head_pic = [];
+                this.formData.head_pic_img = [];
                 for(let i in data.data.head_pic_img){
-                    head_pic.push(data.data.head_pic_img[i].pic);
+                    this.addHeadImg(data.data.head_pic_img[i]);
                 }
-                this.formData.head_pic = head_pic;
+
                 this.formData.browse_times = this.formData.browse_num;
                 this.formData.bought_num = this.formData.people_buy_num;
                 this.merchant_help_text = data.data.merchant_help_text;
                 if(!data.data.details){this.formData.details = [];}
             });
+        },
+        // 添加头图
+        addHeadImg(o){
+            if(!this.head_pic_arr_id && this.head_pic_arr_id!==0){
+                this.formData.head_pic.push(o.pic);
+                this.formData.head_pic_img.push({pic_img: o.pic_img});
+            } else {
+                this.formData.head_pic.splice(this.head_pic_arr_id, 1, o.pic);
+                this.formData.head_pic_img.splice(this.head_pic_arr_id, 1, {pic_img: o.pic_img});
+            }
+            this.head_pic_arr_id = null;
         },
         // 获取客服
         getKefu(){
@@ -586,25 +600,25 @@ export default {
                 for(let i in file){
                     this.upImg(file[i]).then((data)=>{
                         if(data.data.err!=0){return}
-                        Toast("上传成功")
-                        this.formData.head_pic_img.push({pic_img: data.data.content.url});
-                        this.formData.head_pic.push(data.data.content.fileid);
+                        Toast("上传成功");
+                        this.addHeadImg({pic_img:data.data.content.url, pic:data.data.content.fileid});
                     })
                 }
             } else {
                 this.upImg(file).then((data)=>{
                     if(data.data.err!=0){return}
                     Toast("上传成功");
-                    this.formData.head_pic_img.push({pic_img: data.data.content.url});
-                    this.formData.head_pic.push(data.data.content.fileid);
+                    this.addHeadImg({pic_img:data.data.content.url, pic:data.data.content.fileid});
                 })
             }
         },
         // 选择头图完成
         topMouldSelOk(){
             this.showTtMould = false;
-            this.formData.head_pic_img.push({pic_img: this.topModel[this.topModelSel]['pics'][this.topModelImg]['thumb']});
-            this.formData.head_pic.push(this.topModel[this.topModelSel]['pics'][this.topModelImg]['id']);
+            this.addHeadImg({
+                pic_img: this.topModel[this.topModelSel]['pics'][this.topModelImg]['thumb'],
+                pic: this.topModel[this.topModelSel]['pics'][this.topModelImg]['id']
+            });
             this.topModelSel = 0;
             this.topModelImg = 0;
         },
@@ -672,7 +686,7 @@ export default {
 .tt-mould .title .btn{padding:0 4px;}
 .tt-mould .imgbox{width:100%; overflow-x:auto; overflow-y:hidden;}
 .tt-mould .imgbox .img-ul{position:relative; white-space: nowrap; padding:0.1rem;}
-.tt-mould .imgbox .img-ul .li{position:relative; display:inline-block; margin:0 0.2rem; width:1.64rem; height:2.32rem; }
+.tt-mould .imgbox .img-ul .li{position:relative; display:inline-block; margin:0 0.2rem; width:3.26rem; height:2rem; }
 .tt-mould .imgbox .img-ul .li .img{width:100%; height:100%;}
 .tt-mould .imgbox .img-ul .li .check{box-sizing:border-box; position:absolute; right:0.1rem; top:0.1rem;}
 .tt-mould .imgbox .img-ul .fl{display:inline-block;padding:0.1rem; margin:0 0.1rem;}

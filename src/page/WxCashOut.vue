@@ -29,9 +29,16 @@
         <van-button type="default" v-for="item in btnData" v-show="pointType == item.point_type" @click="cashedAll(item.point)" :key="item.id">全部提现</van-button>
       </van-cell-group>
        <!-- 判断手续费 -->
-      <p class="shouxufei" v-if="item.proceduresType == 0 && item.point_type == pointType">收取 ( <span>{{(item.proceduresNum*cashoutNum).toFixed(item.point_decimal)}}{{item.point_unit}}</span> )手续费 实际到账金额为 <span v-if="cashoutNum">{{((cashoutNum-item.proceduresNum*cashoutNum)*item.ratio).toFixed(item.point_decimal)}}{{item.point_unit}}</span><span v-else>0{{item.point_unit}}</span></p>
-            
-      <p class="shouxufei" v-if="item.proceduresType == 1 && item.point_type == pointType">收取{{item.proceduresNum}}%（<span>{{(cashoutNum*(item.proceduresNum)/100).toFixed(item.point_decimal)}}{{item.point_unit}}</span> )手续费 实际到账金额为 <span>{{((cashoutNum-cashoutNum*(item.proceduresNum)/100)*item.ratio).toFixed(item.point_decimal)}}{{item.point_unit}}</span></p>
+      <p class="shouxufei" v-if="item.proceduresType == 0 && item.point_type == pointType">收取 (<span>{{getFloat(item.proceduresNum*cashoutNum,item.point_decimal)}}{{item.point_unit}}</span>)手续费 实际到账金额为 
+         <span v-if="cashoutNum">{{(cashoutNum-getFloat(item.proceduresNum*cashoutNum,item.point_decimal))*item.ratio}}</span>
+         <span v-else>0</span>
+         {{item.point_unit}}
+      </p>
+      <p class="shouxufei" v-if="item.proceduresType == 1 && item.point_type == pointType">
+          收取{{item.proceduresNum}}%（<span>{{getFloat(item.proceduresNum/100*cashoutNum,item.point_decimal)}}{{item.point_unit}}</span> )手续费
+          实际到账金额为 <span>{{ ((cashoutNum-getFloat(item.proceduresNum/100*cashoutNum,item.point_decimal))*item.ratio).toFixed(item.point_decimal) }}</span>
+          {{item.point_unit}}
+      </p>
       <p class="mt-10 c_99 fs_24">提现金额最低0.3元最高5000元，每日限提现一次</p>
       <van-button class="querenBtn" round type="danger" @click="toCash()">确认提现</van-button>
     </main>
@@ -63,6 +70,10 @@ export default {
         };
     },
     methods: {
+        getFloat(n,len){
+            var bs = Math.pow(10,len);
+            return (parseInt(n*bs)/bs).toFixed(len) ;
+        },
         Check_number(e) {
             let flag = /^\d+(\.\d{1,2})?$/.test(e.target.value);
             if (!flag) {

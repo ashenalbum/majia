@@ -120,7 +120,7 @@ export default {
                     this.memberCateData = data.data;
                     console.log(this.memberCateData);
                     this.cate1 = this.memberCateData[0] && this.memberCateData[0].sub;
-                    this.cate2 = this.memberCateData;
+                    this.cate2 = this.memberCateData.slice(1);
                 }
             })
         }

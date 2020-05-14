@@ -406,6 +406,12 @@ export default {
                 this.merchant_help_text = data.data.merchant_help_text;
                 if(!data.data.details){this.formData.details = [];}
             });
+            
+            axios({
+                url: "/activity/Apiactivity/IsRelease"
+            }).then((data)=>{
+                if(data.err!==0){Toast(data.content);}
+            });
         },
         // 添加头图
         addHeadImg(o){

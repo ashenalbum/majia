@@ -206,7 +206,10 @@
                 <van-button plain size="mini" color="#F32323" @click="showGzhEwm=true;">关注公众号</van-button>
             </div>
             <img class="hb-img" :src="imgUrl" @click.stop/>
-            <div class="hb-footer df df-c ai-c just-c-ct c_66 fs_28 mt-20" @click.stop>推广成功后获得佣金</div>
+            <div class="hb-footer df df-c ai-c just-c-ct c_66 fs_28 mt-20" @click.stop>
+                <div>长按保存图片，发给好友或者分享朋友圈</div>
+                <div v-if="this.yongjin">每邀请一位好友购买，您将立即获得<span class="c_red1 fs_30">{{this.yongjin}}</span>元的奖励</div>
+            </div>
         </van-overlay>
         <!-- 关注公众号 -->
         <van-overlay :show="showGzhEwm" class="df ai-c just-c-ct"  @click="showGzhEwm=false;">
@@ -272,6 +275,7 @@ export default {
             haibaoToast: null,
 
             showGzhEwm: false,
+            yongjin: 0,
         }
     },
     beforeRouteUpdate(to,from,next){
@@ -294,6 +298,7 @@ export default {
         this.getData();
         this.getOrganizer();
         this.getActivityForm();
+        this.getYongjin();
     },
     destroyed(){
         if(this.haibaoToast){this.haibaoToast.clear();}
@@ -336,6 +341,16 @@ export default {
                 this.getLastTime();
                 this.bgimg = this.data.sales_posterss;
             })
+        },
+        // 佣金
+        getYongjin(){
+            axios({
+                url: "/activity/Apiactivity/getlavelprice",
+                params: {id: this.id},
+            }).then((data)=>{
+                if(data.err!=0){return;}
+                this.yongjin = data.date;
+            });
         },
         // 商家信息
         getOrganizer(){

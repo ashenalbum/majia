@@ -222,7 +222,7 @@ export default {
                     if(data.err==1){setTimeout(()=>{window.location.reload();},500)}
                     return;
                 }
-                // this.wxpay(this.pay_info);
+                this.wxpay(this.pay_info);
             }).catch(()=>{
                 Toast("pay error");
             })

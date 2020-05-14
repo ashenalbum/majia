@@ -13,7 +13,7 @@
         </div>
         <div class="list df df-c f1">
             <van-tabs v-model="search.template_class" @click="onSearch" type="card" color="#3189F6">
-                <van-tab @click.stop v-for="(value, key, index) in tabs" :key="index" :title="value"></van-tab>
+                <van-tab @click.stop v-for="(value, key, index) in tabs" :name="key" :key="index" :title="value"></van-tab>
             </van-tabs>
             <div class="listul-box f1 mt-30">
                 <van-list
@@ -100,15 +100,23 @@ export default {
         },
         zhizuo(id){
             axios({
-                url: "/activity/Apiactivity/is_perfect_info"
+                url: "/activity/Apiactivity/IsRelease"
             }).then((data)=>{
                 if(data.err!==0){
-                    Toast("请先验证信息");
-                    this.$router.push({name:"Auth",query:{id: id}});
+                    Toast(data.content);
                     return;
                 }
-                this.$router.push({name:"EventForm", query:{id:id, xieyi:1}});
-            });
+                axios({
+                    url: "/activity/Apiactivity/is_perfect_info"
+                }).then((data)=>{
+                    if(data.err!==0){
+                        Toast("请先验证信息");
+                        this.$router.push({name:"Auth",query:{id: id}});
+                        return;
+                    }
+                    this.$router.push({name:"EventForm", query:{id:id, xieyi:1}});
+                });
+            })
         },
         toNewForm(){
             this.zhizuo(1);

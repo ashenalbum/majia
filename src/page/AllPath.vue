@@ -1,5 +1,7 @@
 <template>
     <div class="cont">
+        <router-link to="/index"><div>/index</div></router-link>
+        <router-link to="/extension"><div>/extension</div></router-link>
         <router-link to="/my_center"><div>/my_center</div></router-link>
         <router-link to="/event_list"><div>/event_list</div></router-link>
         <router-link to="/event_view"><div>/event_view</div></router-link>
@@ -24,10 +26,11 @@
         <router-link to="/giveRecords"><div>/giveRecords</div></router-link>
 
         <van-uploader :before-read="beforeRead" />
-
+        <PageMenu></PageMenu>
     </div>
 </template>
 <script>
+import PageMenu from "../components/PageMenu";
 import {upFile} from "../utils/axios";
 import { Toast } from 'vant';
 
@@ -52,7 +55,8 @@ export default {
     },
     created(){
         console.log(this.$store.state);
-    }
+    },
+    components: {PageMenu}
 }
 </script>
 <style scoped>

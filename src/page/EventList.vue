@@ -56,6 +56,8 @@
                 <span class="label c_ashen fs_30" @click="operateClick('createbill',billUrl)">获取海报</span>
                 <span class="label c_ashen fs_30" @click="operateClick('liulan')">浏览记录</span>
                 <span class="label c_ashen fs_30" @click="operateClick('dingdan')">订单列表</span>
+                <span class="label c_ashen fs_30" @click="operateClick('zhutui')">我的助推</span>
+                <span class="label c_ashen fs_30" @click="operateClick('yq-zhutui')">邀请助推</span>
                 <div class="line"></div>
                 <span class="label c_ashen fs_30" id="copyurl" :data-clipboard-text="copyUrl">复制活动链接</span>
                 <span class="label c_ashen fs_30" id="copybill" :data-clipboard-text="billUrl">复制海报链接</span>
@@ -64,12 +66,14 @@
                 <!-- <span class="label c_ashen fs_30" @click="operateClick('datas')">统计数据</span> -->
             </div>
         </van-popup>
+        <PageMenu></PageMenu>
     </div>
 </template>
 <script>
 import axios from "../utils/axios";
 import {Toast} from 'vant';
 import Clipboard from 'clipboard';
+import PageMenu from "../components/PageMenu";
 
 export default {
     data(){
@@ -156,6 +160,8 @@ export default {
             if(type=="payafter"){this.$router.push({path:"/pay_after_set", query:{id:id}}); return}
             if(type=="liulan"){this.$router.push({path:"/browse", query:{id:id}}); return}
             if(type=="qudao"){this.$router.push({path:"/channel", query:{id:id}}); return}
+            if(type=="zhutui"){this.$router.push({path:"/extension", query:{id:id}}); return}
+            if(type=="yq-zhutui"){this.$router.push({path:"/extension", query:{id:id,yq:true}}); return}
         },
         // 活动时间
         computedTime(item){
@@ -187,7 +193,8 @@ export default {
                 this.getList();
             })
         }
-    }
+    },
+    components:{PageMenu},
 }
 </script>
 <style scoped>

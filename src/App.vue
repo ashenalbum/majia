@@ -1,9 +1,9 @@
 <template>
     <div id="app" :class="{ 'header_class': isActive }">
         <keep-alive >
-            <router-view  v-on:footer="footer"  v-if="$route.meta.keepAlive"></router-view>
+            <router-view v-if="$route.meta.keepAlive"></router-view>
         </keep-alive >
-        <router-view  v-on:footer="footer"  v-if="!$route.meta.keepAlive"></router-view>
+        <router-view v-if="!$route.meta.keepAlive"></router-view>
     </div>
 </template>
 
@@ -15,18 +15,12 @@ export default {
         return {
             active: '',
             isActive:false,
-            footer_show: true,
             HeaderBool:false,
             is_open_spec:false
         };
     },
     methods: {
-        //是否显示底部
-        footer: function(bool) {
-            this.footer_show = bool;
-        },
     },
-    created () {},
     watch: {
         $route: {
             handler: function(val) {
@@ -41,6 +35,7 @@ export default {
 </script>
 
 <style>
+::-webkit-scrollbar {width:0; height:0; background:transparent;}
 html,body{height:100%;}
 #app {height:100%; font-family: Avenir, Helvetica, Arial, sans-serif;-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;}
 
@@ -113,6 +108,9 @@ html,body{height:100%;}
 .van-list__finished-text{width:100%;}
 .van-tabs__nav--card{border:none!important;}
 .van-tabs__nav--card .van-tab{border:none!important;}
+
+.index-tabs .van-tabs__line{display:none;}
+.index-tabs .van-tab--active{font-weight:bold;}
 
 .fixed-submit{position:fixed!important; z-index:1; right:0; bottom:2rem; border-radius:0.1rem 0 0 0.1rem; width:2rem;}
 .com-btn-y{display:inline-block; background:#FF9C00; border-radius:0.06rem; line-height:1; padding:0.08rem 0.12rem; color:#ffffff; font-size:0.24rem;}

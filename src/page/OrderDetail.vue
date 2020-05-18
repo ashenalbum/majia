@@ -13,7 +13,7 @@
                         </div>
                         <div class="mt-10 df df-r ai-c just-c-bet fs_24">
                             <div class="df df-r ai-c just-c-end fs_28 c_red1">合计：￥{{data.goods_amount}}</div>
-                            <span class="fs_26 c_33">×1</span>
+                            <span class="fs_26 c_33">×{{data.num}}</span>
                         </div>
                     </div>
                 </div>
@@ -147,6 +147,8 @@
         </van-popup>
         
         <canvas id="ewm" ref="ewm" class="ewm" style="display:none;"></canvas>
+
+        <PageMenu></PageMenu>
     </div>
 </template>
 <script>
@@ -155,6 +157,7 @@ import { Toast,Dialog } from 'vant';
 import QRCode from "qrcode";
 import wx from "weixin-js-sdk";
 import Clipboard from 'clipboard';
+import PageMenu from "../components/PageMenu";
 
 export default {
     data(){
@@ -337,7 +340,8 @@ export default {
             let hms = d.toTimeString().slice(0,8);
             return ymd + " " + hms;
         },
-    }
+    },
+    components: {PageMenu},
 }
 </script>
 <style scoped>

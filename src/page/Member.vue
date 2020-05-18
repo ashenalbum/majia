@@ -102,6 +102,7 @@
                 </ul>
             </div>
         </van-popup>
+        <PageMenu></PageMenu>
     </div>
 </template>
 
@@ -109,6 +110,7 @@
 import { Toast } from "vant";
 import axios from "../utils/axios";
 import wx from "weixin-js-sdk";
+import PageMenu from "../components/PageMenu";
 
 // import BackHome from "../components/BackHome"; //漂浮菜单
 export default {
@@ -280,6 +282,7 @@ export default {
             this.$router.go(-1);
         },
     },
+    components: {PageMenu},
 };
 </script>
 

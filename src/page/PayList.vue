@@ -13,7 +13,7 @@
         </div>
         <div class="list df df-c f1">
             <van-tabs v-model="search.template_class" @click="onSearch" type="card" color="#3189F6">
-                <van-tab @click.stop v-for="(value, key, index) in tabs" :key="index" :title="value"></van-tab>
+                <van-tab @click.stop v-for="(value, key, index) in tabs" :name="key" :key="index" :title="value"></van-tab>
             </van-tabs>
             <div class="listul-box f1 mt-30">
                 <van-list
@@ -37,11 +37,13 @@
                 </van-list>
             </div>
         </div>
+        <PageMenu></PageMenu>
     </div>
 </template>
 <script>
 import axios from "../utils/axios";
 // import { Toast } from 'vant';
+import PageMenu from "../components/PageMenu";
 
 export default {
     data(){
@@ -95,17 +97,13 @@ export default {
             });
         },
         toDetail(id){
-            axios({
-                url: "/activity/Apiactivity/is_perfect_info"
-            }).then((data)=>{
-                if(data.err!==0){return;}
-                this.$router.push({name:"PayDetail", query:{id: id}});
-            });
+            this.$router.push({name:"PayDetail", query:{id: id}});
         }
     },
     created(){
         this.getTabs();
-    }
+    },
+    components: {PageMenu},
 }
 </script>
 <style scoped>

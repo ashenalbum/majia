@@ -235,6 +235,7 @@
             </div>
         </van-popup>
         <!-- </van-overlay> -->
+        <PageMenu></PageMenu>
     </div>
 </template>
 <script>
@@ -242,6 +243,7 @@ import {Toast,Dialog} from "vant";
 import {upFile} from "../utils/axios";
 import axios from "../utils/axios";
 import Clipboard from 'clipboard';
+import PageMenu from "../components/PageMenu";
 // import vuedraggable from 'vuedraggable';
 
 export default {
@@ -407,11 +409,13 @@ export default {
                 if(!data.data.details){this.formData.details = [];}
             });
             
-            axios({
-                url: "/activity/Apiactivity/IsRelease"
-            }).then((data)=>{
-                if(data.err!==0){Toast(data.content);}
-            });
+            if(!this.isEdit){
+                axios({
+                    url: "/activity/Apiactivity/IsRelease"
+                }).then((data)=>{
+                    if(data.err!==0){Toast(data.content);}
+                });
+            }
         },
         // 添加头图
         addHeadImg(o){
@@ -660,7 +664,8 @@ export default {
         // 返回
         back(){this.$router.go(-1)},
         backList(){this.$router.push({path:"/event_list"})}
-    }
+    },
+    components: {PageMenu},
 }
 </script>
 <style scoped>

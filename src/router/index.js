@@ -1,17 +1,22 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import AllPath from '@/page/AllPath'//首页
+import Index from '@/page/Index'//首页
 
 Vue.use(Router);
 
 export default new Router({
     // mode: 'history',
     routes: [{
-        path: '/', redirect: '/pay_list'
+        path: '/', redirect: '/index'
+    }, {
+        path: '/index',
+        name: 'Index',
+        meta: { title: "首页"},
+        component: Index
     },{
         path: '/all_path',
         name: 'AllPath',
-        component: AllPath
+        component: (resolve) =>require(['@/page/AllPath.vue'],resolve)
     }, {
         path: '/my_center',
         name: 'MyCenter',
@@ -142,12 +147,17 @@ export default new Router({
     },{
         path: '/exchange',
         name: 'Exchange',
-        meta: { title: "兑换码", showHeader: true, },
+        meta: { title: "兑换码"},
         component: (resolve) =>require(['@/page/Exchange.vue'],resolve)
     },{
         path: '/giveRecords',
         name: 'GiveRecords',
-        meta: { title: "赠送记录", showHeader: true, },
+        meta: { title: "赠送记录"},
         component: (resolve) =>require(['@/page/GiveRecords.vue'],resolve)
+    },{
+        path: '/extension',
+        name: 'Extension',
+        meta: { title: "好友助推"},
+        component: (resolve) =>require(['@/page/Extension.vue'],resolve)
     },]
 })

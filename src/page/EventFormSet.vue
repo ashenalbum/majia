@@ -27,11 +27,13 @@
             </div>
         </van-popup>
         <!-- </van-overlay> -->
+        <PageMenu></PageMenu>
     </div>
 </template>
 <script>
 import axios from "../utils/axios";
 import { Toast } from 'vant';
+import PageMenu from "../components/PageMenu";
 
 export default {
     data(){
@@ -104,7 +106,8 @@ export default {
         },
         
         backList(){this.$router.push({path:"/event_list"})},
-    }
+    },
+    components: {PageMenu},
 }
 </script>
 <style scoped>

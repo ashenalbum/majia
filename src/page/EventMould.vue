@@ -38,11 +38,13 @@
             </div>
         </div>
         <van-button class="fixed-submit" type="info" @click="toNewForm">创建新活动</van-button>
+        <PageMenu></PageMenu>
     </div>
 </template>
 <script>
 import axios from "../utils/axios";
 import { Toast } from 'vant';
+import PageMenu from "../components/PageMenu";
 
 export default {
     data(){
@@ -60,6 +62,8 @@ export default {
             dataList: [],
             searchShow: false,
             searchVal: "",
+
+            showKefu: false,
         }
     },
     methods: {
@@ -120,11 +124,15 @@ export default {
         },
         toNewForm(){
             this.zhizuo(1);
-        }
+        },
+        toMycenter(){
+            this.$router.push("/my_center");
+        },
     },
     created(){
         this.getTabs();
-    }
+    },
+    components:{PageMenu},
 }
 </script>
 <style scoped>
@@ -134,8 +142,8 @@ export default {
 .search-title .van-search{padding:10px 0.2rem;}
 
 .cont{height:100%;}
-.listul-box{position:relative; width:6.7rem; margin-left:auto; margin-right:auto;}
-.listul{position:absolute; top:0; bottom:0; left:0; right:0; overflow-y:auto; display:flex; flex-direction:row; justify-content:space-between; flex-wrap:wrap; }
+.listul-box{position:relative; }
+.listul{position:absolute; top:0; bottom:0; left:0; right:0; padding:0 0.4rem; overflow-y:auto; display:flex; flex-direction:row; justify-content:space-between; flex-wrap:wrap; align-content: flex-start;}
 .listul .item{box-sizing:border-box; margin-bottom:0.25rem; width:3.24rem; height:3.52rem; border-radius:0.15rem; overflow:hidden;}
 .listul .item .imgbox{position:relative; width:100%; height:2.08rem; border-bottom:1px solid #f1f1f1;}
 .listul .item .imgbox .img{width:100%; height:100%;}
@@ -143,4 +151,5 @@ export default {
 .listul .item .title{height:0.78rem; line-height:0.78rem; padding:0 4px;}
 
 .fixed-submit{bottom:1rem; width:auto;}
+
 </style>

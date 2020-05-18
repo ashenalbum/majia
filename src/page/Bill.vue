@@ -79,6 +79,7 @@
                 </div>
             </div>
         </van-popup> -->
+        <PageMenu></PageMenu>
     </div>
 </template>
 <script>
@@ -87,6 +88,7 @@ import {upFile} from "../utils/axios";
 import QRCode from "qrcode";
 // import html2canvas from 'html2canvas';
 import { Toast } from 'vant';
+import PageMenu from "../components/PageMenu";
 
 
 export default {
@@ -250,7 +252,8 @@ export default {
 
         toFormSet(){this.$router.push({path:"/event_form_set", query:{id:this.id}})},
         backList(){this.$router.push({path:"/event_list"})},
-    }
+    },
+    components: {PageMenu},
 }
 </script>
 <style scoped>

@@ -51,12 +51,14 @@
                 <div class="c_o fs_30 mt-30">关注公众号</div>
             </div>
         </van-overlay>
+        <PageMenu></PageMenu>
     </div>
 </template>
 <script>
 import axios from "../utils/axios";
 import Clipboard from 'clipboard';
-import {Toast} from "vant"
+import {Toast} from "vant";
+import PageMenu from "../components/PageMenu";
 
 export default {
     data(){
@@ -119,7 +121,8 @@ export default {
             clipboard3.on('success', ()=>{Toast("复制成功");});
             clipboard3.on('error', ()=>{Toast("复制失败");});
         }
-    }
+    },
+    components:{PageMenu},
 }
 </script>
 <style scoped>

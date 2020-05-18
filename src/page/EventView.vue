@@ -107,12 +107,14 @@
                 </div>
             </div>
         </van-overlay> -->
+        <PageMenu></PageMenu>
     </div>
 </template>
 <script>
 // import Clipboard from 'clipboard';
 import {Toast} from 'vant';
 import axios from "../utils/axios";
+import PageMenu from "../components/PageMenu";
 
 export default {
     name: "EventView",
@@ -189,6 +191,7 @@ export default {
             }
         },2000);
     },
+    components:{PageMenu},
 }
 </script>
 <style scoped>
@@ -215,7 +218,7 @@ export default {
 .words .title{position:relative; width:3.8rem; margin:0 auto;}
 .words .title .line{position:absolute; left:0; right:0; top:50%; border-bottom:1px solid #E3E3E3;}
 .words .title .txt{position:relative; padding:0 0.5rem; color:#BBC1D4; background:#ffffff; }
-.words .box .txt{padding:0.3rem 0.2rem; line-height:1.4; font-size:0.28rem;white-space: pre-line;}
+.words .box .txt{padding:0.3rem 0.2rem; line-height:1.4; font-size:0.28rem; white-space:pre-line;}
 .words .box .img{display:block; width:100%; height:auto;}
 .words .box .video{display:block; width:100%; height:auto; background:#000000;}
 

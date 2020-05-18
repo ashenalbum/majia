@@ -349,7 +349,7 @@ export default {
         },
     },
     created: function() {
-        this.$emit("footer", false);
+        // this.$emit("footer", false);
         // 接受路由中带过来的showHeader
         // this.HeaderBool = this.$route.meta.showHeader;
     },

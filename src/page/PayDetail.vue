@@ -3,7 +3,7 @@
         <div class="top">
             <van-swipe class="my-swipe" :autoplay="data.video_url?0:3000" indicator-color="white">
                 <van-swipe-item v-if="data.video_url">
-                    <video id="topvideo" class="img" :src="data.video_url" controls autoplay muted></video>
+                    <video id="topvideo" class="img" :src="data.video_url" controls autoplay></video>
                 </van-swipe-item>
                 <van-swipe-item v-for="(item,index) in data.head_pic_img" :key="index">
                     <img :src="item.pic_img" class="img" />
@@ -96,7 +96,7 @@
                     <span class="fs_26 c_ashen">{{ad.browse_times}}人参与</span>
                 </div>
             </div>
-            <van-icon @click.stop="showAd=false" name="clear" size="0.5rem" color="#D1D6E5" class="close"/>
+            <van-icon @click.stop="showAd=false" name="cross" size="0.3rem" color="#FFFFFF" class="close"/>
         </div>
         <!-- 商家信息 -->
         <van-overlay :show="showSeller" @click="showSeller=false">
@@ -220,6 +220,7 @@
                 <div class="c_o fs_30 mt-30">关注公众号 即刻发布活动</div>
             </div>
         </van-overlay>
+        <!-- <PageMenu></PageMenu> -->
     </div>
 </template>
 <script>
@@ -231,6 +232,7 @@ import wx from "weixin-js-sdk";
 import {upFile} from "../utils/axios";
 import QRCode from "qrcode";
 import html2canvas from 'html2canvas';
+// import PageMenu from "../components/PageMenu";
 
 export default {
     name: "EventView",
@@ -278,11 +280,11 @@ export default {
             yongjin: 0,
         }
     },
-    beforeRouteUpdate(to,from,next){
-        next();
-        // this.$router.go(0);
-        if(to.query.id!=from.query.id){window.location.reload();}
-    },
+    // beforeRouteUpdate(to,from,next){
+    //     next();
+    //     // this.$router.go(0);
+    //     if(to.query.id!=from.query.id){window.location.reload();}
+    // },
     created(){
         this.urlQuery = this.$route.query;
         if(this.$route.query.showPoter){
@@ -318,6 +320,8 @@ export default {
                 this.userInfo = data.userinfo;
                 if(data.data.recommend_advert){
                     this.ad = data.data.recommend_advert;
+                    setTimeout(()=>{this.showAd = true;},2000);
+                    setTimeout(()=>{this.showAd = false;},12000);
                 }
                 // 设置规格
                 if(data.data.spec_content.length){
@@ -359,7 +363,6 @@ export default {
                 params: {activity_id: this.id}
             }).then((data)=>{
                 if(data.err!=0){return}
-
                 this.sjInfo = data.content;
             })
         },
@@ -371,7 +374,7 @@ export default {
                 if(data.err!=0){return}
                 this.info = data.data;
                 this.createEwm()
-            })
+            });
         },
         // 生成二维码
         createEwm(){
@@ -548,6 +551,8 @@ export default {
                     recommendid3: this.urlQuery.recommendid3 || 0,
                     channelid: this.urlQuery.channelid || 0,
                     activity_id1: this.urlQuery.activity_id1 || 0,
+                    p1: this.urlQuery.p1,
+                    p2: this.urlQuery.p2,
                 }
             }).then((data)=>{
                 if(data.err!=0){return;}
@@ -578,21 +583,30 @@ export default {
             this.$router.push("/event_mould");
         },
         // 滚动条
-        handleScroll(){
-            let detail = this.$refs.detail;
-            // if(!detail){return}
-            let long = detail.offsetTop - document.documentElement.scrollTop;
-            if(long<=0){
-                this.showAd = true;
-                setTimeout(()=>{ this.showAd = false;},10000);    
-                window.removeEventListener('scroll',this.handleScroll);
-            }
-        },
+        // handleScroll(){
+        //     let detail = this.$refs.detail;
+        //     // if(!detail){return}
+        //     let long = detail.offsetTop - document.documentElement.scrollTop;
+        //     if(long<=0){
+        //         this.showAd = true;
+        //         setTimeout(()=>{ this.showAd = false;},10000);    
+        //         window.removeEventListener('scroll',this.handleScroll);
+        //     }
+        // },
         toMycenter(){
             this.$router.push("/my_center");
         },
         toDetail(id){
-            this.$router.push({name:"PayDetail", query:{id: id}});
+            let url = "/public/index.php/activity/info/index/";
+            url = url + "recommendid/" + this.urlQuery.recommendid + "/";
+            url = url + "recommendid1/" + this.urlQuery.recommendid1 + "/";
+            url = url + "recommendid2/" + this.urlQuery.recommendid2 + "/";
+            url = url + "recommendid3/" + this.urlQuery.recommendid3 + "/";
+            url = url + "channelid/" + this.urlQuery.channelid + "/";
+            url = url + "activity_id1/" + id + "/";
+            url = url + "p1/" + this.sjInfo.user_id + "/";
+            url = url + "p2/" + this.urlQuery.p2 + "/";
+            window.location.href = url;
         },
         newEvent(){
             this.showGzhEwm = true;
@@ -645,10 +659,11 @@ export default {
             }
         },2000);
         // 滚动
-        window.addEventListener('scroll',this.handleScroll);
+        // window.addEventListener('scroll',this.handleScroll);
         // 制作海报
         this.getInfo();
     },
+    // components:{PageMenu},
 }
 </script>
 <style scoped>
@@ -693,7 +708,7 @@ export default {
 .ad .img{width:1.9rem; height:1.16rem;}
 .ad .txt{padding-left:0.2rem;}
 .ad .txt .title{line-height:1.2;}
-.ad .close{position:absolute; padding:0.1rem; right:-0.35rem; top:-0.35rem;}
+.ad .close{position:absolute; padding:0.1rem; right:-0.25rem; top:-0.25rem; background:#D1D6E5; border-radius:50%;}
 
 .maskSeller{display:flex; align-items:center; justify-content: center; height:100%;}
 .maskSeller .box{box-sizing:border-box; width:6.4rem; padding:0.4rem 0.2rem; background:#ffffff; border-radius:0.1rem;}

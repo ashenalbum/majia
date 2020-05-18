@@ -34,9 +34,11 @@
             <van-field v-model="formData.service_tel" label="客服电话" placeholder="请输入电话号" input-align="right" class="form-input"/>
         </div>
         <van-button class="submit" type="info" block @click="checkForm">确认提交</van-button>
+        <PageMenu></PageMenu>
     </div>
 </template>
 <script>
+import PageMenu from "../components/PageMenu";
 import axios from "../utils/axios";
 import {upFile} from "../utils/axios";
 import { Toast } from 'vant';
@@ -131,7 +133,8 @@ export default {
                 this.formData.code_wx = data.data.content.fileid;
             });
         },
-    }
+    },
+    components:{PageMenu}
 }
 </script>
 <style scoped>

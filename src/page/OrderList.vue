@@ -38,11 +38,13 @@
                 </div>
             </div>
         </van-list>
-        
+        <PageMenu></PageMenu>
     </div>
 </template>
 <script>
 import axios from "../utils/axios";
+import PageMenu from "../components/PageMenu";
+
 export default {
     data(){
         return {
@@ -90,7 +92,8 @@ export default {
         toPayAfter(item){
             this.$router.push({path:"/pay_after", query:{id: item.activity_id}});
         },
-    }
+    },
+    components: {PageMenu},
 }
 </script>
 <style scoped>

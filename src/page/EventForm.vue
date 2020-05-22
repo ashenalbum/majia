@@ -110,7 +110,7 @@
             </div>
             <!-- <van-button class="submit" type="info">确认发布</van-button> -->
         </div>
-        <van-button class="fixed-submit" type="info" @click="checkForm">确认发布</van-button>
+        <van-button class="fixed-submit" type="info" @click="checkForm">保存活动</van-button>
         <div ref="xuzhi" class="help fs_22 c_88">
             <div class="fs_30">购买须知：</div>
             <div v-html="formData.instructions"></div>
@@ -125,7 +125,7 @@
                     </van-uploader>
                     <span class="fs_26 c_blue" @click="topMouldSelOk">确定</span>
                 </div>
-                <div class="imgbox mt-40">
+                <div class="imgbox mt-20">
                     <ul class="img-ul">
                         <li v-for="(item,index) in (topModel[topModelSel] && topModel[topModelSel].pics)" :key="index" @click="topModelImg=index" class="li shadow">
                             <img :src="item.thumb" class="img" />
@@ -133,9 +133,9 @@
                         </li>
                     </ul>
                 </div>
-                <div class="imgbox mt-30">
+                <div class="imgbox mt-20">
                     <ul class="img-ul">
-                        <li v-for="(item,index) in topModel" :key="index" class="fl" @click="topModelSel=index;topModelImg=0" :class="{active:topModelSel==index}">{{item.title}}</li>
+                        <li v-for="(item,index) in topModel" :key="index" class="fl fs_26 c_66" @click="topModelSel=index;topModelImg=0" :class="{active:topModelSel==index}">{{item.title}}</li>
                     </ul>
                 </div>
             </div>
@@ -317,8 +317,8 @@ export default {
     created(){
         this.id = this.$route.query.id;
         this.isEdit = this.$route.query.isEdit;
-        this.showXieyi = Boolean(this.$route.query.xieyi && !sessionStorage.getItem("xieyi"));
-        if(this.showXieyi){sessionStorage.setItem("xieyi","true");}
+        this.showXieyi = Boolean(this.$route.query.xieyi && !localStorage.getItem("xieyi"));
+        if(this.showXieyi){localStorage.setItem("xieyi","true");}
         this.getData();
         this.getHy();
         this.getCj();
@@ -348,7 +348,7 @@ export default {
                 {b:/^\s*$/.test(data.special_offer)||!data.special_offer, t:"请输入活动价"},
                 {b:data.scene===undefined, t:"请选择活动场景"},
                 {b:data.genre_id===undefined||data.genre_id==null, t:"请选择行业类型"},
-                {b:data.details.length==0, t:"请填写活动详情"},
+                // {b:data.details.length==0, t:"请填写活动详情"},
             ];
             for(let i in testArr){if(testArr[i]['b']){Toast(testArr[i]['t']);return}}
             this.formSubmit();
@@ -499,6 +499,10 @@ export default {
         },
         // 添加规格
         addGuige(){
+            if(!this.guigeData.name){Toast("请输入规格名");return}
+            if(this.guigeData.price===""){Toast("请输入原价");return}
+            if(this.guigeData.offerPic===""){Toast("请输入活动价");return}
+            if(this.guigeData.stock===""){Toast("请输入库存");return}
             this.formData.spec_content.push({...this.guigeData});
             this.guigeData = { name: "", price: "", offerPic: "", stock: ""};
             this.showGuige = false;
@@ -669,6 +673,7 @@ export default {
 }
 </script>
 <style scoped>
+.cont{height:100%; overflow-y:auto;}
 .txt_line{padding-left:5px;}
 .w_62{width:6.2rem; margin-left:auto; margin-right:auto;}
 .fs_14px{font-size:14px;}
@@ -697,10 +702,10 @@ export default {
 .tt-mould .title .btn{padding:0 4px;}
 .tt-mould .imgbox{width:100%; overflow-x:auto; overflow-y:hidden;}
 .tt-mould .imgbox .img-ul{position:relative; white-space: nowrap; padding:0.1rem;}
-.tt-mould .imgbox .img-ul .li{position:relative; display:inline-block; margin:0 0.2rem; width:3.26rem; height:2rem; }
+.tt-mould .imgbox .img-ul .li{position:relative; display:inline-block; margin:0 0.2rem; width:1.8rem; height:1.1rem; }
 .tt-mould .imgbox .img-ul .li .img{width:100%; height:100%;}
 .tt-mould .imgbox .img-ul .li .check{box-sizing:border-box; position:absolute; right:0.1rem; top:0.1rem;}
-.tt-mould .imgbox .img-ul .fl{display:inline-block;padding:0.1rem; margin:0 0.1rem;}
+.tt-mould .imgbox .img-ul .fl{display:inline-block; padding:0.06rem 0.1rem; margin:0 0.1rem;}
 .tt-mould .imgbox .img-ul .fl.active{background:#FF9C00; color:#ffffff;}
 
 .guige{padding-top:10px; border-bottom:1px solid #E2E6F1;}

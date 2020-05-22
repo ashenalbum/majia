@@ -159,5 +159,10 @@ export default new Router({
         name: 'Extension',
         meta: { title: "好友助推"},
         component: (resolve) =>require(['@/page/Extension.vue'],resolve)
-    },]
+    },{
+        path: '/bgm_set',
+        name: "BgmSet",
+        meta: {title: "BGM设置"},
+        component: (resolve) =>require(['@/page/BgmSet.vue'],resolve)
+    }]
 })

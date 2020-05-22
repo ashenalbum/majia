@@ -2,24 +2,25 @@
     <div class="cont">
         <div class="topimg"></div>
         <div class="item">
-            <div class="ware df df-r" @click="toEventDetail">
+            <div class="ware df df-r" @click="toDetail(id)">
                 <img :src="data.head_pic" class="img shadow" />
                 <div class="detail df df-c just-c-bet">
                     <div>
                         <div class="two-hide fs_32">{{data.title}}</div>
                     </div>
                     <div class="mt-10">
-                        <div v-if="data.start_time&&data.abort_time" class="one-hide c_ashen fs_24">{{getTime()}}</div>
+                        <div v-if="data.start_time&&data.abort_time" class="one-hide c_ashen fs_24">{{getTime(data)}}</div>
                         <div class="mt-10 fs_28 c_red1">￥{{data.price}}</div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="mt-30 box">
-            <van-button v-if="yq" round block color="linear-gradient(to bottom, #2E8AF7, #6DB0FF)" >帮他助推一下</van-button>
-            <van-button v-else round block color="linear-gradient(to bottom, #2E8AF7, #6DB0FF)" >邀请好友帮忙助推</van-button>
+        <div class="act-box mt-30 box">
+            <van-button v-if="is_user" round block color="linear-gradient(to bottom, #2E8AF7, #6DB0FF)" @click="openMenu=true">邀请好友帮忙助推</van-button>
+            <van-button v-else :disabled="disabled" round block color="linear-gradient(to bottom, #2E8AF7, #6DB0FF)" @click="active" >帮他助推一下</van-button>
+            <span ref="ztnum" class="ztnum c_o fs_50">+{{ztnum}}</span>
         </div>
-        <div v-if="!yq" class="mt-50 box df df-r ai-c c_o">
+        <div v-if="is_user" class="mt-50 box df df-r ai-c c_o">
             <div>助力值：</div>
             <div class="slider-box f1 fs_26">
                 <!-- <van-slider v-model="value" :max="999" active-color="#FF9C00" inactive-color="#FFDDA7" bar-height="6px" button-size="18" >                    
@@ -46,7 +47,8 @@
                 </div>
             </div>
         </div>
-        <div class="tuli df df-r just-c-aro mt-50 fs_28">
+        <div v-if="is_user" class="tuli df df-r just-c-aro mt-50 fs_28">
+            <div class="df df-r ai-c"><div class="fk shadow"></div><span>当前助力值</span></div>
             <div class="df df-r ai-c"><div class="fk c1 shadow"></div><span>推荐</span></div>
             <div class="df df-r ai-c"><div class="fk c2 shadow"></div><span>热点</span></div>
             <div class="df df-r ai-c"><div class="fk c3 shadow"></div><span>头条</span></div>
@@ -54,55 +56,50 @@
         <div class="box list c_33">
             <div class="title fs_30 df just-c-ct">好友助推榜</div>
             <ul class="ul mt-40">
-                <li v-for="(item,index) in [1]" :key="index" class="df df-r ai-c">
-                    <img src="~@/assets/test.png" alt="" class="icon" />
+                <li v-for="(item,index) in userList" :key="index" class="df df-r ai-c">
+                    <img :src="item.headpath" alt="" class="icon shadow" />
                     <div class="f1 df df-c">
-                        <span class="fs_28 lh-1">昵称昵称昵称</span>
-                        <span class="fs_28 c_ashen mt-10 lh-1">05/10 23:23:00</span>
+                        <span class="fs_28 lh-1">{{item.nickname}}</span>
+                        <span class="fs_28 c_ashen mt-10 lh-1">{{timeString(item.addtime)}}</span>
                     </div>
-                    <div class="c_o fs_30">+90</div>
+                    <div class="c_o fs_30">+{{item.heating_power}}</div>
                 </li>
             </ul>
+            <div v-if="!userList || !userList.length" class="df df-r just-c-ct c_ashen fs_28">暂无更多</div>
         </div>
         <div class="box mt-30 more c_33">
             <div class="title fs_30 df just-c-ct">更多推荐</div>
             <ul class="ul mt-30 fs_28 c_33 df df-r just-c-bet df-w-w">
-                <li class="df df-c">
-                    <img src="~@/assets/test.png" class="img" />
-                    <div class="mt-10 one-hide">限时秒杀 前100名限时秒杀 前100名限时秒杀 前100名</div>
-                    <div class="jg c_red1">￥99</div>
+                <li v-for="(item,index) in tjList" :key="index" class="df df-c" @click="toDetail(item.id)">
+                    <img :src="item.head_pic" class="img" />
+                    <div class="mt-10 one-hide">{{item.title}}</div>
+                    <div class="jg c_red1">￥{{item.price}}</div>
                 </li>
             </ul>
+            <div v-if="!tjList || !tjList.length" class="df df-r just-c-ct c_ashen fs_28">暂无更多</div>
         </div>
         <van-overlay :show="showMask" @click="showMask=false" class="df ai-c just-c-ct">
-            <div class="mask" @click.stop>            
+            <div class="mask" @click.stop>
                 <div class="title fs_30 df just-c-ct">更多推荐</div>
                 <div class="tj-box fs_26">
-                    <div class="tj df df-r mt-30">
-                        <img src="~@/assets/test.png" class="img" />
+                    <div class="tj df df-r mt-30" v-for="(item,index) in tjList" :key="index">
+                        <img :src="item.head_pic" class="img" />
                         <div class="f1 df df-c">
-                            <div class="one-hide">限时秒杀 前100名限时秒杀 前100名限时秒杀 前100名</div>
-                            <div class="mt-10 f1 c_ashen fs_20">2020/05/15-2020/05/21</div>
+                            <div class="one-hide">{{item.title}}</div>
+                            <div class="mt-10 f1 c_ashen fs_20">{{getTime(item)}}</div>
                             <div class="df df-r ai-c just-c-bet">
-                                <span class="c_red1 c_22">￥99</span>
-                                <van-button size="mini" type="info" class="btn">立即购买</van-button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tj df df-r mt-30">
-                        <img src="~@/assets/test.png" class="img" />
-                        <div class="f1 df df-c">
-                            <div class="one-hide">限时秒杀 前100名限时秒杀 前100名限时秒杀 前100名</div>
-                            <div class="mt-10 f1 c_ashen fs_20">2020/05/15-2020/05/21</div>
-                            <div class="df df-r ai-c just-c-bet">
-                                <span class="c_red1 c_22">￥99</span>
-                                <van-button size="mini" type="info" class="btn">立即购买</van-button>
+                                <span class="c_red1 c_22">￥{{item.price}}</span>
+                                <van-button size="mini" type="info" class="btn" @click="toDetail(item.id)">立即购买</van-button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="df df-r just-c-ct c_99 fs_24 mt-30" @click="toIndex">查看更多</div>
+                <div class="df df-r just-c-ct c_99 fs_24 mt-10" @click="toIndex">查看更多</div>
             </div>
+        </van-overlay>
+        <van-overlay :show="openMenu" @click="openMenu=false" class="open-menu df df-c ai-c ">
+            <img src="~@/assets/other/open-menu.png" alt="" class="img" />
+            <div class="txt fs_40 c_ff">点击微信右上角<br/>发送给朋友吧</div>
         </van-overlay>
         <PageMenu></PageMenu>
     </div>
@@ -110,6 +107,7 @@
 <script>
 import axios from "../utils/axios";
 import PageMenu from "../components/PageMenu";
+import { Toast } from 'vant';
 
 export default {
     data(){
@@ -121,9 +119,17 @@ export default {
             min_num2: 0,
             min_num3: 0,
 
+            is_user: false,
             data: {},
+            userList: [],
+            tjList: [],
             value: 0,
             showMask: false,
+
+            disabled: false,
+            ztnum: 0,
+
+            openMenu: false,
         }
     },
     created(){
@@ -138,28 +144,55 @@ export default {
                 params: {actiyity_id:this.id},
             }).then((data)=>{
                 if(data.err!=0){return}
-                alert(JSON.stringify(data))
                 this.min_num1 = data.data.min_display_power;
                 this.min_num2 = data.data.min_hotspot_power;
                 this.min_num3 = data.data.min_top_power;
+                this.is_user = data.data.is_user;
                 this.data = data.data && data.data.info;
+                this.userList = data.data.userlist;
+                this.tjList = data.data.recommend;
+            }).catch(()=>{
+                Toast("getdata error");
             });
         },
-        toEventDetail(){
-            this.$router.push({path:"/pay_detail", query:{id:this.id}});
+        active(){
+            axios({
+                url: "/activity/Apiactivity/ToHelp",
+                params: {actiyity_id: this.id},
+            }).then((data)=>{
+                if(data.err!=0){return}
+                this.disabled = true;
+                this.ztnum = data.heating_power;
+                this.$refs.ztnum.style.display = "block";
+                setTimeout(()=>{
+                    this.$refs.ztnum.style.top = "-1rem";
+                    this.$refs.ztnum.style.opacity = "0";
+                },10);
+                Toast("助推成功");
+                this.getData();
+            }).catch(()=>{
+                Toast("active error");
+            });
+        },
+        toDetail(id){
+            this.$router.push({path:"/pay_detail", query:{id:id, activity_id1:id}});
         },
         toIndex(){
             this.$router.push({path:"/index"});
         },
-        getTime(){
-            let st = new Date(this.data.start_time*1000);
-            let et = new Date(this.data.abort_time*1000);
+        getTime(data){
+            let st = new Date(data.start_time*1000);
+            let et = new Date(data.abort_time*1000);
             return st.toLocaleDateString()+" - "+et.toLocaleDateString();
         },
         sldLeft(n){
             if(!n){return 0;}
             n = Number(n);
-            return 100*n/(n+400) + "%";
+            return 100*n/(n+600) + "%";
+        },
+        timeString(time){
+            let date = new Date(time*1000);
+            return date.toLocaleDateString() + " " + date.toTimeString().slice(0,8);
         }
     },
     components: {PageMenu},
@@ -189,7 +222,7 @@ export default {
 .slider-box .custom-button .num{position:absolute; top:100%; left:50%; margin-top:5px; transform: translateX(-50%); white-space:nowrap;}
 .slider-box .custom-button .alert{position:absolute; bottom:100%; left:50%; margin-bottom:5px; transform: translateX(-50%); white-space:nowrap;}
 
-.tuli{width:5rem; margin-left:auto; margin-right:auto;}
+.tuli{width:6rem; margin-left:auto; margin-right:auto;}
 .tuli .fk{width:10px; height:10px; border:2px solid #ffffff; border-radius:50%; margin-right:6px;}
 
 .list,
@@ -210,4 +243,11 @@ export default {
 .mask .title{background:url(~@/assets/other/zhutui-title.png) no-repeat center center; background-size:100% auto;}
 .tj img{width:2.3rem; height:1.24rem; margin-right:0.2rem;}
 .tj .btn{background:#FF9C00; padding:0 5px; outline:none; border:none; }
+
+.act-box{position:relative;}
+.act-box .ztnum{display:none; position:absolute; transition:all 1s; top:0; right:10px; opacity:1;}
+.act-box .ztnum.active{top:-1rem; opacity:0;}
+
+.open-menu .img{position:absolute; width:4rem; right:0; top:0;}
+.open-menu .txt{margin-top:3.6rem; padding:0.5rem 1rem; border:5px dashed #ffffff; border-radius:50%;}
 </style>

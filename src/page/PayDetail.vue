@@ -58,7 +58,7 @@
             <div class="fs_30">购买须知：</div>
             <div v-html="data.instructions"></div>
         </div>
-        <div class="bottom-btns df df-r fs_34">
+        <div class="bottom-btns df df-r fs_34 shadow">
             <div class="btn1 f1 df df-c ai-c just-c-ct" @click.stop="showGzhEwm=true">制作新活动</div>
             <div class="btn2 f1 df df-c ai-c just-c-ct" :class="{ashen:data.audit_type!=1}" @click="buyBtnClick">
                 <span>{{data.audit_type==1?data.pay_btn:"活动未开始"}}</span>
@@ -97,6 +97,10 @@
                 </div>
             </div>
             <van-icon @click.stop="showAd=false" name="cross" size="0.3rem" color="#FFFFFF" class="close"/>
+        </div>
+        <!-- 背景音乐 -->
+        <div v-if="bgmSrc" class="bgm-btn shadow" :style="{transform:'rotate('+bgmDeg+'deg)'}" @click="stopBgm">
+            <img src="~@/assets/event/bgm.png" alt="" class="img" />
         </div>
         <!-- 商家信息 -->
         <van-overlay :show="showSeller" @click="showSeller=false">
@@ -221,6 +225,7 @@
             </div>
         </van-overlay>
         <!-- <PageMenu></PageMenu> -->
+        <audio ref="bgm" :src="bgmSrc" loop></audio>
     </div>
 </template>
 <script>
@@ -278,6 +283,10 @@ export default {
 
             showGzhEwm: false,
             yongjin: 0,
+
+            bgmPlay: false,
+            bgmSrc: "",
+            bgmDeg: 0,
         }
     },
     // beforeRouteUpdate(to,from,next){
@@ -345,6 +354,25 @@ export default {
                 this.getLastTime();
                 this.bgimg = this.data.sales_posterss;
             })
+        },
+        playBgm(){
+            if(!this.data.id){setTimeout(this.playBgm,100); return;}
+            this.bgmPlay = true;
+            this.bgmSrc = "https://www.0dutv.com/upload/dance/20200301/8EFCDEB98EE52CFE767B054BEE668A8D.mp3";
+
+            setInterval(()=>{
+                if(!this.bgmPlay){return}
+                this.bgmDeg += 1;
+            },30);
+            wx.ready(()=>{
+                if(this.bgmPlay){
+                    this.$refs.bgm.play();
+                }
+            });
+        },
+        stopBgm(){
+            this.bgmPlay = !this.bgmPlay;
+            this.$refs.bgm[this.bgmPlay?'play':'pause']();
         },
         // 佣金
         getYongjin(){
@@ -662,6 +690,7 @@ export default {
         // window.addEventListener('scroll',this.handleScroll);
         // 制作海报
         this.getInfo();
+        this.playBgm();
     },
     // components:{PageMenu},
 }
@@ -775,4 +804,7 @@ export default {
 .gzhewmbox{width:5.4rem; height:6.25rem; background:#ffffff; border-radius:0.25rem;}
 .gzhewmbox .ewm-bg{box-sizing:border-box; padding:0.4rem; width:4.2rem; height:4.2rem; background:url(~@/assets/other/ewm-border.png) no-repeat; background-size:100% 100%;}
 .gzhewmbox .ewm-bg img{width:100%; height:100%;}
+
+.bgm-btn{position:fixed; left:6px; bottom:1.4rem; width:0.8rem; height:0.8rem; border-radius:50%;}
+.bgm-btn .img{display:block; width:100%; height:100%; border-radius:50%;}
 </style>

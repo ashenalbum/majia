@@ -13,6 +13,17 @@ export const upFile = (formData) => {
     })
 }
 
+// 上传音乐
+export const upMp3 = (formData) => {
+    return axios({
+        method: "post",
+        headers: { "Content-Type": "multipart/form-data" },
+        url: window.baseUrl + "/public/index.php/upload/uploads/upload",
+        data: formData,
+        // params: {...store.state.token}
+    })
+}
+
 // 创建axios实例
 const service = axios.create({
     baseURL: window.baseUrl + "/public/index.php", // api的base_url
@@ -45,7 +56,7 @@ service.interceptors.response.use(
             setTimeout(() => {
                 let route = window.location.href.split("#")[1];
                 window.location.href = window.baseUrl + '/public/index.php/activity/info/index?file='+route;
-            }, 800);
+            }, 200);
         }else if(data.content){
             Toast(data.content);
         }

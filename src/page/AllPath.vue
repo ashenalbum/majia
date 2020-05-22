@@ -1,6 +1,7 @@
 <template>
     <div class="cont">
         <router-link to="/index"><div>/index</div></router-link>
+        <router-link to="/bgm_set"><div>/bgm_set</div></router-link>
         <router-link to="/extension"><div>/extension</div></router-link>
         <router-link to="/my_center"><div>/my_center</div></router-link>
         <router-link to="/event_list"><div>/event_list</div></router-link>

@@ -2,7 +2,7 @@
     <div class="cont">
         <div class="banner">
             <van-swipe indicator-color="white">
-                <van-swipe-item v-for="(item,index) in top" :key="index" @click="toDetail(item.id)">
+                <van-swipe-item v-for="(item,index) in top" :key="index" class="itm" @click="toDetail(item.id)">
                     <img :src="item.head_pic" alt="" />
                 </van-swipe-item>
             </van-swipe>
@@ -112,7 +112,7 @@ export default {
             });
         },
         toDetail(id){
-            this.$router.push({path:"/pay_detail", query:{id: id}});
+            this.$router.push({path:"/pay_detail", query:{id:id, activity_id1:id}});
         }
     },
     components: {PageMenu},
@@ -121,8 +121,9 @@ export default {
 <style scoped>
 .ic{margin-right:4px;}
 .cont{box-sizing:border-box; height:100%; padding-top:0.1rem;}
-.banner{margin:0 0.4rem 0.1rem;; border-radius:0.1rem; overflow:hidden;}
-.banner img{display:block; width:100%;}
+.banner{width:6.7rem; margin:0 auto 0.1rem; border-radius:0.1rem; overflow:hidden;}
+.banner .itm{width:100%; height:3.2rem;}
+.banner .itm img{display:block; width:100%; height:100%;}
 
 .hot{margin-left:0.4rem; margin-right:0.4rem;}
 .hot .ul-box{width:100%; max-height:4rem; overflow-x:auto; overflow-y:hidden;}

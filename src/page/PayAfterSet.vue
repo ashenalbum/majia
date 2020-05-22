@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div ref="detailbtns" class="detail-inputbox mt-30 df df-c ai-c">
-                <van-field ref="input" v-model="detailTxt" v-if="detailType===0" type="textarea" class="input" @blur="addDetails" @keyup.enter.native="addDetails" />
+                <van-field ref="input" v-model="detailTxt" placeholder="请输入内容" v-if="detailType===0" type="textarea" class="input" @blur="addDetails" @keyup.enter.native="addDetails" />
                 <van-uploader v-else-if="detailType===1" :before-read="beforeRead" >
                     <div class="upfile fs_26 c_ashen df ai-c just-c-ct txt-c">宽度不得大于750px<br/>点击上传</div>
                 </van-uploader>
@@ -37,7 +37,9 @@
         <div v-else class="mt-40 linkbox">
             <van-field v-model="after_pay_url" placeholder="请输入跳转链接" class="video-input pl-4" />
         </div>
-        <van-button ref="btn" class="submit" block type="info" @click="checkForm">确认发布</van-button>
+        <div class="submit-box df ai-c just-c-ct shadow">
+            <van-button ref="btn" class="submit" block type="info" @click="checkForm">确认发布</van-button>
+        </div>
         
         <!-- 提交完成提示 -->
         <!-- <van-overlay :show="showTj"> -->
@@ -157,7 +159,7 @@ export default {
 }
 </script>
 <style scoped>
-/* .cont{width:6rem; margin:auto;} */
+.cont{padding-bottom:90px;}
 
 .ttbox{width:6rem; margin:auto; padding:0.4rem 0 0.2rem;}
 .ttbox .radio-group{padding-right:0.2rem;}
@@ -188,7 +190,8 @@ export default {
 .linkbox{width:6rem; margin-left:auto; margin-right:auto;}
 .video-input{border:1px solid #E2E6F1; padding:6px 4px;}
 
-.submit{border-radius:0.1rem; width:6rem; margin:0.6rem auto 0.4rem;}
+.submit-box{position:fixed; bottom:0; left:0; width:100%; padding:20px 0; background:#Ffffff; }
+.submit{border-radius:0.1rem; width:6rem; margin:0 auto;}
 
 .wrapper {display: flex; left:0; top:0; width:100%; height: 100%; z-index:99;}
 .wrapper .tj-ok{width:5.2rem; background:#ffffff; overflow:hidden;}

@@ -77,6 +77,8 @@ html,body{height:100%;}
 .c_66{color:#666666;}
 .c_88{color:#888888;}
 .c_99{color:#999999;}
+.c_aa{color:#aaaaaa;}
+.c_cc{color:#cccccc;}
 .c_ff{color:#FFFFFF;}
 .b{font-weight:bold;}
 .t-indent{text-indent:2em;}

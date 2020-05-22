@@ -84,12 +84,12 @@ function hideSearch(){
             urldt = urldt + (urldt?"&":"") + i + "=" + data[i];
         }
         let url = window.location.href.split("#")[0]+"#"+path+"?"+urldt;
-        setTimeout(function(){
+        setTimeout(()=>{
             window.location.href = url;
         },200);
         return;
     }
-    
+
     wxConfig();
 }
 // url
@@ -109,7 +109,7 @@ router.beforeEach(function (to, from, next) {
     // 判断微信
     let is_weixin = navigator.userAgent.toLowerCase().indexOf('micromessenger') !== -1;
     // let querys = GetUrl(window.location.hash)
-    if(is_weixin){ wxConfig() }
+    if(is_weixin){ wxConfig(to.fullPath) }
 
     let titlePage = [];
     if(is_weixin==false && titlePage.indexOf(to.name)>-1){to.meta.showHeader = true;}
@@ -120,7 +120,7 @@ router.beforeEach(function (to, from, next) {
 })
 
 // 微信config
-function wxConfig(){
+function wxConfig(path){
     let location = window.location.href;
     axios({
         url: "/wechat/Apiwechat/get_wx_config",
@@ -138,15 +138,33 @@ function wxConfig(){
                 'onMenuShareTimeline',
                 'chooseWXPay',
                 'scanQRCode',
+                'hideMenuItems',
             ]
         });
         wx.ready(() => {
-            var querys = GetUrl(window.location.hash.split("?")[1]);
-            delete querys.cowcms_userid;
-            // alert(JSON.stringify(querys))
+            wx.hideMenuItems({
+                menuList: [
+                    "menuItem:copyUrl",
+                    "menuItem:share:qq",
+                    "menuItem:share:QZone",
+                    "menuItem:share:weiboApp",
+                    "menuItem:share:facebook",
+                    "menuItem:openWithQQBrowser",
+                    "menuItem:openWithSafari",
+                    "menuItem:originPage",
+                    "menuItem:readMode"
+                ] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮
+            });
+
+            var fqs = GetUrl(window.location.hash.split("?")[1]);
+            delete fqs.cowcms_userid;
+            if(window.location.href.indexOf("/extension")>0){
+                fqs.help_id = fqs.id;
+                delete fqs.activity_id1;
+            }
             axios({
                 url: "/activity/Apiactivity/sharing_getInfo",
-                params: querys,
+                params: {path:path, ...fqs},
             }).then((data)=>{
                 if(data.err!=0){return;}
                 // alert(page_id);

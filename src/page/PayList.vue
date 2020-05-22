@@ -26,12 +26,14 @@
                     <div v-for="(item,index) in dataList" :key="index" class="item shadow">
                         <div class="imgbox">
                             <img class="img" :src="item.head_pic" />
-                            <span class="txt c_ff fs_24">{{item.useNum||0}}人在使用</span>
+                            <span class="yj c_ff fs_22">佣金：{{item.commission}}元</span>
+                            <span class="txt c_ff fs_24">{{(item.type==0?"报名":"销量")+(item.people_buy_num||0)}}</span>
+                            <!-- {{item.useNum||0}}人在使用 -->
                         </div>
                         <div class="title van-ellipsis fs_28 c_33 txt-c">{{item.title}}</div>
                         <div class="df df-r ai-c just-c-bet pl-20">
-                            <span class="fs_26 c_ashen">{{(item.type==0?"报名":"销量")+(item.people_buy_num||0)}}</span>
-                            <van-button type="mini" :disabled="item.state==1" :color="item.state==0?'#FF9C00':'#9FA9C7'" @click="toDetail(item.id)">{{item.type=="0"?"立即报名":"立即购买"}}</van-button>
+                            <span class="fs_26 c_ashen">￥{{item.price}}</span>
+                            <van-button type="mini" :disabled="item.state==1" :color="item.state==0?'#FF9C00':'#9FA9C7'" @click="toDetail(item)">{{item.type=="0"?"立即分享":"立即分享"}}</van-button>
                         </div>
                     </div>
                 </van-list>
@@ -96,8 +98,8 @@ export default {
                 this.tabs = data.data;
             });
         },
-        toDetail(id){
-            this.$router.push({name:"PayDetail", query:{id: id}});
+        toDetail(item){
+            window.location.href = item.activity_url;
         }
     },
     created(){
@@ -118,5 +120,6 @@ export default {
 .listul .item .imgbox{position:relative; width:100%; height:2.08rem; border-bottom:1px solid #f1f1f1;}
 .listul .item .imgbox .img{width:100%; height:100%;}
 .listul .item .imgbox .txt{position:absolute; bottom:0; right:0; padding:2px 0.16rem; line-height:0.36rem; background:rgba(0,0,0,0.5); border-radius:4px 0 0 0;}
+.listul .item .imgbox .yj{position:absolute; top:0; right:0; padding:2px 0.16rem; line-height:0.36rem; background:rgba(0,0,0,0.5); border-radius:0 0 0 4px;}
 .listul .item .title{height:0.78rem; line-height:0.78rem; padding:0 4px;}
 </style>

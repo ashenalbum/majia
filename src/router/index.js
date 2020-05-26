@@ -164,5 +164,25 @@ export default new Router({
         name: "BgmSet",
         meta: {title: "BGM设置"},
         component: (resolve) =>require(['@/page/BgmSet.vue'],resolve)
+    },{
+        path: '/group',
+        name: 'Group',
+        meta: {title: "推广组"},
+        component: (resolve) =>require(['@/page/Group.vue'],resolve)
+    },{
+        path: '/group_sel',
+        name: 'GroupSel',
+        meta: {title: "选择活动"},
+        component: (resolve) =>require(['@/page/GroupSel.vue'],resolve)
+    },{
+        path: '/group_detail',
+        name: 'GroupDetail',
+        meta: {title: "组详情"},
+        component: (resolve) =>require(['@/page/GroupDetail.vue'],resolve)
+    },{
+        path: '/group_bill',
+        name: 'GroupBill',
+        meta: {title: "设置海报"},
+        component: (resolve) =>require(['@/page/GroupBill.vue'],resolve)
     }]
 })

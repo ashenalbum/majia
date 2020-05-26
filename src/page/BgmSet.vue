@@ -12,7 +12,7 @@
                         <div class="mt-10 fs_22 c_99">{{item.addtime}}</div>
                     </div>
                     <div class="btns df df-r ai-c">
-                        <span v-if="item.is_true" class="edit-btn fs_28 c_blue" @click="edit">修改</span>
+                        <span v-if="item.is_true" class="edit-btn fs_28 c_blue" @click.stop="edit(item)">修改</span>
                         <span v-if="selBgm && selBgm.id===item.id" class="c_red1 fs_28">已选择</span>
                         <span v-else class="c_blue fs_28" @click.stop="selOk(item)">确认选择</span>
                         <!-- <van-button v-else color="#1989fa" size="small" @click.stop="selBgm=item">确认选择</van-button> -->
@@ -34,18 +34,39 @@
         </div>
         <van-overlay :show="showForm" class="df df-c ai-c just-c-ct">
             <div class="form-box shadow">
-                <van-field v-model="formData.title" class="mt-10" label="音乐名称" placeholder="请输入名称" />
-                <van-field name="uploader" class="mt-10" label="文件上传">
-                    <template #input>
-                        <van-uploader accept="audio/mp3" v-model="formData.update_id" :after-read="afterRead" :preview-image="false">
-                            <span v-if="formData.fileName" class="fs_28 one-hied c_66">{{formData.fileName}}</span>
-                            <span v-else class="fs_28 c_blue txt-line">上传文件<span class="fs_24 c_aa">（文件格式.mp3）</span></span>
+                <div class="field mt-10 df df-r ai-c">
+                    <div class="label">音乐名称</div>
+                    <input class="f1" type="text" v-model="formData.title" placeholder="请输入名称"  />
+                </div>
+                <div class="field mt-10 df df-r ai-c">
+                    <div class="label">文件上传</div>
+                    <div class="f1 template one-hide">
+                        <van-uploader accept="audio/mp3" :before-read="beforeRead" :preview-image="false" class="f1">
+                            <span v-if="formData.filename||formData.url" class="fs_28 one-hied c_66">{{formData.filename||formData.url.match(/[^/\/]+$/)[0]}}</span>
+                            <span v-else class="fs_28 c_blue">
+                                <span class="txt-line">上传文件</span>
+                                <span class="fs_24 c_aa">（文件格式.mp3）</span>
+                            </span>
                         </van-uploader>
-                    </template>
-                </van-field>
-                <button class="mt-30 form-btn c_ff">确定</button>
+                    </div>
+                </div>
+                
+
+                <!-- <van-field v-model="formData.title" class="field mt-10" label="音乐名称" placeholder="请输入名称" label-width="64px" />
+                <van-cell title="文件上传" class="field mt-10 one-hide" label-width="64px" title-style="width:64px;flex:none;">
+                        <div class="template one-hide">
+                            <van-uploader accept="audio/mp3" :before-read="beforeRead" :preview-image="false" class="f1">
+                                <span v-if="formData.filename||formData.url" class="fs_28 one-hied c_66">{{formData.filename||formData.url.match(/[^/\/]+$/)[0]}}</span>
+                                <span v-else class="fs_28 c_blue">
+                                    <span class="txt-line">上传文件</span>
+                                    <span class="fs_24 c_aa">（文件格式.mp3）</span>
+                                </span>
+                            </van-uploader>
+                        </div>
+                </van-cell> -->
+                <button class="mt-30 form-btn c_ff" @click="submitForm">确定</button>
             </div>
-            <van-icon name="close" class="mt-50 fs_60 c_99" @click="showForm=false"/>
+            <van-icon name="close" class="mt-50 fs_60 c_ff" @click="showForm=false" />
         </van-overlay>
         <audio ref="audio" :src="audioSrc" loop />
     </div>
@@ -72,7 +93,6 @@ export default {
 
             formEdit: false,
             formData: {},
-
             showForm: false,
             upFileToast: null,
         }
@@ -95,6 +115,13 @@ export default {
             }).then((data)=>{
                 if(data.err!==0){return}
                 this.dataList = data.data;
+            });
+            axios({
+                url: "/activity/Apiactivity/activity_music_info",
+                params: {activity_id: this.id},
+            }).then((data)=>{
+                if(data.err!==0 || !data.data || !data.data.url){return;}
+                this.selBgm = data.data;
             })
         },
         // 确定选择
@@ -109,23 +136,43 @@ export default {
             });
         },
         // 上传音乐
-        afterRead(file){
+        beforeRead(file){
             this.upFileToast = Toast.loading({
                 message: "正在上传，请稍候...",
                 forbidClick: true,
                 duration: 0,
             });
-            let data = new FormData();
-            data.append("file",file);
-            upMp3(data).then((data)=>{
-                alert(JSON.stringify(data))
+            let fd = new FormData();
+            fd.append("file",file);
+            // data.append("savename",file.file.name);
+            
+            upMp3(fd).then((res)=>{
+                let data = res.data;
                 this.upFileToast && this.upFileToast.clear();
-                if(data.data.err!=0){return}
+                if(data.err!=0){return}
                 Toast("上传成功");
-            }).catch((data)=>{
-                alert(JSON.stringify(data))
+                this.$set(this.formData, 'update_id', data.content.fileid);
+                this.$set(this.formData, 'filename', data.content.filename);
+            }).catch(()=>{
                 this.upFileToast && this.upFileToast.clear();
             })
+        },
+        // 提交表单
+        submitForm(){
+            if(!this.formData.title){Toast("请输入音乐名称");return}
+            if(!this.formData.update_id){Toast("请上传音乐文件");return}
+            let url = this.formEdit?"/activity/Apiactivity/music_edit":"/activity/Apiactivity/music_add";
+            axios({
+                url: url,
+                params: this.formData,
+            }).then((data)=>{
+                if(data.err!==0){return}
+                Toast("操作成功");
+                this.getData();
+                this.showForm = false;
+            }).catch(()=>{
+                Toast("error");
+            });
         },
         // 添加
         add(){
@@ -214,4 +261,7 @@ export default {
 .fs_60{font-size:0.6rem;}
 .form-box{width:6.2rem; padding:0.3rem; background:#ffffff; border-radius:0.2rem;}
 .form-box .form-btn{box-sizing:border-box; width:100%; height:36px; background:#1989fa; border:none; outline:none; border-radius:6px;}
+.form-box .label{padding-right:10px;}
+.form-box .field{padding:0.2rem 0; font-size:14px;}
+.form-box .field input{height:24px; padding:0; outline:0; border:0;}
 </style>

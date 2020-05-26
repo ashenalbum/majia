@@ -1,6 +1,8 @@
 <template>
     <div class="cont">
         <router-link to="/index"><div>/index</div></router-link>
+        <router-link to="/group"><div>/group</div></router-link>
+        <router-link to="/group_sel"><div>/group_sel</div></router-link>
         <router-link to="/bgm_set"><div>/bgm_set</div></router-link>
         <router-link to="/extension"><div>/extension</div></router-link>
         <router-link to="/my_center"><div>/my_center</div></router-link>

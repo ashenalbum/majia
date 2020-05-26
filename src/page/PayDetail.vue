@@ -99,7 +99,7 @@
             <van-icon @click.stop="showAd=false" name="cross" size="0.3rem" color="#FFFFFF" class="close"/>
         </div>
         <!-- 背景音乐 -->
-        <div v-if="bgmSrc" class="bgm-btn shadow" :style="{transform:'rotate('+bgmDeg+'deg)'}" @click="stopBgm">
+        <div v-if="bgmSrc" class="bgm-btn" :style="{transform:'rotate('+bgmDeg+'deg)'}" @click="stopBgm">
             <img src="~@/assets/event/bgm.png" alt="" class="img" />
         </div>
         <!-- 商家信息 -->
@@ -187,7 +187,7 @@
                 </van-uploader> -->
                 <img ref="bgimgDom" v-if="bgimg" :src="bgimg" crossOrigin='anonymous' class="bgimg" />
                 
-                <div ref="name" class="name fs_24 c_99" :style="{left:testIsTrue('namex'), top:testIsTrue('namex')}">{{info.nickname}}</div>
+                <div ref="name" class="name fs_24 c_99" :style="{left:testIsTrue('namex'), top:testIsTrue('namey')}">{{info.nickname}}</div>
                 <div class="user" :style="{left:testIsTrue('headx'), top:testIsTrue('heady')}">
                     <!-- <div class="name fs_24 c_99">{{info.nickname}}</div> -->
                     <div class="iconbox">
@@ -358,7 +358,8 @@ export default {
         playBgm(){
             if(!this.data.id){setTimeout(this.playBgm,100); return;}
             this.bgmPlay = true;
-            this.bgmSrc = "https://www.0dutv.com/upload/dance/20200301/8EFCDEB98EE52CFE767B054BEE668A8D.mp3";
+            this.bgmSrc = this.data.back_url;
+            if(!this.bgmSrc){return;}
 
             setInterval(()=>{
                 if(!this.bgmPlay){return}

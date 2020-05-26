@@ -39,46 +39,6 @@
         
         <canvas class="canvas" id="canvas" ref="canvas" style="display:none;"></canvas>
 
-        <!-- 提交完成提示 -->
-        <!-- <van-overlay :show="showTj"> -->
-        <van-popup v-model="showTj" @close="backList">
-            <div class="wrapper df df-c ai-c just-c-ct" @click="showTj=false">
-                <div class="tj-ok df df-c ai-c" @click.stop>
-                    <img src="~@/assets/event/submit_title.png" class="img" />
-                    <div class="mt-30 mb-30 c_33 fs_28">设置完成</div>
-                    <van-button type="info" size="small" class="btn" @click="toFormSet">表单设置</van-button>
-                    <van-button type="info" size="small" class="btn" @click="backList">返回我的活动</van-button>
-                </div>
-                <!-- <van-icon name="close" class="mt-30" size="0.6rem" color="#BFC4CE" /> -->
-            </div>
-        </van-popup>
-        <!-- </van-overlay> -->
-        <!-- <van-popup v-model="showPopup" position="bottom">
-            <div class="popup-box">
-                <div class="top-btn df df-r ai-c just-c-bet fs_26">
-                    <span class="c_ashen" @click="showPopup=false">取消</span>
-                    <span class="c_blue">确定</span>
-                </div>
-                <div class="imgbox">
-                    <ul class="img-ul">
-                        <li v-for="(item,index) in [1,2,3,4,5,6,7]" :key="index" class="ai-c">
-                            <img src="~@/assets/test.png" class="img" />
-                            <van-icon
-                                :name="index==1?'checked':'circle'"
-                                :color="index==1?'#FF9C00':'#ffffff'"
-                                size="0.4rem"
-                                class="check"
-                            />
-                        </li>
-                    </ul>
-                </div>
-                <div class="upfile txt-c">                    
-                    <van-uploader :preview-image="false" :before-read="beforeRead">
-                        <a href="javascript:;" class="fs_30 c_blue">本地上传</a>
-                    </van-uploader>
-                </div>
-            </div>
-        </van-popup> -->
         <PageMenu></PageMenu>
     </div>
 </template>
@@ -86,7 +46,6 @@
 import axios from "../utils/axios";
 import {upFile} from "../utils/axios";
 import QRCode from "qrcode";
-// import html2canvas from 'html2canvas';
 import { Toast } from 'vant';
 import PageMenu from "../components/PageMenu";
 
@@ -118,17 +77,11 @@ export default {
     },
     created(){
         this.id = this.$route.query.id;
-        // if(this.$route.query.share_url){localStorage.setItem("share_url",this.$route.query.share_url);}
-        if(!localStorage.getItem("share_url")){
-            this.share_url = window.baseUrl + "/dist/";
-        }else{
-            this.share_url =localStorage.getItem("share_url");
-        }
+        this.share_url = window.baseUrl + "/dist/";
         this.getInfo();
     },
     mounted(){
         this.createEwm();
-        
         this.billPst = {left:this.$refs.bill.offsetLeft, top:this.$refs.bill.offsetTop};
         this.$refs.name.addEventListener("touchstart",(event)=>{this.touchStart(event,"name")});
         this.$refs.user.addEventListener("touchstart",(event)=>{this.touchStart(event,"user")});
@@ -140,18 +93,12 @@ export default {
     methods: {
         getInfo(){
             axios({
-                url: '/member/Apimember/member_getInfo',
+                url: '/activity/Apiactivity/extension_details',
+                params: {id:this.id},
             }).then((data)=>{
                 if(data.err!=0){return}
-                this.info = data.data;
-            })
-            
-            axios({
-                url: "/activity/Apiactivity/previewTemplateInfo",
-                params: {activity_id: this.id}
-            }).then((data)=>{
-                if(data.err!=0){return}
-                this.bgimg = data.data.sales_posterss;
+                this.info = data.data.info;
+                this.bgimg = data.data.back_pic;
             });
         },
         createEwm(){
@@ -161,31 +108,28 @@ export default {
             msg.style.height = "100%";
         },
         createHb(){
-            // if(!this.bgimg){Toast("请先上传图片");return}
-            // if(!this.bgimgId){Toast("未修改或设置图片");return}
             this.upDate();
         },
         upDate(){
-            // if(!this.bgimgId){return}
-            // Toast("正在上传");
-            // 提交海报背景图片
             axios({
-                url: "/activity/Apiactivity/editActivity",
+                url: "/activity/Apiactivity/extension_edit",
                 params: {
-                    activity_id: this.id,
-                    sales_posterss: this.bgimgId,
-                    headx: this.userIconPst.left,
-                    heady: this.userIconPst.top,
-                    erweix: this.ewmPst.left,
-                    erweiy: this.ewmPst.top,
-                    namex: this.namePst.left,
-                    namey: this.namePst.top,
-                }
+                    id: this.id,
+                    back_pic: this.bgimgId,
+                    sales_posterss_coords: {
+                        headx: this.userIconPst.left,
+                        heady: this.userIconPst.top,
+                        erweix: this.ewmPst.left,
+                        erweiy: this.ewmPst.top,
+                        namex: this.namePst.left,
+                        namey: this.namePst.top,
+                    }
+                },
             }).then((data)=>{
                 if(data.err!=0){return}
                 Toast("操作成功");
-                this.showTj = true;
-            })
+                this.$router.push("/group");
+            });
         },
         beforeRead(file){
             let formdata = new FormData();
@@ -251,9 +195,6 @@ export default {
             this.$refs.bill.removeEventListener("touchmove",this.touchMove);
             this.$refs.bill.removeEventListener("touchend",this.touchEnd);
         },
-
-        toFormSet(){this.$router.push({path:"/event_form_set", query:{id:this.id}})},
-        backList(){this.$router.push({path:"/event_list"})},
     },
     components: {PageMenu},
 }

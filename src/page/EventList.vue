@@ -52,6 +52,7 @@
                 <span class="label c_ashen fs_30" @click="operateClick('upbill')">上传海报</span>
                 <span class="label c_ashen fs_30" @click="operateClick('formset')">表单设置</span>
                 <span class="label c_ashen fs_30" @click="operateClick('qudao')">添加渠道</span>
+                <span class="label c_ashen fs_30" @click="operateClick('bgm')">设置背景音乐</span>
                 <div class="line"></div>
                 <span class="label c_ashen fs_30" @click="operateClick('createbill',billUrl)">获取海报</span>
                 <span class="label c_ashen fs_30" @click="operateClick('liulan')">浏览记录</span>
@@ -125,7 +126,7 @@ export default {
                 if(data.count<=this.search.pageSize){
                     this.dataList = data.data;
                     this.over = true;
-                }else{
+                } else {
                     this.dataList = this.dataList.concat(data.data);
                 }
                 if(data.count<=this.dataList.length){ this.over = true;}
@@ -160,6 +161,7 @@ export default {
             if(type=="liulan"){this.$router.push({path:"/browse", query:{id:id}}); return}
             if(type=="qudao"){this.$router.push({path:"/channel", query:{id:id}}); return}
             if(type=="zhutui"){this.$router.push({path:"/extension", query:{id:id, help_id:id}}); return}
+            if(type=="bgm"){this.$router.push({path:"/bgm_set", query:{id:id}});return}
         },
         // 活动时间
         computedTime(item){

@@ -11,7 +11,7 @@ export default new Router({
     }, {
         path: '/index',
         name: 'Index',
-        meta: { title: "首页"},
+        meta: { title: "流量池"},
         component: Index
     },{
         path: '/all_path',

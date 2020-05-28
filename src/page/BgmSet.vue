@@ -2,7 +2,7 @@
     <div class="cont df df-c">
         <div class="top-box df df-r ai-c just-c-bet">
             <div class="now c_blue fs_28" @click="selBgm?changeAudio(selBgm):''">当前选择：{{selBgm?selBgm.title:"无"}}</div>
-            <van-button type="info" icon="plus" size="small" @click="add">添加</van-button>
+            <van-button type="info" icon="plus" size="small" @click="add">自定义上传</van-button>
         </div>
         <div class="f1 df df-c list-box">
             <ul class="list f1">
@@ -127,7 +127,7 @@ export default {
         // 确定选择
         selOk(item){
             axios({
-                url: "/activity/Apiactivity/editActivity",
+                url: "/activity/Apiactivity/music_set_up",
                 params: {activity_id:this.id, back_id:item.id},
             }).then((data)=>{
                 if(data.err!==0){return}

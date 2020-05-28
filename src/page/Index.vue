@@ -20,7 +20,7 @@
                                     <span>{{item.display_quantity}}</span>
                                 </div>
                                 <div class="df df-r ai-c">
-                                    <van-icon class="ic" name="friends-o" />
+                                    <van-icon class="ic" name="fire-o" />
                                     <span>{{item.heating_power}}</span>
                                 </div>
                             </div>
@@ -51,13 +51,13 @@
                                 <span>{{item.display_quantity}}</span>
                             </div>
                             <div class="df df-r ai-c">
-                                <van-icon class="ic" name="friends-o" />
+                                <van-icon class="ic" name="fire-o" />
                                 <span>{{item.heating_power}}</span>
                             </div>
                         </div>
                     </div>
                     <div class="title van-ellipsis fs_28 c_33 txt-c">{{item.title}}</div>
-                    <div class="fs_26 c_red1">￥{{item.special_offer}} <span class="txt-del txt-line-t c_ashen">{{item.price}}</span></div>
+                    <div class="fs_26 c_red1">￥{{item.special_offer}} <span class="txt-del txt-line-t c_ashen">￥{{item.price}}</span></div>
                 </div>
             </van-list>
         </div>

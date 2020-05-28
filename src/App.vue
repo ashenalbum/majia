@@ -66,6 +66,7 @@ html,body{height:100%;}
 .pl-40{padding-left:0.4rem;padding-right:0.4rem;}
 .pl-50{padding-left:0.5rem;padding-right:0.5rem;}
 
+.c_y1{color:#ffff00;}
 .c_o{color:#FF9C00}
 .c_y{color:#FA7E00;}
 .c_red{color:#FF0000;}

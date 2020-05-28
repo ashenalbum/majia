@@ -26,7 +26,7 @@
                     <div v-for="(item,index) in dataList" :key="index" class="item shadow" @click="toDetail(item)">
                         <div class="imgbox">
                             <img class="img" :src="item.head_pic" />
-                            <span class="yj c_ff fs_22">佣金：{{item.commission}}元</span>
+                            <span class="yj c_y1 fs_22">佣金：{{item.commission}}元</span>
                             <span class="txt c_ff fs_24">{{(item.type==0?"报名":"销量")+(item.people_buy_num||0)}}</span>
                             <!-- {{item.useNum||0}}人在使用 -->
                         </div>

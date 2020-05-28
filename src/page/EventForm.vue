@@ -127,7 +127,7 @@
                 </div>
                 <div class="imgbox mt-20">
                     <ul class="img-ul">
-                        <li v-for="(item,index) in (topModel[topModelSel] && topModel[topModelSel].pics)" :key="index" @click="topModelImg=index" class="li shadow">
+                        <li v-for="(item,index) in (topModel[topModelSel] && topModel[topModelSel].pics)" :key="item.id" @click="topModelImg=index" class="li shadow">
                             <img :src="item.thumb" class="img" />
                             <van-icon :name="topModelImg==index?'checked':'circle'" color="#FF9C00" size="0.4rem" class="check" />
                         </li>

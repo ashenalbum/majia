@@ -370,6 +370,11 @@ export default {
                     this.$refs.bgm.play();
                 }
             });
+            setTimeout(()=>{
+                if(this.bgmPlay){
+                    this.$refs.bgm.play();
+                }
+            },400)
         },
         stopBgm(){
             this.bgmPlay = !this.bgmPlay;
@@ -806,6 +811,6 @@ export default {
 .gzhewmbox .ewm-bg{box-sizing:border-box; padding:0.4rem; width:4.2rem; height:4.2rem; background:url(~@/assets/other/ewm-border.png) no-repeat; background-size:100% 100%;}
 .gzhewmbox .ewm-bg img{width:100%; height:100%;}
 
-.bgm-btn{position:fixed; left:6px; bottom:1.4rem; width:0.8rem; height:0.8rem; border-radius:50%;}
+.bgm-btn{position:fixed; right:6px; top:6px; width:0.8rem; height:0.8rem; border-radius:50%;}
 .bgm-btn .img{display:block; width:100%; height:100%; border-radius:50%;}
 </style>

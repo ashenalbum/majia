@@ -8,8 +8,10 @@ import axios from './utils/axios';
 import wx from 'weixin-js-sdk';
 import './static/reset.css';
 import { Base64 } from 'js-base64';
+import BaiduMap from 'vue-baidu-map'
 
 Vue.use(Tabbar).use(TabbarItem).use(Overlay).use(ImagePreview).use(Stepper).use(DatetimePicker).use(Slider).use(NoticeBar).use(Notify).use(Loading).use(Dialog).use(Image).use(Grid).use(GridItem).use(Uploader).use(Sidebar).use(SidebarItem).use(Cell).use(Area).use(AddressEdit).use(List).use(CellGroup).use(Swipe).use(SwipeItem).use(Tab).use(Tabs).use(Button).use(Icon).use(Popup).use(Checkbox).use(CheckboxGroup).use(Field).use(RadioGroup).use(Radio).use(Search).use(Switch).use(PullRefresh).use(SwipeCell).use(Toast).use(NavBar).use(Tag).use(AddressList).use(Picker).use(ActionSheet).use(Sticky).use(Col).use(Row).use(Collapse).use(CollapseItem);
+Vue.use(BaiduMap,{ak:window.mapKey});
 
 Vue.config.productionTip = false
 
@@ -139,6 +141,7 @@ function wxConfig(path){
                 'chooseWXPay',
                 'scanQRCode',
                 'hideMenuItems',
+                "getLocation",
             ]
         });
         wx.ready(() => {

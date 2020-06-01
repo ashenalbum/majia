@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="cont">
         <div class="top">
             <div class="username pl-50 df df-r ai-c">
@@ -8,7 +8,13 @@
         </div>
         <div class="formbox formbox1 shadow">
             <div class="fs_20 c_red">活动上线需要审核哦，请您先编辑活动信息，然后联系客服(客服微信：{{kefu}}）帮您启动活动<span id="kefu" :data-clipboard-text="kefu" class="txt_line">点击复制微信号</span></div>
-            <div class="mt-30 title fs_32 c_33"><span class="c_red"> *</span>活动标题</div>
+            <div class="mt-30 df df-r ai-c just-c-bet title fs_32 c_33">
+                <span><span class="c_red"> *</span>活动标题</span>
+                <div v-if="formData.type===0" class="df df-r ai-c" @click="openMap">
+                    <van-icon name="location" class="fs_30 c_o" />
+                    <span class="fs_28 c_o">添加定位</span>
+                </div>
+            </div>
             <van-field v-model="formData.title" @focus="inputFocusSel" placeholder="请输入主标题" class="form-input pl-4" />
             <van-field v-model="formData.subhead" @focus="inputFocusSel" placeholder="请输入副标题" class="form-input pl-4" />
             <div class="ttbox df df-r c_ashen">
@@ -235,19 +241,32 @@
             </div>
         </van-popup>
         <!-- </van-overlay> -->
+        <!-- 地址 -->
+        <van-overlay :show="showLocation" class="df df-c ai-c just-c-ct" @click="showLocation=false">
+            <div class="location-box" @click.stop>
+                <baidu-map @ready="mapReady" @click="setPoint" :center="mapCenter" :zoom="mapZoom" class="map-box" :scroll-wheel-zoom="true">
+                    <bm-marker :position="mapPoint" :dragging="true" animation="BMAP_ANIMATION_BOUNCE" :icon="{url:iconImg,size:{width:30,height:30}}"></bm-marker>
+                </baidu-map>
+                <div class="btn-box">
+                    <van-button color="#FF9C01" block @click="selMapOk">确 定</van-button>
+                </div>
+            </div>
+        </van-overlay>
         <PageMenu></PageMenu>
     </div>
 </template>
 <script>
+import wx from "weixin-js-sdk";
 import {Toast,Dialog} from "vant";
 import {upFile} from "../utils/axios";
 import axios from "../utils/axios";
 import Clipboard from 'clipboard';
 import PageMenu from "../components/PageMenu";
+import BaiduMap from 'vue-baidu-map/components/map/Map.vue';
 // import vuedraggable from 'vuedraggable';
 
 export default {
-    // components: {vuedraggable},
+    components: {PageMenu, BaiduMap},
     data(){
         return {
             id: null,
@@ -312,6 +331,14 @@ export default {
             merchant_help_text: "",
             toId: null,
             kefu: "",
+
+            showLocation: false,
+            map: null,
+            mapCenter: {lng:116.404, lat:39.915},
+            openCenter: {lng:116.404, lat:39.915},
+            mapPoint: {lng:116.404, lat:39.915},
+            mapZoom: 18,
+            iconImg: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAADCklEQVR4AcWXBczTUBSFiztsXTccorgTw91h69ri7u7u7h7DiePEPWg8QWJoFO8b7m7nJC/5rfrrS05952vvXm/vVYKOt7qmvkhpLTLpSDeRjgwSRkynuM1jAudepjRVKazx1KzW+LGp6i8NbbYwtKXCjC8XRmIJthdR3OYxnsvgGl771KraON/AD8nKNe2B6vBXZmL5SyO+zDa0WTCf5qNZvJa/sQepw98mK9cKBc3o0bbCii1+MSy+DGbToak0DiZcm9am28MSy4SpLRapaNtgUEPriKdbbRvxuTCZQrN8Cr+FB7zo6QkVqRrthZlYw5B5PWUI0WMWPentDE1H6mKWrsBdzvaFZoV/slxP94bDE95k5IDaAyuVEYY6ATN0sQ90BjQGGgIZ0HAoDSWhsTzvDoc3GGRlgYfUaINwrPaAzpBPx/d3OnQCugLdhi6LdOyonA9D3COA42SApXA8H1KxdMZQx+GOFnqEdSJNATkMvYX+5ZX6CuuDvDlosiMcDLLIVJ4low0znPbe/9NgmJ4lIIBO8noXv+lkkam86V2j84sRiRUeT8vUuJmmwaWtgiwnOFlkKiIZTSHlLXZ/FzmJ1AdhwNAt3rDjnAGLTAXZZTQOzHcBj4KWhIRS36XnaAfP+WQqcuLMdQGbMNkZHkxpG6GhDp5zyfQDWzDZnk/wemiYO9g71Dw3D0a/QoI/4XczobHuofaeXFOhFIxuhgRfl8lkmuvkCvA6MdyLQ0D/4jezoeFer1OQBDJD3v0+f6gKaGybvH6GVwIJmjKnyTy9HnoIQF5oOnYX65XOWcshZXII/4/EdCkdGi4z2VnoIvZPY70BGiq/VDP8PxL5+yxOgiwZzsFSFjQ55GdRwtORegyVVyHgEYlpAQqBlWSUYOnjUeyxQBOFUOyxYLT9i72swZKUpSnLW5EuQHlraYtZKithBotxMSiroBdhC3o0Ax9Y0Od3PEM7wrYkI1sYPMlyYWa1MNzGsawWxgrfwngONmRszF4NqN4tk4oMstGwUdzmMZ4TyeBN23/GRC1/sYTzmAAAAABJRU5ErkJggg==",
         }
     },
     created(){
@@ -325,6 +352,16 @@ export default {
         this.getXieyi();
         this.getTopImg();
         this.getKefu();
+        wx.ready(() => {
+            wx.getLocation({
+                type: 'wgs84',
+                success:(res)=>{
+                    if(this.formData.long && this.formData.lat){return}
+                    this.openCenter = this.wgs84togcj02tobd09(Number(res.longitude),Number(res.latitude));
+                    this.mapPoint = {lng:this.openCenter.lng, lat:this.openCenter.lat};
+                }
+            });
+        })
     },
     mounted(){
         let kefu = new Clipboard("#kefu");
@@ -360,8 +397,9 @@ export default {
         // 提交表单
         formSubmit(){
             this.showXieyi = false;
-            let url = this.isEdit?"/activity/Apiactivity/editActivity":"/activity/Apiactivity/addActivity";
+            let url = this.isEdit?"/activity/Apiactivity/editActivity?is_examine=1":"/activity/Apiactivity/addActivity";
             this.formData.activity_id = this.formData.id;
+            delete this.formData.browse_num;
             delete this.formData.id;
             axios({
                 url: url,
@@ -407,6 +445,15 @@ export default {
                 this.formData.bought_num = this.formData.people_buy_num;
                 this.merchant_help_text = data.data.merchant_help_text;
                 if(!data.data.details){this.formData.details = [];}
+
+                if(data.data.long && data.data.lat){
+                    let lng = Number(data.data.long);
+                    let lat = Number(data.data.lat);
+                    this.mapPoint.lng = lng;
+                    this.mapPoint.lat = lat;
+                    this.openCenter.lng = lng;
+                    this.openCenter.lat = lat;
+                }
             });
             
             if(!this.isEdit){
@@ -514,6 +561,31 @@ export default {
             }).then(() => {
                 this.formData.spec_content.splice(id,1);
             }).catch(() => {});
+        },
+        // map
+        mapReady(obj){
+            this.map = obj.map;
+            // this.map.reset();
+        },
+        // 打开地图
+        openMap(){
+            this.showLocation = true;
+            setTimeout(()=>{
+                this.mapCenter = this.openCenter;
+                this.mapPoint = {lng:this.mapPoint.lng, lat:this.mapPoint.lat};
+                // this.map.reset();
+            },100);
+        },
+        // 点击地图
+        setPoint(event){
+            this.mapPoint = event.point;
+        },
+        // 选择经纬度
+        selMapOk(){
+            this.formData.long = this.mapPoint.lng;
+            this.formData.lat = this.mapPoint.lat;
+            this.showLocation = false;
+            Toast("添加定位成功");
         },
         // 选择场景
         selCj(o){
@@ -667,9 +739,48 @@ export default {
         toPayAfterSet(){this.$router.push({path:"/pay_after_set", query:{id: this.toId}});},
         // 返回
         back(){this.$router.go(-1)},
-        backList(){this.$router.push({path:"/event_list"})}
+        backList(){this.$router.push({path:"/event_list"})},
+        wgs84togcj02tobd09 (lng, lat) {
+            const xPI = 3.14159265358979324 * 3000.0 / 180.0
+            const PI = 3.1415926535897932384626
+            const a = 6378245.0
+            const ee = 0.00669342162296594323
+            // WGS84转GCj02
+            let dlat = this.transformlat(lng - 105.0, lat - 35.0)
+            let dlng = this.transformlng(lng - 105.0, lat - 35.0)
+            let radlat = lat / 180.0 * PI
+            let magic = Math.sin(radlat)
+            magic = 1 - ee * magic * magic
+            let sqrtmagic = Math.sqrt(magic)
+            dlat = (dlat * 180.0) / ((a * (1 - ee)) / (magic * sqrtmagic) * PI)
+            dlng = (dlng * 180.0) / (a / sqrtmagic * Math.cos(radlat) * PI)
+            let mglat = lat + dlat
+            let mglng = lng + dlng
+            // 火星坐标系 (GCJ-02) 与百度坐标系 (BD-09) 的转换
+            let z = Math.sqrt(mglng * mglng + mglat * mglat) + 0.00002 * Math.sin(mglat * xPI)
+            let theta = Math.atan2(mglat, mglng) + 0.000003 * Math.cos(mglng * xPI)
+            let bdlng = z * Math.cos(theta) + 0.0065
+            let bdlat = z * Math.sin(theta) + 0.006
+            // return [bdlng, bdlat]
+            return {lng: bdlng, lat: bdlat}
+            },
+            transformlat (lng, lat) {
+            const PI = 3.1415926535897932384626
+            let ret = -100.0 + 2.0 * lng + 3.0 * lat + 0.2 * lat * lat + 0.1 * lng * lat + 0.2 * Math.sqrt(Math.abs(lng))
+            ret += (20.0 * Math.sin(6.0 * lng * PI) + 20.0 * Math.sin(2.0 * lng * PI)) * 2.0 / 3.0
+            ret += (20.0 * Math.sin(lat * PI) + 40.0 * Math.sin(lat / 3.0 * PI)) * 2.0 / 3.0
+            ret += (160.0 * Math.sin(lat / 12.0 * PI) + 320 * Math.sin(lat * PI / 30.0)) * 2.0 / 3.0
+            return ret
+            },
+            transformlng (lng, lat) {
+            const PI = 3.1415926535897932384626
+            let ret = 300.0 + lng + 2.0 * lat + 0.1 * lng * lng + 0.1 * lng * lat + 0.1 * Math.sqrt(Math.abs(lng))
+            ret += (20.0 * Math.sin(6.0 * lng * PI) + 20.0 * Math.sin(2.0 * lng * PI)) * 2.0 / 3.0
+            ret += (20.0 * Math.sin(lng * PI) + 40.0 * Math.sin(lng / 3.0 * PI)) * 2.0 / 3.0
+            ret += (150.0 * Math.sin(lng / 12.0 * PI) + 300.0 * Math.sin(lng / 30.0 * PI)) * 2.0 / 3.0
+            return ret
+        }
     },
-    components: {PageMenu},
 }
 </script>
 <style scoped>
@@ -722,8 +833,8 @@ export default {
 .guige-popup .btn{width:4.6rem;}
 
 .upimgbox{padding:0.2rem 0; flex-wrap:wrap;}
-.upimgbox .imgbox{position:relative; width:1.8rem; height:1.1rem; margin:0 0.26rem 0.26rem 0;}
-.upimgbox .imgbox .close{position:absolute; z-index:59; top:-0.2rem; right:-0.2rem; padding:0.1rem; background:#D1D6E5; border-radius:50%;}
+.upimgbox .imgbox{position:relative; z-index:1; width:1.8rem; height:1.1rem; margin:0 0.26rem 0.26rem 0;}
+.upimgbox .imgbox .close{position:absolute; z-index:2; top:-0.2rem; right:-0.2rem; padding:0.1rem; background:#D1D6E5; border-radius:50%;}
 .upimgbox .addimg,
 .upimgbox .img{width:1.8rem; height:1.1rem;}
 .upimgbox .addimg{box-sizing:border-box; border:1px dashed;}
@@ -767,4 +878,8 @@ export default {
 .wrapper .tj-ok .img{width:100%; height:auto;}
 .wrapper .tj-ok .btn{margin:0.3rem 0;width:4.4rem;}
 .fixed-submit{width:auto;}
+
+.location-box{width:6.9rem; height:9rem; border-radius:0.2rem; overflow:hidden; position:relative; z-index:99; background:#ffffff;}
+.location-box .map-box{width:100%; height:100%; }
+.location-box .btn-box{width:6.2rem; position:absolute; bottom:0.4rem; left:0; right:0; margin:auto;}
 </style>

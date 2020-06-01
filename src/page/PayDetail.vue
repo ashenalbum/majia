@@ -40,6 +40,11 @@
                 </div>
                 <van-button size="mini" color="#FF9C00" @click="showSeller=true">关注</van-button>
             </div>
+            <div v-if="mapPoint && data.type===0" class="map-box mt-30">
+                <baidu-map :center="mapPoint" :zoom="18" class="map" :scroll-wheel-zoom="true">
+                    <bm-marker :position="mapPoint" :dragging="false" animation="BMAP_ANIMATION_BOUNCE" :icon="{url:iconImg,size:{width:30,height:30}}"></bm-marker>
+                </baidu-map>
+            </div>
             <div ref="detail" class="words mt-40">
                 <div class="title df ai-c just-c-ct">
                     <div class="line"></div>
@@ -237,6 +242,7 @@ import wx from "weixin-js-sdk";
 import {upFile} from "../utils/axios";
 import QRCode from "qrcode";
 import html2canvas from 'html2canvas';
+import BaiduMap from 'vue-baidu-map/components/map/Map.vue';
 // import PageMenu from "../components/PageMenu";
 
 export default {
@@ -287,6 +293,9 @@ export default {
             bgmPlay: false,
             bgmSrc: "",
             bgmDeg: 0,
+
+            mapPoint: null,
+            iconImg: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAADCklEQVR4AcWXBczTUBSFiztsXTccorgTw91h69ri7u7u7h7DiePEPWg8QWJoFO8b7m7nJC/5rfrrS05952vvXm/vVYKOt7qmvkhpLTLpSDeRjgwSRkynuM1jAudepjRVKazx1KzW+LGp6i8NbbYwtKXCjC8XRmIJthdR3OYxnsvgGl771KraON/AD8nKNe2B6vBXZmL5SyO+zDa0WTCf5qNZvJa/sQepw98mK9cKBc3o0bbCii1+MSy+DGbToak0DiZcm9am28MSy4SpLRapaNtgUEPriKdbbRvxuTCZQrN8Cr+FB7zo6QkVqRrthZlYw5B5PWUI0WMWPentDE1H6mKWrsBdzvaFZoV/slxP94bDE95k5IDaAyuVEYY6ATN0sQ90BjQGGgIZ0HAoDSWhsTzvDoc3GGRlgYfUaINwrPaAzpBPx/d3OnQCugLdhi6LdOyonA9D3COA42SApXA8H1KxdMZQx+GOFnqEdSJNATkMvYX+5ZX6CuuDvDlosiMcDLLIVJ4low0znPbe/9NgmJ4lIIBO8noXv+lkkam86V2j84sRiRUeT8vUuJmmwaWtgiwnOFlkKiIZTSHlLXZ/FzmJ1AdhwNAt3rDjnAGLTAXZZTQOzHcBj4KWhIRS36XnaAfP+WQqcuLMdQGbMNkZHkxpG6GhDp5zyfQDWzDZnk/wemiYO9g71Dw3D0a/QoI/4XczobHuofaeXFOhFIxuhgRfl8lkmuvkCvA6MdyLQ0D/4jezoeFer1OQBDJD3v0+f6gKaGybvH6GVwIJmjKnyTy9HnoIQF5oOnYX65XOWcshZXII/4/EdCkdGi4z2VnoIvZPY70BGiq/VDP8PxL5+yxOgiwZzsFSFjQ55GdRwtORegyVVyHgEYlpAQqBlWSUYOnjUeyxQBOFUOyxYLT9i72swZKUpSnLW5EuQHlraYtZKithBotxMSiroBdhC3o0Ax9Y0Od3PEM7wrYkI1sYPMlyYWa1MNzGsawWxgrfwngONmRszF4NqN4tk4oMstGwUdzmMZ4TyeBN23/GRC1/sYTzmAAAAABJRU5ErkJggg==",
         }
     },
     // beforeRouteUpdate(to,from,next){
@@ -353,6 +362,10 @@ export default {
                 }
                 this.getLastTime();
                 this.bgimg = this.data.sales_posterss;
+
+                if(this.data.long && this.data.lat){
+                    this.mapPoint = {lat:this.data.lat, lng:this.data.long};
+                }
             })
         },
         playBgm(){
@@ -698,7 +711,7 @@ export default {
         this.getInfo();
         this.playBgm();
     },
-    // components:{PageMenu},
+    components:{BaiduMap},
 }
 </script>
 <style scoped>
@@ -813,4 +826,7 @@ export default {
 
 .bgm-btn{position:fixed; right:6px; top:6px; width:0.8rem; height:0.8rem; border-radius:50%;}
 .bgm-btn .img{display:block; width:100%; height:100%; border-radius:50%;}
+
+.map-box{width:6.8rem; margin-left:auto; margin-right:auto;}
+.map-box .map{height:4rem;}
 </style>

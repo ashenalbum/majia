@@ -275,7 +275,7 @@ to_upload_img(){
     console.log(setData)
      var that=this;
         var params = {};
-        params['url'] = 'activity/Apiactivity/editActivityRedeem';
+        params['url'] = 'activity/Apiactivity/editActivityRedeem?is_examine=2';
         params['param'] = setData;
         params['success'] = function(d){
             if(d.err==0){

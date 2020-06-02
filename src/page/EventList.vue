@@ -184,7 +184,12 @@ export default {
         frames(item){
             axios({
                 url: "/activity/Apiactivity/editActivity",
-                params: {activity_id: item.id, specialOperate:true, putaway:true}
+                params: {
+                    is_examine:2,
+                    activity_id: item.id,
+                    specialOperate:true,
+                    putaway:true
+                }
             }).then((data)=>{
                 if(data.err!=0){return}
                 Toast("操作成功");

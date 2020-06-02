@@ -31,7 +31,7 @@
                     <div class="html fs_30 c_33" v-html="item.describe"></div>
                 </div>
             </van-tab>
-        </van-tabs>
+        </van-tabs> 
         <div class="tequan mt-40 c_33">
             <div class="tt fs_36 df ai-c just-c-ct">会员专享特权</div>
             <div class="tq-box mt-30 df df-r df-w-w">

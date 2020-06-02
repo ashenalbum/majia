@@ -80,6 +80,7 @@ export default {
             axios({
                 url: "/activity/Apiactivity/editActivityDitch",
                 params: {
+                    is_examine: 2,
                     'activity_id':this.Page_id,
                     'ditch_salse':this.ditch_salse,
                     'ditch_divide':{type:0, number: this.ditch_divide},

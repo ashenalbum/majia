@@ -172,6 +172,8 @@ export default {
             axios({
                 url: "/activity/Apiactivity/editActivity",
                 params: {
+                    is_examine: 2,
+                    specialOperate: true,
                     activity_id: this.id,
                     sales_posterss: this.bgimgId,
                     headx: this.userIconPst.left,

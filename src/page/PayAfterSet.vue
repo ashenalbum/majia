@@ -90,6 +90,7 @@ export default {
             axios({
                 url: "/activity/Apiactivity/editActivity",
                 params: {
+                    is_examine: 2,
                     activity_id: this.id,
                     after_pay_type: this.type,
                     after_pay_url: this.after_pay_url,

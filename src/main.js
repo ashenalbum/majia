@@ -170,6 +170,7 @@ function wxConfig(path){
                 params: {path:path, ...fqs},
             }).then((data)=>{
                 if(data.err!=0){return;}
+                // alert("分享链接:" + data.data.url);
                 // alert(page_id);
                 // alert(JSON.stringify(data.data))
                 //分享朋友圈

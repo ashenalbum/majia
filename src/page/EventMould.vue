@@ -12,6 +12,9 @@
             />
         </div>
         <div class="list df df-c f1">
+            <!-- <van-tabs v-model="search.template_class" @click="onSearch" type="card" color="#3189F6">
+                <van-tab @click.stop v-for="(value, key, index) in tabs" :name="key" :key="index" :title="value"></van-tab>
+            </van-tabs> -->
             <van-tabs v-model="search.template_class" @click="onSearch" type="card" color="#3189F6">
                 <van-tab @click.stop v-for="(value, key, index) in tabs" :name="key" :key="index" :title="value"></van-tab>
             </van-tabs>

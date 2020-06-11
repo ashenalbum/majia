@@ -41,15 +41,31 @@
                 <van-button size="mini" color="#FF9C00" @click="showSeller=true">关注</van-button>
             </div>
             <div v-if="mapPoint && data.type===0" class="map-box mt-30">
-                <baidu-map :center="mapPoint" :zoom="18" class="map" :scroll-wheel-zoom="true">
+                <baidu-map :center="mapPoint" :zoom="18" class="map" :scroll-wheel-zoom="true"> 
                     <bm-marker :position="mapPoint" :dragging="false" animation="BMAP_ANIMATION_BOUNCE" :icon="{url:iconImg,size:{width:30,height:30}}"></bm-marker>
                 </baidu-map>
             </div>
+            <!-- <div class="pindan mt-30">
+                <div class="fs_28 c_33 df df-r ai-c just-c-bet">
+                    <span>n人在拼单，可直接参与</span>
+                    <span class="c_99">查看全部</span>
+                </div>
+                <div class="ls">
+                    <ul>
+                        <li v-for="i in 12" :key="i" class="li df df-r ai-c">
+                            <img src="~@/assets/test.png" class="icon" />
+                            <div class="f1 fs_28 one-hide">名称名称名称</div>
+                            <van-button size="small" type="info" class="btn">拼单</van-button>
+                        </li>
+                    </ul>
+                </div>
+            </div> -->
             <div ref="detail" class="words mt-40">
                 <div class="title df ai-c just-c-ct">
                     <div class="line"></div>
                     <span class="txt fs_36">产品详情</span>
                 </div>
+                <div class="mt-20"></div>
                 <div class="box">
                     <div v-for="(item,index) in data.details" :key="index">
                         <div v-if="item.type==1" v-html="item.content" class="txt t-indent c_ashen"></div>
@@ -63,7 +79,7 @@
             <div class="fs_30">购买须知：</div>
             <div v-html="data.instructions"></div>
         </div>
-        <div class="bottom-btns df df-r fs_34 shadow">
+        <div class="bottom-btns df df-r fs_30 shadow">
             <div class="btn1 f1 df df-c ai-c just-c-ct" @click.stop="showGzhEwm=true">制作新活动</div>
             <div class="btn2 f1 df df-c ai-c just-c-ct" :class="{ashen:data.audit_type!=1}" @click="buyBtnClick">
                 <span>{{data.audit_type==1?data.pay_btn:"活动未开始"}}</span>
@@ -430,6 +446,7 @@ export default {
             }else{
                 this.share_url =localStorage.getItem("share_url");
             }
+            // alert("海报链接："+this.share_url)
             let msg = document.getElementById('ewm');
             QRCode.toCanvas(msg, this.share_url);
             msg.style.width = "100%";
@@ -829,4 +846,10 @@ export default {
 
 .map-box{width:6.8rem; margin-left:auto; margin-right:auto;}
 .map-box .map{height:4rem;}
+
+.pindan{border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; padding:0.1rem 0.3rem;}
+.pindan .ls{max-height:2rem; overflow-y:auto;}
+.pindan .ls .li{height:1rem; }
+.pindan .ls .li .icon{width:0.7rem; height:0.7rem; border-radius:50%; margin-right:0.16rem; }
+.pindan .ls .li .btn{margin-left:0.2rem;}
 </style>

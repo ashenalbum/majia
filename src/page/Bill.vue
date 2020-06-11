@@ -152,6 +152,16 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 this.bgimg = data.data.sales_posterss;
+                let pst = data.data.sales_posterss_coords;
+                if(pst.namex && pst.namey){
+                    this.namePst = {left:pst.namex, top:pst.namey};
+                }
+                if(pst.erweix && pst.erweiy){
+                    this.wemPst = {left:pst.erweix, top:pst.erweiy};
+                }
+                if(pst.headx && pst.heady){
+                    this.userIconPst = {left:pst.headx, top:pst.heady};
+                }
             });
         },
         createEwm(){

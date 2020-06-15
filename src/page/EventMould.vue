@@ -12,10 +12,11 @@
             />
         </div>
         <div class="list df df-c f1">
-            <!-- <van-tabs v-model="search.template_class" @click="onSearch" type="card" color="#3189F6">
-                <van-tab @click.stop v-for="(value, key, index) in tabs" :name="key" :key="index" :title="value"></van-tab>
-            </van-tabs> -->
-            <van-tabs v-model="search.template_class" @click="onSearch" type="card" color="#3189F6">
+            <van-tabs v-model="search.type" @click="onSearch" type="card" color="#3189F6">
+                <van-tab @click.stop name="all" key="all" title="全部"></van-tab>
+                <van-tab @click.stop v-for="(value, key, index) in types" :name="key" :key="index" :title="value"></van-tab>
+            </van-tabs>
+            <van-tabs v-model="search.template_class" @click="onSearch" type="card" color="#3189F6" class="mt-30">
                 <van-tab @click.stop v-for="(value, key, index) in tabs" :name="key" :key="index" :title="value"></van-tab>
             </van-tabs>
             <div class="listul-box f1 mt-30">
@@ -40,7 +41,15 @@
                 </van-list>
             </div>
         </div>
-        <van-button class="fixed-submit" type="info" @click="toNewForm">创建新活动</van-button>
+        <van-button class="fixed-submit" type="info" @click="showSelType=true">创建新活动</van-button>
+        <van-popup v-model="showSelType" position="bottom">
+            <van-picker
+                show-toolbar
+                :columns="eventTypes"
+                @confirm="selTypeOk"
+                @cancel="showSelType=false"
+            />
+        </van-popup>
         <PageMenu></PageMenu>
     </div>
 </template>
@@ -53,7 +62,9 @@ export default {
     data(){
         return {
             tabs: {},
+            types: {"0":"普通活动","1":"产品活动","2":"拼团活动"},
             search: {
+                type: "all",
                 keyword: "",
                 template_class: 0,
                 page: 1,
@@ -67,6 +78,10 @@ export default {
             searchVal: "",
 
             showKefu: false,
+
+            showSelType: false,
+            eventTypes: ["普通活动","产品活动","拼团活动"],
+
         }
     },
     methods: {
@@ -105,7 +120,7 @@ export default {
         yulan(id){
             this.$router.push({name:"EventView", query:{id: id}});
         },
-        zhizuo(id){
+        zhizuo(id,index){
             axios({
                 url: "/activity/Apiactivity/IsRelease"
             }).then((data)=>{
@@ -121,12 +136,18 @@ export default {
                         this.$router.push({name:"Auth",query:{id: id}});
                         return;
                     }
-                    this.$router.push({name:"EventForm", query:{id:id, xieyi:1}});
+                    let path = "";
+                    switch(index){
+                        case 0:path="/event_form";break;
+                        case 1:path="/event_form_n1";break;
+                        default: path="/event_form_n2";break;
+                    }
+                    this.$router.push({path:path, query:{id:id, xieyi:1}});
                 });
             })
         },
-        toNewForm(){
-            this.zhizuo(1);
+        selTypeOk(value,index){
+            this.zhizuo(1,Number(index));
         },
         toMycenter(){
             this.$router.push("/my_center");

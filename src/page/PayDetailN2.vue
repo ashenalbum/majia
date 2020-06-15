@@ -9,7 +9,7 @@
                     <img :src="item.pic_img" class="img" />
                 </van-swipe-item>
             </van-swipe>
-            <!-- <div class="see c_ashen fs_28">{{data.browse_num}}人浏览</div> -->
+            <div class="see c_ashen fs_28">{{data.browse_num}}人浏览</div>
 
             <!-- <div v-if="dmList.length" class="box"></div> -->
             
@@ -30,7 +30,7 @@
                         <span class="c_red1 fs_30">￥{{data.special_offer}}</span>
                         <span class="yuanjia fs_26 c_ashen txt-line-t">￥ {{data.price}}</span>
                     </div>
-                    <!-- <span class="fs_28 c_ashen">销量 {{data.people_buy_num}}</span> -->
+                    <span class="fs_28 c_ashen">销量 {{data.people_buy_num}}</span>
                 </div>
             </div>
             <div class="seller shadow df df-r ai-c just-c-bet" @click="showSeller=true">
@@ -54,21 +54,22 @@
                     <bm-marker :position="mapPoint" :dragging="false" animation="BMAP_ANIMATION_BOUNCE" :icon="{url:iconImg,size:{width:30,height:30}}"></bm-marker>
                 </baidu-map>
             </div>
-            <!-- <div class="pindan mt-30">
+            <div v-if="ptData&&ptData.length" class="pindan mt-30">
                 <div class="fs_28 c_33 df df-r ai-c just-c-bet">
-                    <span>n人在拼单，可直接参与</span>
-                    <span class="c_99">查看全部</span>
+                    <span>{{ptData.length}}人在拼单</span>
+                    <!-- ，可直接参与</span>
+                    <span class="c_99">查看全部</span> -->
                 </div>
                 <div class="ls">
                     <ul>
-                        <li v-for="i in 12" :key="i" class="li df df-r ai-c">
+                        <li v-for="(item,index) in ptData" :key="index" class="li df df-r ai-c">
                             <img src="~@/assets/test.png" class="icon" />
                             <div class="f1 fs_28 one-hide">名称名称名称</div>
                             <van-button size="small" type="info" class="btn">拼单</van-button>
                         </li>
                     </ul>
                 </div>
-            </div> -->
+            </div>
             <div ref="detail" class="words mt-40">
                 <div class="title df ai-c just-c-ct">
                     <div class="line"></div>
@@ -90,9 +91,13 @@
         </div>
         <div class="bottom-btns df df-r fs_30 shadow">
             <div class="btn1 f1 df df-c ai-c just-c-ct" @click.stop="showGzhEwm=true">制作新活动</div>
-            <div class="btn2 f1 df df-c ai-c just-c-ct" :class="{ashen:data.audit_type!=1}" @click="buyBtnClick">
-                <span>{{data.audit_type==1?(data.pay_btn?data.pay_btn:"参与"):"活动未开始"}}</span>
-                <span v-if="data.audit_type==1&&showLastTime" class="fs_26">{{lastTime}}</span>
+            <div class="btn2 f1 df df-c ai-c just-c-ct" :class="{ashen:data.audit_type!=1}" @click="buyBtnClick(0)">
+                <span class="fs_26">￥{{data.price}}</span>
+                <span>单独购买</span>
+            </div>
+            <div class="btn3 f1 df df-c ai-c just-c-ct" :class="{ashen:data.audit_type!=1}" @click="buyBtnClick(1)">
+                <span class="fs_26">￥{{data.special_offer}}</span>
+                <span>拼团</span>
             </div>
         </div>
         <!-- 制作海报 -->
@@ -282,8 +287,8 @@ export default {
             showSeller: false,
             dmList: [],
             ad: {},
-            showLastTime: true, //显示倒计时
-            lastTime: "", //结束倒计时
+            // showLastTime: true, //显示倒计时
+            // lastTime: "", //结束倒计时
             timeIsover: false, //活动结束
 
             showKefu: false, // 显示客服
@@ -293,6 +298,7 @@ export default {
             showSelarea: false, // 省市区选择
             area: {}, // 省市区json
 
+            buyType: null, // 购买类型: 0单独购买 1拼团
             buyNum: 1,  // 数量
             buyMoney: null, //价格
             buyOneMoney: null, //单价
@@ -321,6 +327,8 @@ export default {
 
             mapPoint: null,
             iconImg: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAADCklEQVR4AcWXBczTUBSFiztsXTccorgTw91h69ri7u7u7h7DiePEPWg8QWJoFO8b7m7nJC/5rfrrS05952vvXm/vVYKOt7qmvkhpLTLpSDeRjgwSRkynuM1jAudepjRVKazx1KzW+LGp6i8NbbYwtKXCjC8XRmIJthdR3OYxnsvgGl771KraON/AD8nKNe2B6vBXZmL5SyO+zDa0WTCf5qNZvJa/sQepw98mK9cKBc3o0bbCii1+MSy+DGbToak0DiZcm9am28MSy4SpLRapaNtgUEPriKdbbRvxuTCZQrN8Cr+FB7zo6QkVqRrthZlYw5B5PWUI0WMWPentDE1H6mKWrsBdzvaFZoV/slxP94bDE95k5IDaAyuVEYY6ATN0sQ90BjQGGgIZ0HAoDSWhsTzvDoc3GGRlgYfUaINwrPaAzpBPx/d3OnQCugLdhi6LdOyonA9D3COA42SApXA8H1KxdMZQx+GOFnqEdSJNATkMvYX+5ZX6CuuDvDlosiMcDLLIVJ4low0znPbe/9NgmJ4lIIBO8noXv+lkkam86V2j84sRiRUeT8vUuJmmwaWtgiwnOFlkKiIZTSHlLXZ/FzmJ1AdhwNAt3rDjnAGLTAXZZTQOzHcBj4KWhIRS36XnaAfP+WQqcuLMdQGbMNkZHkxpG6GhDp5zyfQDWzDZnk/wemiYO9g71Dw3D0a/QoI/4XczobHuofaeXFOhFIxuhgRfl8lkmuvkCvA6MdyLQ0D/4jezoeFer1OQBDJD3v0+f6gKaGybvH6GVwIJmjKnyTy9HnoIQF5oOnYX65XOWcshZXII/4/EdCkdGi4z2VnoIvZPY70BGiq/VDP8PxL5+yxOgiwZzsFSFjQ55GdRwtORegyVVyHgEYlpAQqBlWSUYOnjUeyxQBOFUOyxYLT9i72swZKUpSnLW5EuQHlraYtZKithBotxMSiroBdhC3o0Ax9Y0Od3PEM7wrYkI1sYPMlyYWa1MNzGsawWxgrfwngONmRszF4NqN4tk4oMstGwUdzmMZ4TyeBN23/GRC1/sYTzmAAAAABJRU5ErkJggg==",
+
+            ptData: [],
         }
     },
     // beforeRouteUpdate(to,from,next){
@@ -369,11 +377,11 @@ export default {
                 // 设置规格
                 if(data.data.spec_content.length){
                     this.buyNum = 1;
-                    this.buyOneMoney = this.buyMoney = data.data.spec_content[0][this.timeIsover?'price':'offerPic'];
+                    // this.buyOneMoney = this.buyMoney = data.data.spec_content[0][this.timeIsover?'price':'offerPic'];
                     this.buyKc = data.data.spec_content[0].stock;
                 }else{
                     this.buyNum = 1;
-                    this.buyOneMoney = this.buyMoney = data.data[this.timeIsover?'price':'special_offer'];
+                    // this.buyOneMoney = this.buyMoney = data.data[this.timeIsover?'price':'special_offer'];
                 }
                 this.dmList = [];
                 for(let i in data.data.barrage){
@@ -385,12 +393,23 @@ export default {
                         top:0,
                     })
                 }
-                this.getLastTime();
+                // this.getLastTime();
                 this.bgimg = this.data.sales_posterss;
 
                 if(this.data.long && this.data.lat){
                     this.mapPoint = {lat:this.data.lat, lng:this.data.long};
                 }
+                
+                this.pintuanList();
+            })
+        },
+        pintuanList(){
+            axios({
+                url: "/activity/Apiactivity/see_list",
+                params: {id: this.data.id}
+            }).then((data)=>{
+                if(data.err!==0){return}
+                this.ptData = data.data;
             })
         },
         playBgm(){
@@ -530,31 +549,31 @@ export default {
                 this.buyFormLs = data.data;
             })
         },
-        // 倒计时
-        getLastTime(){
-            if(this.data.abort_time==0){this.showLastTime=false;return}
-            if((typeof this.data.abort_time) === "number"){this.data.abort_time*=1000;}
-            let over = new Date(this.data.abort_time).getTime();
-            this.timeToString(over);
-            setInterval(()=>{
-                this.timeToString(over);
-            },1000)
-        },
-        // 计算时间
-        timeToString(over){
-            let now = new Date().getTime();
-            let time = over - now;
-            if(time<=0){
-                this.timeIsover = true;
-                this.lastTime = "活动结束";
-                return;
-            }
-            let d = parseInt(time/86400000);
-            let h = parseInt((time%86400000)/3600000);
-            let m = parseInt((time%3600000)/60000);
-            let s = parseInt((time%60000)/1000);
-            this.lastTime = "剩余："+(d==0?"":(d+"天"))+h+"时"+m+"分"+s+"秒";
-        },
+        // // 倒计时
+        // getLastTime(){
+        //     if(this.data.abort_time==0){this.showLastTime=false;return}
+        //     if((typeof this.data.abort_time) === "number"){this.data.abort_time*=1000;}
+        //     let over = new Date(this.data.abort_time).getTime();
+        //     this.timeToString(over);
+        //     setInterval(()=>{
+        //         this.timeToString(over);
+        //     },1000)
+        // },
+        // // 计算时间
+        // timeToString(over){
+        //     let now = new Date().getTime();
+        //     let time = over - now;
+        //     if(time<=0){
+        //         this.timeIsover = true;
+        //         this.lastTime = "活动结束";
+        //         return;
+        //     }
+        //     let d = parseInt(time/86400000);
+        //     let h = parseInt((time%86400000)/3600000);
+        //     let m = parseInt((time%3600000)/60000);
+        //     let s = parseInt((time%60000)/1000);
+        //     this.lastTime = "剩余："+(d==0?"":(d+"天"))+h+"时"+m+"分"+s+"秒";
+        // },
         // 选择省市区
         selAreaOk(o){
             this.buyFormData.addr = o[0].name + "," + o[1].name + "," + o[2].name;
@@ -565,7 +584,7 @@ export default {
             if(this.guigeId==id){return}
             this.guigeId = id;
             this.buyNum = 1;
-            this.buyOneMoney = this.buyMoney = this.data.spec_content[id].offerPic;
+            this.buyOneMoney = this.buyMoney = this.data.spec_content[id][this.buyType==0?'price':'offerPic'];
             this.buyKc = this.data.spec_content[id].stock;
         },
         // 改变购买数量
@@ -583,8 +602,18 @@ export default {
             }
         },
         // 点击购买
-        buyBtnClick(){
+        buyBtnClick(tp){
             if(this.data.audit_type!=1){return}
+            this.buyType = tp;
+
+            this.guigeId = 0;
+            this.buyNum = 1;
+            if(this.data.spec_content.length){
+                this.buyOneMoney = this.buyMoney = this.data.spec_content[0][tp==0?'price':'offerPic'];
+            } else {
+                this.buyOneMoney = this.buyMoney = this.data[tp==0?'price':'special_offer'];
+            }
+
             // 没有规格
             if((!this.data.spec_content) || this.data.spec_content.length==0){
                 // 没有表单
@@ -630,7 +659,7 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return;}
                 if(data.data!==2){return;}
-                this.wxpay(data.content);                    
+                this.wxpay(data.content);
             })
         },
         // 支付
@@ -776,6 +805,8 @@ export default {
 .bottom-btns .btn1{height:100%; background: #ffffff; color:#FF9C00;}
 .bottom-btns .btn2{height:100%; background:#FF9C00; color:#ffffff;}
 .bottom-btns .btn2.ashen{background:#aaaaaa;}
+.bottom-btns .btn3{height:100%; background:#e02e24; color:#ffffff;}
+.bottom-btns .btn3.ashen{background:#f4aaa7;}
 .bottom-btns .made{position:absolute; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.7)}
 
 .ad{position:fixed; left:0.5rem; bottom:1.45rem; box-sizing:border-box; width:6.5rem; height:1.6rem; padding:0.22rem 0.25rem; background:#ffffff; border-radius:3px;}
@@ -856,7 +887,7 @@ export default {
 .map-box{width:6.8rem; margin-left:auto; margin-right:auto;}
 .map-box .map{height:4rem;}
 
-.pindan{border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; padding:0.1rem 0.3rem;}
+.pindan{border-top:1px solid #e3e3e3; border-bottom:1px solid #e3e3e3; padding:0.1rem 0.3rem;}
 .pindan .ls{max-height:2rem; overflow-y:auto;}
 .pindan .ls .li{height:1rem; }
 .pindan .ls .li .icon{width:0.7rem; height:0.7rem; border-radius:50%; margin-right:0.16rem; }

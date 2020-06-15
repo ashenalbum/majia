@@ -69,7 +69,15 @@ export default {
         },
         // 预览
         toView(item){
-            this.$router.push({path:"pay_detail", query:{id:item.id, activity_id1:item.id}});
+            let id = item.id;
+            let path = "";
+            item.type = Number(item.type);
+            switch(item.type){
+                case 0:path="/pay_detail";break;
+                case 1:path="/pay_detail_n1";break;
+                default: path="/pay_detail_n2";break;
+            }
+            this.$router.push({path:path, query:{id:id, activity_id1:id}});
         },
     },
     components:{PageMenu},

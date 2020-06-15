@@ -203,6 +203,7 @@ export default {
             })
         },
         toEventDetail(){
+            
             this.$router.push({path:"/pay_detail", query:{id:this.data.activity_id, activity_id1:this.data.activity_id}});
         },
         getInfo(type){

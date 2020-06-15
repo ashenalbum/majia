@@ -70,7 +70,7 @@
         <div class="box mt-30 more c_33">
             <div class="title fs_30 df just-c-ct">更多推荐</div>
             <ul class="ul mt-30 fs_28 c_33 df df-r just-c-bet df-w-w">
-                <li v-for="(item,index) in tjList" :key="index" class="df df-c" @click="toDetail(item.id)">
+                <li v-for="(item,index) in tjList" :key="index" class="df df-c" @click="toDetail(item)">
                     <img :src="item.head_pic" class="img" />
                     <div class="mt-10 one-hide">{{item.title}}</div>
                     <div class="jg c_red1">￥{{item.price}}</div>
@@ -174,8 +174,16 @@ export default {
                 Toast("active error");
             });
         },
-        toDetail(id){
-            this.$router.push({path:"/pay_detail", query:{id:id, activity_id1:id}});
+        toDetail(item){
+            let id = item.id;
+            let path = "";
+            item.type = Number(item.type);
+            switch(item.type){
+                case 0:path="/pay_detail";break;
+                case 1:path="/pay_detail_n1";break;
+                default: path="/pay_detail_n2";break;
+            }
+            this.$router.push({path:path, query:{id:id, activity_id1:id}});
         },
         toIndex(){
             this.$router.push({path:"/index"});

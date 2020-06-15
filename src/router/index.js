@@ -53,6 +53,16 @@ export default new Router({
         meta: { title: "活动设置"},
         component: (resolve) =>require(['@/page/EventForm.vue'],resolve)
     }, {
+        path: '/event_form_n1',
+        name: 'EventFormN1',
+        meta: { title: "活动设置"},
+        component: (resolve) =>require(['@/page/EventFormN1.vue'],resolve)
+    }, {
+        path: '/event_form_n2',
+        name: 'EventFormN2',
+        meta: { title: "活动设置"},
+        component: (resolve) =>require(['@/page/EventFormN2.vue'],resolve)
+    }, {
         path: '/event_form_set',
         name: 'EventFormSet',
         meta: { title: "表单设置"},
@@ -122,13 +132,23 @@ export default new Router({
     {
         path: '/pay_list',
         name: 'PayList',
-        meta: {title: "活动列表"},
+        meta: {title: "活动广场"},
         component: (resolve) =>require(['@/page/PayList.vue'],resolve)
     },{
         path: '/pay_detail',
         name: 'PayDetail',
         meta: {title: "详情"},
         component: (resolve) =>require(['@/page/PayDetail.vue'],resolve)
+    },{
+        path: '/pay_detail_n1',
+        name: 'PayDetailN1',
+        meta: {title: "详情"},
+        component: (resolve) =>require(['@/page/PayDetailN1.vue'],resolve)
+    },{
+        path: '/pay_detail_n2',
+        name: 'PayDetailN2',
+        meta: {title: "详情"},
+        component: (resolve) =>require(['@/page/PayDetailN2.vue'],resolve)
     },{
         path: '/wxCashOut',
         name: 'WxCashOut',

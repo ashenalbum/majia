@@ -197,8 +197,8 @@ export default {
 <style scoped>
 .cont{background:#F1EFF2; padding-bottom:1.6rem;}
 .top{position:relative; width:100%; height:4.6rem; overflow: hidden;}
-.my-swipe .van-swipe-item{width:100%; height:4.6rem;}
-.my-swipe .van-swipe-item .img{width:100%; height:100%;}
+.my-swipe .van-swipe-item{width:100%; height:4.6rem; display:flex; align-items:center; justify-content:center; background:#000000;}
+.my-swipe .van-swipe-item .img{max-width:100%; max-height:100%;}
 .top .see{position:absolute; bottom:0; right:0; padding:0.1rem 0.22rem; background:rgba(0,0,0,0.55);}
 .top .box{position:absolute; top:0; left:0; width:100%; height:100%; overflow:hidden;}
 .top .dm{position:absolute; max-width:7rem; left:100%; height:0.44rem;}

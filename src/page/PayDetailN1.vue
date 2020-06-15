@@ -9,7 +9,7 @@
                     <img :src="item.pic_img" class="img" />
                 </van-swipe-item>
             </van-swipe>
-            <!-- <div class="see c_ashen fs_28">{{data.browse_num}}人浏览</div> -->
+            <div class="see c_ashen fs_28">{{data.browse_num}}人浏览</div>
 
             <!-- <div v-if="dmList.length" class="box"></div> -->
             
@@ -30,7 +30,7 @@
                         <span class="c_red1 fs_30">￥{{data.special_offer}}</span>
                         <span class="yuanjia fs_26 c_ashen txt-line-t">￥ {{data.price}}</span>
                     </div>
-                    <!-- <span class="fs_28 c_ashen">销量 {{data.people_buy_num}}</span> -->
+                    <span class="fs_28 c_ashen">销量 {{data.people_buy_num}}</span>
                 </div>
             </div>
             <div class="seller shadow df df-r ai-c just-c-bet" @click="showSeller=true">
@@ -91,7 +91,7 @@
         <div class="bottom-btns df df-r fs_30 shadow">
             <div class="btn1 f1 df df-c ai-c just-c-ct" @click.stop="showGzhEwm=true">制作新活动</div>
             <div class="btn2 f1 df df-c ai-c just-c-ct" :class="{ashen:data.audit_type!=1}" @click="buyBtnClick">
-                <span>{{data.audit_type==1?(data.pay_btn?data.pay_btn:"参与"):"活动未开始"}}</span>
+                <span>{{data.audit_type==1?(data.pay_btn?data.pay_btn:"购买"):"活动未开始"}}</span>
                 <span v-if="data.audit_type==1&&showLastTime" class="fs_26">{{lastTime}}</span>
             </div>
         </div>

@@ -14,7 +14,7 @@
                     <div class="btns df df-r ai-c">
                         <span v-if="item.is_true" class="edit-btn fs_28 c_blue" @click.stop="edit(item)">修改</span>
                         <span v-if="selBgm && selBgm.id===item.id" class="c_red1 fs_28">已选择</span>
-                        <span v-else class="c_blue fs_28" @click.stop="selOk(item)">确认选择</span>
+                        <span v-else class="c_blue fs_28" @click.stop="selOk(item)">选择</span>
                         <!-- <van-button v-else color="#1989fa" size="small" @click.stop="selBgm=item">确认选择</van-button> -->
                     </div>
                 </li>

@@ -40,9 +40,9 @@
 
             <van-field label="原价" v-model="formData.price" required placeholder="请输入原价" @focus="inputFocusSel" type="number" input-align="right" class="form-input" :border="false"/>
             <van-field label="活动价格" v-model="formData.special_offer" required placeholder="请输入活动价格" @focus="inputFocusSel" type="number" input-align="right" class="form-input" :border="false"/>
-            <!-- <div v-if="formData.type!=0" class="guige">
+            <div class="guige">
                 <div class="guige-label df df-r ai-c just-c-bet">
-                    <div class="title fs_32 c_33 fs_14px">产品规格</div>           
+                    <div class="title fs_32 c_33 fs_14px">产品规格</div>
                     <van-button icon="plus" size="mini" color="#FF9B00" @click="showGuige=true"></van-button>
                 </div>
                 <div class="guige-li c_ashen">
@@ -51,7 +51,7 @@
                         <van-icon name="cross" size="0.2rem" color="#ffffff" class="close" @click="delGuige(index)"/>
                     </div>
                 </div>
-            </div> -->
+            </div>
             <van-field label="虚拟浏览量" v-model="formData.browse_times" placeholder="请输入数量" @focus="inputFocusSel" type="number" input-align="right" class="form-input pl-4" :border="false"/>
             <van-field label="虚拟购买量" v-model="formData.bought_num" placeholder="请输入数量" @focus="inputFocusSel" type="number" input-align="right" class="form-input pl-4" :border="false"/>
             <van-field label="开始时间" v-model="formData.start_time" placeholder="请选择开始时间" @click="selTime('start_time')" left-icon="question-o" @click-left-icon.stop="leftIcon('starttime')" readonly input-align="right" class="form-input pl-4" :border="false"/>
@@ -155,7 +155,7 @@
             <van-datetime-picker v-model="nowDate" @confirm="selTimeOk" @cancel="showSelTime=false" type="date"/>
         </van-popup>
         <!-- 添加规格 -->
-        <!-- <van-popup v-model="showGuige" position="bottom">
+        <van-popup v-model="showGuige" position="bottom">
             <div class="guige-popup">
                 <div class="close df df-r just-c-end"><span class="c_ashen" @click="showGuige=false">关闭</span></div>
                 <div class="title txt-c c_33">产品规格</div>
@@ -173,7 +173,7 @@
                     <van-button class="btn" color="#FF9C00" size="small" @click="addGuige">保存设置</van-button>
                 </div>
             </div>
-        </van-popup> -->
+        </van-popup>
         <!-- 活动协议 -->
         <van-popup v-model="showXieyi" :close-on-click-overlay="false">
             <div class="wrapper df df-c ai-c just-c-ct" @click.stop>
@@ -256,7 +256,6 @@
     </div>
 </template>
 <script>
-import wx from "weixin-js-sdk";
 import {Toast,Dialog} from "vant";
 import {upFile} from "../utils/axios";
 import axios from "../utils/axios";
@@ -283,8 +282,8 @@ export default {
             focusName: "",
             showSelTime: false,
             // 选择规格
-            // showGuige: false,
-            // guigeData: { name: "", price: "", offerPic: "", stock: ""},
+            showGuige: false,
+            guigeData: { name: "", price: "", offerPic: "", stock: ""},
             // 协议
             showXieyi: false,
             checkXieyi: false,
@@ -325,7 +324,7 @@ export default {
                 start_time: "", //开始时间
                 abort_time: "", //结束时间
                 details: [], //详情
-                // spec_content: [], //规格
+                spec_content: [], //规格
             },
             merchant_help_text: "",
             toId: null,
@@ -351,16 +350,6 @@ export default {
         this.getXieyi();
         this.getTopImg();
         this.getKefu();
-        wx.ready(() => {
-            wx.getLocation({
-                type: 'wgs84',
-                success:(res)=>{
-                    if(this.formData.long && this.formData.lat){return}
-                    this.openCenter = this.wgs84togcj02tobd09(Number(res.longitude),Number(res.latitude));
-                    this.mapPoint = {lng:this.openCenter.lng, lat:this.openCenter.lat};
-                }
-            });
-        })
     },
     mounted(){
         let kefu = new Clipboard("#kefu");
@@ -422,7 +411,7 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 this.formData = JSON.parse(JSON.stringify(data.data));
-                this.formData.type = 0;
+                this.formData.type = 1;
                 if(typeof this.formData.start_time=="number"){
                     this.formData.start_time = this.setTime(this.formData.start_time);
                 }
@@ -544,23 +533,23 @@ export default {
             }).catch(() => {});
         },
         // 添加规格
-        // addGuige(){
-        //     if(!this.guigeData.name){Toast("请输入规格名");return}
-        //     if(this.guigeData.price===""){Toast("请输入原价");return}
-        //     if(this.guigeData.offerPic===""){Toast("请输入活动价");return}
-        //     if(this.guigeData.stock===""){Toast("请输入库存");return}
-        //     this.formData.spec_content.push({...this.guigeData});
-        //     this.guigeData = { name: "", price: "", offerPic: "", stock: ""};
-        //     this.showGuige = false;
-        // },
-        // // 删除规格
-        // delGuige(id){
-        //     Dialog.confirm({
-        //         message: '确定删除该规格吗？'
-        //     }).then(() => {
-        //         this.formData.spec_content.splice(id,1);
-        //     }).catch(() => {});
-        // },
+        addGuige(){
+            if(!this.guigeData.name){Toast("请输入规格名");return}
+            if(this.guigeData.price===""){Toast("请输入原价");return}
+            if(this.guigeData.offerPic===""){Toast("请输入活动价");return}
+            if(this.guigeData.stock===""){Toast("请输入库存");return}
+            this.formData.spec_content.push({...this.guigeData});
+            this.guigeData = { name: "", price: "", offerPic: "", stock: ""};
+            this.showGuige = false;
+        },
+        // 删除规格
+        delGuige(id){
+            Dialog.confirm({
+                message: '确定删除该规格吗？'
+            }).then(() => {
+                this.formData.spec_content.splice(id,1);
+            }).catch(() => {});
+        },
         // map
         mapReady(obj){
             this.map = obj.map;

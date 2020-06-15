@@ -150,7 +150,15 @@ export default {
         // 操作详情
         operateClick(type,data){
             let id = this.nowItem.id;
-            if(type=="bianji"){this.$router.push({path:"/event_form", query:{id:id, isEdit:true}});return}
+            if(type=="bianji"){
+                let path = "/event_form";
+                switch(this.nowItem.type){
+                    case 1:path="/event_form_n1";break;
+                    case 2:path="/event_form_n2";break;
+                }
+                this.$router.push({path:path, query:{id:id, isEdit:true}});
+                return;
+            }
             if(type=="dingdan"){this.$router.push({path:"/userdata", query:{id:id}}); return}
             if(type=="fenxiao"){this.$router.push({path:"/distb_set", query:{id:id}}); return}
             if(type=="formset"){this.$router.push({path:"/event_form_set", query:{id:id}}); return}

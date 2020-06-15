@@ -10,10 +10,10 @@
             <div class="fs_20 c_red">活动上线需要审核哦，请您先编辑活动信息，然后联系客服(客服微信：{{kefu}}）帮您启动活动<span id="kefu" :data-clipboard-text="kefu" class="txt_line">点击复制微信号</span></div>
             <div class="mt-30 df df-r ai-c just-c-bet title fs_32 c_33">
                 <span><span class="c_red"> *</span>活动标题</span>
-                <div v-if="formData.type===0" class="df df-r ai-c" @click="openMap">
+                <!-- <div v-if="formData.type===0" class="df df-r ai-c" @click="openMap">
                     <van-icon name="location" class="fs_30 c_o" />
                     <span class="fs_28 c_o">添加定位</span>
-                </div>
+                </div> -->
             </div>
             <van-field v-model="formData.title" @focus="inputFocusSel" placeholder="请输入主标题" class="form-input pl-4" :border="false"/>
             <van-field v-model="formData.subhead" @focus="inputFocusSel" placeholder="请输入副标题" class="form-input pl-4" :border="false"/>
@@ -39,19 +39,19 @@
             <van-field v-else v-model="formData.video_url" placeholder="请输入视频播放地址" class="video-input mb-20 pl-4" :border="false"/>
 
             <van-field label="原价" v-model="formData.price" required placeholder="请输入原价" @focus="inputFocusSel" type="number" input-align="right" class="form-input" :border="false"/>
-            <van-field label="活动价格" v-model="formData.special_offer" required placeholder="请输入活动价格" @focus="inputFocusSel" type="number" input-align="right" class="form-input" :border="false"/>
-            <!-- <div v-if="formData.type!=0" class="guige">
+            <van-field label="拼团价格" v-model="formData.special_offer" required placeholder="请输入拼团价格" @focus="inputFocusSel" type="number" input-align="right" class="form-input" :border="false"/>
+            <div class="guige">
                 <div class="guige-label df df-r ai-c just-c-bet">
-                    <div class="title fs_32 c_33 fs_14px">产品规格</div>           
+                    <div class="title fs_32 c_33 fs_14px">产品规格</div>
                     <van-button icon="plus" size="mini" color="#FF9B00" @click="showGuige=true"></van-button>
                 </div>
                 <div class="guige-li c_ashen">
                     <div v-for="(item,index) in formData.spec_content" :key="index" class="li df df-r ai-c">
-                        <div class=" van-ellipsis f1">规格名/{{item.name}}  原价/{{item.price}}  活动价/{{item.offerPic}}  库存/{{item.stock}}</div>
+                        <div class=" van-ellipsis f1">规格名/{{item.name}}  原价/{{item.price}}  拼团价/{{item.offerPic}}  库存/{{item.stock}}</div>
                         <van-icon name="cross" size="0.2rem" color="#ffffff" class="close" @click="delGuige(index)"/>
                     </div>
                 </div>
-            </div> -->
+            </div>
             <van-field label="虚拟浏览量" v-model="formData.browse_times" placeholder="请输入数量" @focus="inputFocusSel" type="number" input-align="right" class="form-input pl-4" :border="false"/>
             <van-field label="虚拟购买量" v-model="formData.bought_num" placeholder="请输入数量" @focus="inputFocusSel" type="number" input-align="right" class="form-input pl-4" :border="false"/>
             <van-field label="开始时间" v-model="formData.start_time" placeholder="请选择开始时间" @click="selTime('start_time')" left-icon="question-o" @click-left-icon.stop="leftIcon('starttime')" readonly input-align="right" class="form-input pl-4" :border="false"/>
@@ -61,6 +61,12 @@
         <div class="formbox formbox2 shadow">
             <van-field label="活动场景" v-model="formData.cj" required readonly placeholder="请选择活动场景" @click="cjShow=true" input-align="right" class="form-input pr-4" right-icon="arrow" :border="false"/>
             <van-field label="行业类型" v-model="formData.hy" required readonly placeholder="请选择行业类型" @click="hyShow=true" input-align="right" class="form-input pr-4" right-icon="arrow" :border="false"/>
+            <!-- <van-cell title="几人成团" class="cell form-input pl-4 pr-4" :border="false">
+                <van-stepper v-model="formData.clusters_num" />
+            </van-cell>
+            <van-cell title="是否免拼" class="cell form-input pl-4 pr-4" :border="false">
+                <van-switch v-model="formData.is_exemption" size="0.4rem" />
+            </van-cell> -->
             <van-cell class="cell form-input pl-4 pr-4" :border="false">
                 <template #title>
                     <div class="df df-r ai-c">
@@ -155,7 +161,7 @@
             <van-datetime-picker v-model="nowDate" @confirm="selTimeOk" @cancel="showSelTime=false" type="date"/>
         </van-popup>
         <!-- 添加规格 -->
-        <!-- <van-popup v-model="showGuige" position="bottom">
+        <van-popup v-model="showGuige" position="bottom">
             <div class="guige-popup">
                 <div class="close df df-r just-c-end"><span class="c_ashen" @click="showGuige=false">关闭</span></div>
                 <div class="title txt-c c_33">产品规格</div>
@@ -165,7 +171,7 @@
                         <td class="txt-r">原 价：</td><td><input type="number" v-model="guigeData.price" /></td>
                     </tr>
                     <tr>
-                        <td class="txt-r">活动价：</td><td><input type="number" v-model="guigeData.offerPic" /></td>
+                        <td class="txt-r">拼团价：</td><td><input type="number" v-model="guigeData.offerPic" /></td>
                         <td class="txt-r">库 存：</td><td><input type="number" v-model="guigeData.stock" /></td>
                     </tr>
                 </table>
@@ -173,7 +179,7 @@
                     <van-button class="btn" color="#FF9C00" size="small" @click="addGuige">保存设置</van-button>
                 </div>
             </div>
-        </van-popup> -->
+        </van-popup>
         <!-- 活动协议 -->
         <van-popup v-model="showXieyi" :close-on-click-overlay="false">
             <div class="wrapper df df-c ai-c just-c-ct" @click.stop>
@@ -256,17 +262,19 @@
     </div>
 </template>
 <script>
-import wx from "weixin-js-sdk";
 import {Toast,Dialog} from "vant";
 import {upFile} from "../utils/axios";
 import axios from "../utils/axios";
 import Clipboard from 'clipboard';
 import PageMenu from "../components/PageMenu";
-import BaiduMap from 'vue-baidu-map/components/map/Map.vue';
+// import BaiduMap from 'vue-baidu-map/components/map/Map.vue';
 // import vuedraggable from 'vuedraggable';
 
 export default {
-    components: {PageMenu, BaiduMap},
+    components: {
+        PageMenu,
+        // BaiduMap,
+    },
     data(){
         return {
             id: null,
@@ -283,8 +291,8 @@ export default {
             focusName: "",
             showSelTime: false,
             // 选择规格
-            // showGuige: false,
-            // guigeData: { name: "", price: "", offerPic: "", stock: ""},
+            showGuige: false,
+            guigeData: { name: "", price: "", offerPic: "", stock: ""},
             // 协议
             showXieyi: false,
             checkXieyi: false,
@@ -325,7 +333,7 @@ export default {
                 start_time: "", //开始时间
                 abort_time: "", //结束时间
                 details: [], //详情
-                // spec_content: [], //规格
+                spec_content: [], //规格
             },
             merchant_help_text: "",
             toId: null,
@@ -351,16 +359,6 @@ export default {
         this.getXieyi();
         this.getTopImg();
         this.getKefu();
-        wx.ready(() => {
-            wx.getLocation({
-                type: 'wgs84',
-                success:(res)=>{
-                    if(this.formData.long && this.formData.lat){return}
-                    this.openCenter = this.wgs84togcj02tobd09(Number(res.longitude),Number(res.latitude));
-                    this.mapPoint = {lng:this.openCenter.lng, lat:this.openCenter.lat};
-                }
-            });
-        })
     },
     mounted(){
         let kefu = new Clipboard("#kefu");
@@ -381,7 +379,7 @@ export default {
                 {b:data.video_url&&(!videoText.test(data.video_url)), t:"视频格式只能为mp4"},
                 {b:data.start_time&&data.abort_time&&data.start_time>data.abort_time, t:"开始时间不能大于结束时间"},
                 {b:/^\s*$/.test(data.price)||!data.price, t:"请输入原价"},
-                {b:/^\s*$/.test(data.special_offer)||!data.special_offer, t:"请输入活动价"},
+                {b:/^\s*$/.test(data.special_offer)||!data.special_offer, t:"请输入拼团价"},
                 {b:data.scene===undefined, t:"请选择活动场景"},
                 {b:data.genre_id===undefined||data.genre_id==null, t:"请选择行业类型"},
                 // {b:data.details.length==0, t:"请填写活动详情"},
@@ -422,7 +420,7 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 this.formData = JSON.parse(JSON.stringify(data.data));
-                this.formData.type = 0;
+                this.formData.type = 2;
                 if(typeof this.formData.start_time=="number"){
                     this.formData.start_time = this.setTime(this.formData.start_time);
                 }
@@ -544,48 +542,49 @@ export default {
             }).catch(() => {});
         },
         // 添加规格
-        // addGuige(){
-        //     if(!this.guigeData.name){Toast("请输入规格名");return}
-        //     if(this.guigeData.price===""){Toast("请输入原价");return}
-        //     if(this.guigeData.offerPic===""){Toast("请输入活动价");return}
-        //     if(this.guigeData.stock===""){Toast("请输入库存");return}
-        //     this.formData.spec_content.push({...this.guigeData});
-        //     this.guigeData = { name: "", price: "", offerPic: "", stock: ""};
-        //     this.showGuige = false;
+        addGuige(){
+            if(!this.guigeData.name){Toast("请输入规格名");return}
+            if(this.guigeData.price===""){Toast("请输入原价");return}
+            if(this.guigeData.offerPic===""){Toast("请输入拼团价");return}
+            if(this.guigeData.stock===""){Toast("请输入库存");return}
+            if(this.guigeData.price<this.guigeData.offerPic){Toast("拼团价不能大于原价");return}
+            this.formData.spec_content.push({...this.guigeData});
+            this.guigeData = { name: "", price: "", offerPic: "", stock: ""};
+            this.showGuige = false;
+        },
+        // 删除规格
+        delGuige(id){
+            Dialog.confirm({
+                message: '确定删除该规格吗？'
+            }).then(() => {
+                this.formData.spec_content.splice(id,1);
+            }).catch(() => {});
+        },
+        // // map
+        // mapReady(obj){
+        //     this.map = obj.map;
+        //     // this.map.reset();
         // },
-        // // 删除规格
-        // delGuige(id){
-        //     Dialog.confirm({
-        //         message: '确定删除该规格吗？'
-        //     }).then(() => {
-        //         this.formData.spec_content.splice(id,1);
-        //     }).catch(() => {});
+        // // 打开地图
+        // openMap(){
+        //     this.showLocation = true;
+        //     setTimeout(()=>{
+        //         this.mapCenter = this.openCenter;
+        //         this.mapPoint = {lng:this.mapPoint.lng, lat:this.mapPoint.lat};
+        //         // this.map.reset();
+        //     },100);
         // },
-        // map
-        mapReady(obj){
-            this.map = obj.map;
-            // this.map.reset();
-        },
-        // 打开地图
-        openMap(){
-            this.showLocation = true;
-            setTimeout(()=>{
-                this.mapCenter = this.openCenter;
-                this.mapPoint = {lng:this.mapPoint.lng, lat:this.mapPoint.lat};
-                // this.map.reset();
-            },100);
-        },
-        // 点击地图
-        setPoint(event){
-            this.mapPoint = event.point;
-        },
-        // 选择经纬度
-        selMapOk(){
-            this.formData.long = this.mapPoint.lng;
-            this.formData.lat = this.mapPoint.lat;
-            this.showLocation = false;
-            Toast("添加定位成功");
-        },
+        // // 点击地图
+        // setPoint(event){
+        //     this.mapPoint = event.point;
+        // },
+        // // 选择经纬度
+        // selMapOk(){
+        //     this.formData.long = this.mapPoint.lng;
+        //     this.formData.lat = this.mapPoint.lat;
+        //     this.showLocation = false;
+        //     Toast("添加定位成功");
+        // },
         // 选择场景
         selCj(o){
             this.cjShow = false;
@@ -608,7 +607,7 @@ export default {
                 }).then(()=>{
                     this.merchant_help_b = true;
                     this.formData.merchant_help = 1;
-                }).catch(()=>{})
+                }).catch(()=>{});
             }
         },
         // 活动详情交换

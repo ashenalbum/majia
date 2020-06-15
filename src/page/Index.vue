@@ -2,7 +2,7 @@
     <div class="cont">
         <div class="banner">
             <van-swipe indicator-color="white">
-                <van-swipe-item v-for="(item,index) in top" :key="index" class="itm" @click="toDetail(item.id)">
+                <van-swipe-item v-for="(item,index) in top" :key="index" class="itm" @click="toDetail(item)">
                     <img :src="item.head_pic" alt="" />
                 </van-swipe-item>
             </van-swipe>
@@ -11,7 +11,7 @@
             <div v-if="hotList && hotList.length" class="title fs_32 c_33 b">热门活动</div>
             <div class="ul-box mt-20 c_33 fs_28">
                 <ul class="ul df">
-                    <li v-for="(item,index) in hotList" :key="index" @click="toDetail(item.id)">
+                    <li v-for="(item,index) in hotList" :key="index" @click="toDetail(item)">
                         <div class="img-box shadow">
                             <img class="img" :src="item.head_pic" />
                             <div class="imgbox-detail df df-r just-c-bet c_ff fs_22">
@@ -42,7 +42,7 @@
                 @load="getList"
                 class="listul df df-r just-c-bet df-w-w"
             >
-                <div v-for="(item,index) in dataList" :key="index" class="item"  @click="toDetail(item.id)">
+                <div v-for="(item,index) in dataList" :key="index" class="item"  @click="toDetail(item)">
                     <div class="imgbox shadow">
                         <img class="img" :src="item.head_pic" />
                         <div class="imgbox-detail df df-r just-c-bet c_ff fs_22">
@@ -113,8 +113,16 @@ export default {
                 this.tabs = data.data;
             });
         },
-        toDetail(id){
-            this.$router.push({path:"/pay_detail", query:{id:id, activity_id1:id}});
+        toDetail(item){
+            let id = item.id;
+            let path = "/pay_detail";
+            item.type = Number(item.type);
+            switch(item.type){
+                case 0:path="/pay_detail";break;
+                case 1:path="/pay_detail_n1";break;
+                case 2:path="/pay_detail_n2";break;
+            }
+            this.$router.push({path:path, query:{id:id, activity_id1:id}});
         }
     },
     components: {PageMenu},

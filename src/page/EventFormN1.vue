@@ -10,7 +10,7 @@
             <div class="fs_20 c_red">活动上线需要审核哦，请您先编辑活动信息，然后联系客服(客服微信：{{kefu}}）帮您启动活动<span id="kefu" :data-clipboard-text="kefu" class="txt_line">点击复制微信号</span></div>
             <div class="mt-30 df df-r ai-c just-c-bet title fs_32 c_33">
                 <span><span class="c_red"> *</span>活动标题</span>
-                <div v-if="formData.type===0" class="df df-r ai-c" @click="openMap">
+                <div class="df df-r ai-c" @click="openMap">
                     <van-icon name="location" class="fs_30 c_o" />
                     <span class="fs_28 c_o">添加定位</span>
                 </div>

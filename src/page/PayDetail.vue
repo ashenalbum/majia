@@ -46,10 +46,10 @@
                     <div class="f1 df ai-c just-c-ct"><span class="c_o">{{data.browse_num}}</span>次浏览</div>
                 </div>
                 <div v-if="dmList && dmList.length" class="icons mt-20 df df-r df-w-w">
-                    <img v-for="(item,index) in dmList" :key="index" :src="item.src" class="icon" />
+                    <img v-for="(item,index) in dmList" :key="index" :src="item.src" class="icon shadow" />
                 </div>
             </div>
-            <div v-if="mapPoint && data.type===0" class="map-box mt-30">
+            <div v-if="mapPoint" class="map-box mt-30">
                 <baidu-map :center="mapPoint" :zoom="18" class="map" :scroll-wheel-zoom="true"> 
                     <bm-marker :position="mapPoint" :dragging="false" animation="BMAP_ANIMATION_BOUNCE" :icon="{url:iconImg,size:{width:30,height:30}}"></bm-marker>
                 </baidu-map>
@@ -254,6 +254,8 @@
                 <div class="c_o fs_30 mt-30">关注公众号 即刻发布活动</div>
             </div>
         </van-overlay>
+        <!-- 新弹幕 -->
+        <div ref="newdanmu" class="new-dm"></div>
         <!-- <PageMenu></PageMenu> -->
         <audio ref="bgm" :src="bgmSrc" loop></audio>
     </div>
@@ -717,20 +719,53 @@ export default {
             clipboard3.on('success', ()=>{Toast("复制成功");});
             clipboard3.on('error', ()=>{Toast("复制失败");});
         }
-        // 弹幕
-        let propTop = 0;
+        // // 弹幕
+        // let propTop = 0;
+        // setInterval(()=>{
+        //     for(let dm of this.dmList){
+        //         if(dm.move){continue}
+        //         dm.move = true;
+        //         let top = Math.random()*4+0.1;
+        //         while(Math.abs(propTop-top)<0.5){ top = Math.random()*4+0.1; }
+        //         propTop = top;
+        //         dm.top = top+'rem';
+        //         setTimeout(()=> dm.move=false, 10000);
+        //         return;
+        //     }
+        // },2000);
+        // 新弹幕
+        let newdm = this.$refs.newdanmu;
+        let dmid = 0;
         setInterval(()=>{
-            for(let dm of this.dmList){
-                if(dm.move){continue}
-                dm.move = true;
-                let top = Math.random()*4+0.1;
-                while(Math.abs(propTop-top)<0.5){ top = Math.random()*4+0.1; }
-                propTop = top;
-                dm.top = top+'rem';
-                setTimeout(()=> dm.move=false, 10000);
-                return;
-            }
-        },2000);
+            if(!newdm || this.dmList.length<5){return}
+            let dm = this.dmList[dmid];
+            if(this.dmList.length<=dmid+1){dmid=0}else{dmid++}
+
+            let div = document.createElement("div");
+            div.setAttribute("class","dm df df-r ai-c");
+            let img = document.createElement("img");
+            img.src = dm.src;
+            img.setAttribute("class","icon");
+            let txt = document.createElement("div");
+            txt.setAttribute("class","txt");
+            txt.innerHTML = dm.txt;
+            div.appendChild(img);
+            div.appendChild(txt); 
+            newdm.appendChild(div);
+            setTimeout(()=>{
+                div.style.height = "0.6rem";              
+                if(newdm.children.length>3){
+                    newdm.children[0].remove();
+                    newdm.children[1].style.bottom = "0.8rem";
+                    newdm.children[0].style.bottom = "1.6rem";
+                }else{
+                    newdm.children[0].style.bottom = (newdm.children.length-1)*0.8+"rem";
+                    if(newdm.children[1]){
+                        newdm.children[1].style.bottom = (newdm.children.length-2)*0.8+"rem";
+                    }
+                }
+            },100)
+        },2000)
         // 滚动
         // window.addEventListener('scroll',this.handleScroll);
         // 制作海报
@@ -867,4 +902,10 @@ export default {
 .liulan .tab .f1:last-child{border:none;}
 .liulan .icons{padding-top:0.2rem; height:2.2rem; overflow-y:auto; border-top:1px solid #DDDDDD;}
 .liulan .icons .icon{width:0.9rem; height:0.9rem; margin:0.2rem 0.1rem 0; border-radius:50%;}
+
+.new-dm{width:100%; height:0px; position:fixed; bottom:1.3rem; left:0;}
+.new-dm>>>.dm{position:absolute; bottom:0; left:0; height:0rem; overflow:hidden; transition:all 0.8s;}
+.new-dm>>>.dm .icon{position:relative; width:0.6rem; height:0.6rem; border-radius:50%;}
+.new-dm>>>.dm .txt{ background:rgba(0,0,0,0.6); color:#ffffff; margin-left:-0.3rem; font-size:0.28rem; line-height:1; padding:0.1rem 0.2rem 0.1rem 0.4rem; margin-left:-0.3rem; border-radius:0.24rem;}
+
 </style>

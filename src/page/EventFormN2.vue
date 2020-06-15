@@ -10,10 +10,10 @@
             <div class="fs_20 c_red">活动上线需要审核哦，请您先编辑活动信息，然后联系客服(客服微信：{{kefu}}）帮您启动活动<span id="kefu" :data-clipboard-text="kefu" class="txt_line">点击复制微信号</span></div>
             <div class="mt-30 df df-r ai-c just-c-bet title fs_32 c_33">
                 <span><span class="c_red"> *</span>活动标题</span>
-                <!-- <div v-if="formData.type===0" class="df df-r ai-c" @click="openMap">
+                <div class="df df-r ai-c" @click="openMap">
                     <van-icon name="location" class="fs_30 c_o" />
                     <span class="fs_28 c_o">添加定位</span>
-                </div> -->
+                </div>
             </div>
             <van-field v-model="formData.title" @focus="inputFocusSel" placeholder="请输入主标题" class="form-input pl-4" :border="false"/>
             <van-field v-model="formData.subhead" @focus="inputFocusSel" placeholder="请输入副标题" class="form-input pl-4" :border="false"/>
@@ -560,31 +560,31 @@ export default {
                 this.formData.spec_content.splice(id,1);
             }).catch(() => {});
         },
-        // // map
-        // mapReady(obj){
-        //     this.map = obj.map;
-        //     // this.map.reset();
-        // },
-        // // 打开地图
-        // openMap(){
-        //     this.showLocation = true;
-        //     setTimeout(()=>{
-        //         this.mapCenter = this.openCenter;
-        //         this.mapPoint = {lng:this.mapPoint.lng, lat:this.mapPoint.lat};
-        //         // this.map.reset();
-        //     },100);
-        // },
-        // // 点击地图
-        // setPoint(event){
-        //     this.mapPoint = event.point;
-        // },
-        // // 选择经纬度
-        // selMapOk(){
-        //     this.formData.long = this.mapPoint.lng;
-        //     this.formData.lat = this.mapPoint.lat;
-        //     this.showLocation = false;
-        //     Toast("添加定位成功");
-        // },
+        // map
+        mapReady(obj){
+            this.map = obj.map;
+            // this.map.reset();
+        },
+        // 打开地图
+        openMap(){
+            this.showLocation = true;
+            setTimeout(()=>{
+                this.mapCenter = this.openCenter;
+                this.mapPoint = {lng:this.mapPoint.lng, lat:this.mapPoint.lat};
+                // this.map.reset();
+            },100);
+        },
+        // 点击地图
+        setPoint(event){
+            this.mapPoint = event.point;
+        },
+        // 选择经纬度
+        selMapOk(){
+            this.formData.long = this.mapPoint.lng;
+            this.formData.lat = this.mapPoint.lat;
+            this.showLocation = false;
+            Toast("添加定位成功");
+        },
         // 选择场景
         selCj(o){
             this.cjShow = false;

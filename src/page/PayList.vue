@@ -12,7 +12,11 @@
             />
         </div>
         <div class="list df df-c f1">
-            <van-tabs v-model="search.template_class" @click="onSearch" type="card" color="#3189F6">
+            <van-tabs v-model="search.type" @click="onSearch" type="card" color="#3189F6">
+                <van-tab @click.stop name="" title="全部"></van-tab>
+                <van-tab @click.stop v-for="(value, key, index) in types" :name="key" :key="index" :title="value"></van-tab>
+            </van-tabs>
+            <van-tabs v-model="search.template_class" @click="onSearch" type="card" color="#3189F6" class="mt-20">
                 <van-tab @click.stop v-for="(value, key, index) in tabs" :name="key" :key="index" :title="value"></van-tab>
             </van-tabs>
             <div class="listul-box f1 mt-30">
@@ -33,7 +37,7 @@
                         <div class="title van-ellipsis fs_28 c_33 txt-c">{{item.title}}</div>
                         <div class="df df-r ai-c just-c-bet pl-20">
                             <span class="fs_26 c_ashen">￥{{item.price}}</span>
-                            <van-button type="mini" :disabled="item.state==1" :color="item.state==0?'#FF9C00':'#9FA9C7'">{{item.type=="0"?"立即分享":"立即分享"}}</van-button>
+                            <van-button type="mini" :disabled="item.audit_type!=1" :color="item.audit_type==1?'#FF9C00':'#9FA9C7'">{{item.type=="0"?"立即分享":"立即分享"}}</van-button>
                         </div>
                     </div>
                 </van-list>
@@ -51,6 +55,7 @@ export default {
     data(){
         return {
             tabs: {},
+            types: {"0":"普通活动","1":"产品活动","2":"拼团活动"},
             search: {
                 keyword: "",
                 template_class: 0,

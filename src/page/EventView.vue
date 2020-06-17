@@ -9,7 +9,7 @@
                     <img :src="item.pic_img" class="img" />
                 </van-swipe-item>
             </van-swipe>
-            <div class="see c_ashen fs_28">{{data.browse_num}}人浏览</div>
+            <!-- <div class="see c_ashen fs_28">{{data.browse_num}}人浏览</div> -->
 
             <!-- <div v-if="dmList.length" class="box"></div> -->
             
@@ -30,7 +30,7 @@
                         <span class="c_red1 fs_30">￥{{data.special_offer}}</span>
                         <span class="yuanjia fs_26 c_ashen txt-line-t">￥ {{data.price}}</span>
                     </div>
-                    <span class="fs_28 c_ashen">销量 {{data.people_buy_num}}</span>
+                    <!-- <span class="fs_28 c_ashen">销量 {{data.people_buy_num}}</span> -->
                 </div>
             </div>
             <div class="seller shadow df df-r ai-c just-c-bet" @click="showSeller=true">
@@ -39,6 +39,15 @@
                     <span class="name c_33 fs_30 one-hide">{{userInfo.nickname}}</span>
                 </div>
                 <van-button size="mini" color="#FF9C00" @click="showSeller=true">关注</van-button>
+            </div>
+            <div class="liulan shadow mt-40">
+                <div class="tab df df-r fs_28">
+                    <div class="f1 df ai-c just-c-ct">已购买<span class="c_o">{{data.people_buy_num}}</span>人</div>
+                    <div class="f1 df ai-c just-c-ct"><span class="c_o">{{data.browse_num}}</span>次浏览</div>
+                </div>
+                <div v-if="dmList && dmList.length" class="icons mt-20 df df-r df-w-w">
+                    <img v-for="(item,index) in dmList" :key="index" :src="item.src" class="icon shadow" />
+                </div>
             </div>
             <div class="words mt-40">
                 <div class="title df ai-c just-c-ct">
@@ -107,6 +116,8 @@
                 </div>
             </div>
         </van-overlay> -->
+        <!-- 新弹幕 -->
+        <div ref="newdanmu" class="new-dm"></div>
         <PageMenu></PageMenu>
     </div>
 </template>
@@ -177,19 +188,52 @@ export default {
         // clipboard.on('success', ()=>{Toast("复制成功");});
         // clipboard.on('error', ()=>{Toast("复制失败");});
         // 弹幕
-        let propTop = 0;
+        // let propTop = 0;
+        // setInterval(()=>{
+        //     for(let dm of this.dmList){
+        //         if(dm.move){continue}
+        //         dm.move = true;
+        //         let top = Math.random()*4+0.1;
+        //         while(Math.abs(propTop-top)<0.5){ top = Math.random()*4+0.1; }
+        //         propTop = top;
+        //         dm.top = top+'rem';
+        //         setTimeout(()=> dm.move=false, 10000);
+        //         return;
+        //     }
+        // },2000);
+        // 新弹幕
+        let newdm = this.$refs.newdanmu;
+        let dmid = 0;
         setInterval(()=>{
-            for(let dm of this.dmList){
-                if(dm.move){continue}
-                dm.move = true;
-                let top = Math.random()*4+0.1;
-                while(Math.abs(propTop-top)<0.5){ top = Math.random()*4+0.1; }
-                propTop = top;
-                dm.top = top+'rem';
-                setTimeout(()=> dm.move=false, 10000);
-                return;
-            }
-        },2000);
+            if(!newdm || this.dmList.length<5){return}
+            let dm = this.dmList[dmid];
+            if(this.dmList.length<=dmid+1){dmid=0}else{dmid++}
+
+            let div = document.createElement("div");
+            div.setAttribute("class","dm df df-r ai-c");
+            let img = document.createElement("img");
+            img.src = dm.src;
+            img.setAttribute("class","icon");
+            let txt = document.createElement("div");
+            txt.setAttribute("class","txt");
+            txt.innerHTML = dm.txt;
+            div.appendChild(img);
+            div.appendChild(txt); 
+            newdm.appendChild(div);
+            setTimeout(()=>{
+                div.style.height = "0.6rem";
+                if(newdm.children.length>3){
+                    newdm.children[0].remove();
+                    newdm.children[1].style.bottom = "0.8rem";
+                    newdm.children[0].style.bottom = "1.6rem";
+                }else{
+                    newdm.children[0].style.bottom = (newdm.children.length-1)*0.8+"rem";
+                    if(newdm.children[1]){
+                        newdm.children[1].style.bottom = (newdm.children.length-2)*0.8+"rem";
+                    }
+                }
+            },100)
+        },2000)
     },
     components:{PageMenu},
 }
@@ -249,4 +293,16 @@ export default {
 .maskSeller .linebox .txt{position:relative; padding:0 0.5rem; background:#ffffff;}
 
 .fixed-submit{top:5.45rem; width:auto;}
+
+.liulan{box-sizing:border-box; width:7rem; margin-left:auto; margin-right:auto; border-radius:0.1rem; padding:0.2rem;}
+.liulan .tab .f1{border-right:1px solid #3B3A40;}
+.liulan .tab .f1:last-child{border:none;}
+.liulan .icons{padding-top:0.2rem; height:2.2rem; overflow-y:auto; border-top:1px solid #DDDDDD;}
+.liulan .icons .icon{width:0.9rem; height:0.9rem; margin:0.2rem 0.1rem 0; border-radius:50%;}
+
+.new-dm{width:100%; height:0px; position:fixed; bottom:1.3rem; left:0;}
+.new-dm>>>.dm{position:absolute; bottom:0; left:0; height:0rem; overflow:hidden; transition:all 0.8s;}
+.new-dm>>>.dm .icon{position:relative; width:0.6rem; height:0.6rem; border-radius:50%;}
+.new-dm>>>.dm .txt{background:rgba(0,0,0,0.6); color:#ffffff; margin-left:-0.3rem; font-size:0.28rem; line-height:1; padding:0.1rem 0.2rem 0.1rem 0.4rem; margin-left:-0.3rem; border-radius:0.24rem;}
+
 </style>

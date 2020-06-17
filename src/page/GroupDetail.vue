@@ -70,12 +70,12 @@ export default {
         // 预览
         toView(item){
             let id = item.id;
-            let path = "";
+            let path = "/pay_detail";
             item.type = Number(item.type);
             switch(item.type){
                 case 0:path="/pay_detail";break;
                 case 1:path="/pay_detail_n1";break;
-                default: path="/pay_detail_n2";break;
+                case 2:path="/pay_detail_n2";break;
             }
             this.$router.push({path:path, query:{id:id, activity_id1:id}});
         },

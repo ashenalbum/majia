@@ -59,6 +59,7 @@ html,body{height:100%;}
 .mt-40{margin-top:0.4rem;}
 .mt-46{margin-top:0.46rem;}
 .mt-50{margin-top:0.50rem;}
+.ml-10{margin-left:0.1rem;}
 .ml-20{margin-left:0.2rem;}
 .ml-40{margin-left:0.4rem;}
 .pl-10{padding-left:0.1rem;padding-right:0.1rem;}

@@ -24,6 +24,7 @@
                                     <span>{{item.heating_power}}</span>
                                 </div>
                             </div>
+                            <div class="biaoshi fs_24 c_ff">{{getTypeName(item.type)}}</div>
                         </div>
                         <div class="mt-10 lh-1 title">{{item.title}}</div>
                         <div class="fs_26 c_red1">￥{{item.special_offer}} <span class="txt-del txt-line-t c_ashen">￥{{item.price}}</span></div>
@@ -55,6 +56,7 @@
                                 <span>{{item.heating_power}}</span>
                             </div>
                         </div>
+                        <div class="biaoshi fs_24 c_ff">{{getTypeName(item.type)}}</div>
                     </div>
                     <div class="title van-ellipsis fs_28 c_33 txt-c">{{item.title}}</div>
                     <div class="fs_26 c_red1">￥{{item.special_offer}} <span class="txt-del txt-line-t c_ashen">￥{{item.price}}</span></div>
@@ -123,7 +125,14 @@ export default {
                 case 2:path="/pay_detail_n2";break;
             }
             this.$router.push({path:path, query:{id:id, activity_id1:id}});
-        }
+        },
+        getTypeName(type){
+            switch(type){
+                case 0: return "活动";
+                case 1: return "产品";
+                case 2: return "拼团";
+            }
+        },
     },
     components: {PageMenu},
 }
@@ -153,5 +162,6 @@ export default {
 .listul .item .title{padding:2px;}
 
 .imgbox-detail{position:absolute; box-sizing:border-box; padding:4px; width:100%; left:0; bottom:0; background:rgba(0,0,0,0.5);}
+.biaoshi{position:absolute; top:0; left:0; background:#1989fa; padding: 0.06rem 0.1rem; border-radius: 0 0 .2rem 0; line-height: 1;}
 .txt-del{padding-left:0.2rem; }
 </style>

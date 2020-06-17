@@ -13,10 +13,10 @@
         </div>
         <div class="list df df-c f1">
             <van-tabs v-model="search.type" @click="onSearch" type="card" color="#3189F6">
-                <van-tab @click.stop name="all" key="all" title="全部"></van-tab>
+                <van-tab @click.stop name="" title="全部"></van-tab>
                 <van-tab @click.stop v-for="(value, key, index) in types" :name="key" :key="index" :title="value"></van-tab>
             </van-tabs>
-            <van-tabs v-model="search.template_class" @click="onSearch" type="card" color="#3189F6" class="mt-30">
+            <van-tabs v-model="search.template_class" @click="onSearch" type="card" color="#3189F6" class="mt-20">
                 <van-tab @click.stop v-for="(value, key, index) in tabs" :name="key" :key="index" :title="value"></van-tab>
             </van-tabs>
             <div class="listul-box f1 mt-30">
@@ -35,7 +35,7 @@
                         <div class="title van-ellipsis fs_28 c_33 txt-c">{{item.title}}</div>
                         <div class="df df-r ai-c just-c-bet pl-20">
                             <a class="fs_26 c_ashen" href="javascript:;" >预览</a>
-                            <a class="com-btn-y" href="javascript:;" @click.stop="zhizuo(item.id)">立即制作</a>
+                            <a class="com-btn-y" href="javascript:;" @click.stop="zhizuo(item.id, item.type)">立即制作</a>
                         </div>
                     </div>
                 </van-list>
@@ -136,11 +136,11 @@ export default {
                         this.$router.push({name:"Auth",query:{id: id}});
                         return;
                     }
-                    let path = "";
+                    let path = "event_form";
                     switch(index){
                         case 0:path="/event_form";break;
                         case 1:path="/event_form_n1";break;
-                        default: path="/event_form_n2";break;
+                        case 2: path="/event_form_n2";break;
                     }
                     this.$router.push({path:path, query:{id:id, xieyi:1}});
                 });

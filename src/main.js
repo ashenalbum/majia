@@ -142,6 +142,7 @@ function wxConfig(path){
                 'scanQRCode',
                 'hideMenuItems',
                 "getLocation",
+                "openLocation",
             ]
         });
         wx.ready(() => {

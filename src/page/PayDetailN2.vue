@@ -31,12 +31,19 @@
                     <!-- <span class="fs_28 c_ashen">销量 {{data.people_buy_num}}</span> -->
                 </div>
             </div>
-            <div class="seller shadow df df-r ai-c just-c-bet" @click="showSeller=true">
-                <div class="df df-r ai-c">
-                    <img :src="userInfo.headpath" class="icon" />
-                    <span class="name c_33 fs_30 one-hide">{{userInfo.nickname}}</span>
+            <div class="seller shadow">
+                <div class="df df-r ai-c just-c-bet" @click="showSeller=true">
+                    <div class="df df-r ai-c">
+                        <img :src="userInfo.headpath" class="icon" />
+                        <span class="name c_33 fs_30 one-hide">{{userInfo.nickname}}</span>
+                    </div>
+                    <van-button size="mini" color="#FF9C00">关注</van-button>
                 </div>
-                <van-button size="mini" color="#FF9C00" @click="showSeller=true">关注</van-button>
+                <baidu-map @ready="mapReady" v-show="false"></baidu-map>
+                <div v-if="myLocationName" class="df df-r ai-c c_66 mt-30 fs_28" @click="toMap">
+                    <van-icon name="location" class="c_red1 fs_40"/>
+                    <span class="ml-10">{{myLocationName}}</span>
+                </div>
             </div>
             <div class="liulan shadow mt-40">
                 <div class="tab df df-r fs_28">
@@ -47,23 +54,24 @@
                     <img v-for="(item,index) in dmList" :key="index" :src="item.src" class="icon shadow" />
                 </div>
             </div>
-            <div v-if="mapPoint" class="map-box mt-30">
+            <!-- <div v-if="mapPoint" class="map-box mt-30">
                 <baidu-map :center="mapPoint" :zoom="18" class="map" :scroll-wheel-zoom="true"> 
                     <bm-marker :position="mapPoint" :dragging="false" animation="BMAP_ANIMATION_BOUNCE" :icon="{url:iconImg,size:{width:30,height:30}}"></bm-marker>
                 </baidu-map>
-            </div>
+            </div> -->
             <div v-if="ptData&&ptData.length" class="pindan mt-30">
-                <div class="fs_28 c_33 df df-r ai-c just-c-bet">
-                    <span>{{ptData.length}}人在拼单</span>
-                    <!-- ，可直接参与</span>
-                    <span class="c_99">查看全部</span> -->
-                </div>
+                <!-- <div class="fs_28 c_33 df df-r ai-c just-c-bet"> -->
+                    <!-- <span>{{ptData.length}}人在拼单</span> -->
+                    <!-- ，可直接参与</span><span class="c_99">查看全部</span> -->
+                <!-- </div> -->
                 <div class="ls">
                     <ul>
                         <li v-for="(item,index) in ptData" :key="index" class="li df df-r ai-c">
-                            <img src="~@/assets/test.png" class="icon" />
-                            <div class="f1 fs_28 one-hide">名称名称名称</div>
-                            <van-button size="small" type="info" class="btn">拼单</van-button>
+                            <div class="icons">
+                                <img v-for="(ic,icid) in item.user.slice(0,3)" :key="icid" :src="ic.headpath" class="icon" />
+                            </div>
+                            <div class="f1 fs_28 one-hide">{{pindanName(item.user)}}</div>
+                            <van-button size="small" type="info" class="btn" @click="buyBtnClick(1,item.id)">拼单</van-button>
                         </li>
                     </ul>
                 </div>
@@ -325,10 +333,13 @@ export default {
             bgmSrc: "",
             bgmDeg: 0,
 
+            BMap: null,
             mapPoint: null,
+            myLocationName: null,
             iconImg: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAADCklEQVR4AcWXBczTUBSFiztsXTccorgTw91h69ri7u7u7h7DiePEPWg8QWJoFO8b7m7nJC/5rfrrS05952vvXm/vVYKOt7qmvkhpLTLpSDeRjgwSRkynuM1jAudepjRVKazx1KzW+LGp6i8NbbYwtKXCjC8XRmIJthdR3OYxnsvgGl771KraON/AD8nKNe2B6vBXZmL5SyO+zDa0WTCf5qNZvJa/sQepw98mK9cKBc3o0bbCii1+MSy+DGbToak0DiZcm9am28MSy4SpLRapaNtgUEPriKdbbRvxuTCZQrN8Cr+FB7zo6QkVqRrthZlYw5B5PWUI0WMWPentDE1H6mKWrsBdzvaFZoV/slxP94bDE95k5IDaAyuVEYY6ATN0sQ90BjQGGgIZ0HAoDSWhsTzvDoc3GGRlgYfUaINwrPaAzpBPx/d3OnQCugLdhi6LdOyonA9D3COA42SApXA8H1KxdMZQx+GOFnqEdSJNATkMvYX+5ZX6CuuDvDlosiMcDLLIVJ4low0znPbe/9NgmJ4lIIBO8noXv+lkkam86V2j84sRiRUeT8vUuJmmwaWtgiwnOFlkKiIZTSHlLXZ/FzmJ1AdhwNAt3rDjnAGLTAXZZTQOzHcBj4KWhIRS36XnaAfP+WQqcuLMdQGbMNkZHkxpG6GhDp5zyfQDWzDZnk/wemiYO9g71Dw3D0a/QoI/4XczobHuofaeXFOhFIxuhgRfl8lkmuvkCvA6MdyLQ0D/4jezoeFer1OQBDJD3v0+f6gKaGybvH6GVwIJmjKnyTy9HnoIQF5oOnYX65XOWcshZXII/4/EdCkdGi4z2VnoIvZPY70BGiq/VDP8PxL5+yxOgiwZzsFSFjQ55GdRwtORegyVVyHgEYlpAQqBlWSUYOnjUeyxQBOFUOyxYLT9i72swZKUpSnLW5EuQHlraYtZKithBotxMSiroBdhC3o0Ax9Y0Od3PEM7wrYkI1sYPMlyYWa1MNzGsawWxgrfwngONmRszF4NqN4tk4oMstGwUdzmMZ4TyeBN23/GRC1/sYTzmAAAAABJRU5ErkJggg==",
 
             ptData: [],
+            pintuanId: "",
         }
     },
     // beforeRouteUpdate(to,from,next){
@@ -367,7 +378,7 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 this.data = data.data;
-                document.title = this.data.title + "  详情";
+                document.title = this.data.title;
                 this.userInfo = data.userinfo;
                 if(data.data.recommend_advert){
                     this.ad = data.data.recommend_advert;
@@ -398,6 +409,7 @@ export default {
 
                 if(this.data.long && this.data.lat){
                     this.mapPoint = {lat:this.data.lat, lng:this.data.long};
+                    this.getMapName();
                 }
                 
                 this.pintuanList();
@@ -411,6 +423,49 @@ export default {
                 if(data.err!==0){return}
                 this.ptData = data.data;
             })
+        },
+        pindanName(arr){
+            let str = "";
+            arr.forEach(i => {
+                str += i.nickname + "; ";
+            });
+            str = str.slice(0,-2);
+            return str;
+        },
+        // 地图加载完成
+        mapReady(obj){
+            this.BMap = obj.BMap;
+            this.getMapName();
+        },
+        // 逆解析地址
+        getMapName(){
+            if(!this.BMap || !this.mapPoint){return}
+            let geoc = new this.BMap.Geocoder();
+            let point = new this.BMap.Point(this.mapPoint.lng, this.mapPoint.lat);
+            geoc.getLocation(point, (rs)=>{
+                let addComp = rs.addressComponents;
+                let str = addComp.province + ", " + addComp.city + ", " + addComp.district + (addComp.street?", ":"") + addComp.street + (addComp.streetNumber?", ":"") + addComp.streetNumber;
+                this.myLocationName = str;
+            });
+        },
+        toMap(){
+            let p = this.mapType(this.mapPoint.lat, this.mapPoint.lng);
+            wx.openLocation({
+                latitude: p.lat,
+                longitude: p.lng,
+                name: this.myLocationName,
+                scale: 15,
+            });
+        },
+        mapType($lat,$lng){
+            let $xPi = 3.14159265358979324 * 3000.0 / 180.0;
+            let $x = $lng - 0.0065;
+            let $y = $lat - 0.006;
+            let $z = Math.sqrt($x * $x + $y * $y) - 0.00002 * Math.sin($y * $xPi);
+            let $theta = Math.atan2($y, $x) - 0.000003 * Math.cos($x * $xPi);
+            $lng = $z * Math.cos($theta);
+            $lat = $z * Math.sin($theta);
+            return {lng:$lng, lat:$lat};
         },
         playBgm(){
             if(!this.data.id){setTimeout(this.playBgm,100); return;}
@@ -602,10 +657,11 @@ export default {
             }
         },
         // 点击购买
-        buyBtnClick(tp){
+        buyBtnClick(tp,info){
             if(this.data.audit_type!=1){return}
             this.buyType = tp;
 
+            this.pintuanId = info || "";
             this.guigeId = 0;
             this.buyNum = 1;
             if(this.data.spec_content.length){
@@ -655,6 +711,7 @@ export default {
                     activity_id1: this.urlQuery.activity_id1 || 0,
                     p1: this.urlQuery.p1,
                     p2: this.urlQuery.p2,
+                    list_id: this.pintuanId,
                 }
             }).then((data)=>{
                 if(data.err!=0){return;}
@@ -821,7 +878,7 @@ export default {
 .details .label{display:inline-block; line-height:0.4rem; margin-right:0.1rem; margin-bottom:0.1rem; padding:2px 0.18rem; border-radius:2px; background:#FFF8EC;}
 .details .yuanjia{padding-left:0.2rem;}
 
-.seller{width:7rem; box-sizing:border-box; margin:0 auto; padding:0 0.32rem; height:1.28rem; border-radius:0.1rem;}
+.seller{width:7rem; box-sizing:border-box; margin:0 auto; padding:0.32rem; border-radius:0.1rem;}
 .seller .icon{width:0.8rem; height:0.8rem; border-radius:50%;}
 .seller .name{padding-left:0.2rem;}
 
@@ -863,7 +920,7 @@ export default {
 
 .fixed-submit{top:5.45rem; width:auto;}
 
-.fixed-btn{position:fixed; right:0.5rem; top:8.4rem; min-height:1.22rem;}
+.fixed-btn{position:fixed; right:0.5rem; bottom:3.2rem; min-height:1.22rem;}
 .fixed-btn .txt{padding:0.1rem 0.7rem 0.1rem 0.26rem; background:#ffffff; border-radius:0.1rem;}
 .fixed-btn .txt .line{padding:0.1rem 0; line-height:1; border-bottom:1px solid #D7DBE9;}
 .fixed-btn .txt .line:last-child{border:none;}
@@ -924,7 +981,8 @@ export default {
 .pindan{border-top:1px solid #e3e3e3; border-bottom:1px solid #e3e3e3; padding:0.1rem 0.3rem;}
 .pindan .ls{max-height:2rem; overflow-y:auto;}
 .pindan .ls .li{height:1rem; }
-.pindan .ls .li .icon{width:0.7rem; height:0.7rem; border-radius:50%; margin-right:0.16rem; }
+.pindan .ls .li .icons{height:0.7rem; padding-left:0.45rem; margin-right:0.16rem; }
+.pindan .ls .li .icons .icon{width:0.7rem; height:0.7rem; margin-left:-0.45rem; border-radius:50%;}
 .pindan .ls .li .btn{margin-left:0.2rem;}
 
 .liulan{box-sizing:border-box; width:7rem; margin-left:auto; margin-right:auto; border-radius:0.1rem; padding:0.2rem;}

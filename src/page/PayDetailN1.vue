@@ -24,19 +24,30 @@
                     <span v-for="(item,index) in data.spec_content" :key="index" class="label">{{item.name}}</span>
                 </div>
                 <div class="mt-36 df df-r ai-e just-c-bet">
-                    <div class="df df-r ai-e">
+                    <div v-if="timeIsover" class="df df-r ai-e">
+                        <span class="c_red1 fs_30">￥{{data.price}}</span>
+                        <!-- <span class="yuanjia fs_26 c_ashen txt-line-t">￥ {{data.price}}</span> -->
+                    </div>
+                    <div v-else class="df df-r ai-e">
                         <span class="c_red1 fs_30">￥{{data.special_offer}}</span>
                         <span class="yuanjia fs_26 c_ashen txt-line-t">￥ {{data.price}}</span>
                     </div>
                     <!-- <span class="fs_28 c_ashen">销量 {{data.people_buy_num}}</span> -->
                 </div>
             </div>
-            <div class="seller shadow df df-r ai-c just-c-bet" @click="showSeller=true">
-                <div class="df df-r ai-c">
-                    <img :src="userInfo.headpath" class="icon" />
-                    <span class="name c_33 fs_30 one-hide">{{userInfo.nickname}}</span>
+            <div class="seller shadow">
+                <div class="df df-r ai-c just-c-bet" @click="showSeller=true">
+                    <div class="df df-r ai-c">
+                        <img :src="userInfo.headpath" class="icon" />
+                        <span class="name c_33 fs_30 one-hide">{{userInfo.nickname}}</span>
+                    </div>
+                    <van-button size="mini" color="#FF9C00">关注</van-button>
                 </div>
-                <van-button size="mini" color="#FF9C00" @click="showSeller=true">关注</van-button>
+                <baidu-map @ready="mapReady" v-show="false"></baidu-map>
+                <div v-if="myLocationName" class="df df-r ai-c c_66 mt-30 fs_28" @click="toMap">
+                    <van-icon name="location" class="c_red1 fs_40"/>
+                    <span class="ml-10">{{myLocationName}}</span>
+                </div>
             </div>
             <div class="liulan shadow mt-40">
                 <div class="tab df df-r fs_28">
@@ -47,11 +58,11 @@
                     <img v-for="(item,index) in dmList" :key="index" :src="item.src" class="icon shadow" />
                 </div>
             </div>
-            <div v-if="mapPoint" class="map-box mt-30">
+            <!-- <div v-if="mapPoint" class="map-box mt-30">
                 <baidu-map :center="mapPoint" :zoom="18" class="map" :scroll-wheel-zoom="true"> 
                     <bm-marker :position="mapPoint" :dragging="false" animation="BMAP_ANIMATION_BOUNCE" :icon="{url:iconImg,size:{width:30,height:30}}"></bm-marker>
                 </baidu-map>
-            </div>
+            </div> -->
             <!-- <div class="pindan mt-30">
                 <div class="fs_28 c_33 df df-r ai-c just-c-bet">
                     <span>n人在拼单，可直接参与</span>
@@ -90,7 +101,7 @@
             <div class="btn1 f1 df df-c ai-c just-c-ct" @click.stop="showGzhEwm=true">制作新活动</div>
             <div class="btn2 f1 df df-c ai-c just-c-ct" :class="{ashen:data.audit_type!=1}" @click="buyBtnClick">
                 <span>{{data.audit_type==1?(data.pay_btn?data.pay_btn:"购买"):"活动未开始"}}</span>
-                <span v-if="data.audit_type==1&&showLastTime" class="fs_26">{{lastTime}}</span>
+                <span v-if="data.audit_type==1&&showLastTime&&lastTime" class="fs_26">{{lastTime}}</span>
             </div>
         </div>
         <!-- 制作海报 -->
@@ -319,7 +330,9 @@ export default {
             bgmSrc: "",
             bgmDeg: 0,
 
+            BMap: null,
             mapPoint: null,
+            myLocationName: null,
             iconImg: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAADCklEQVR4AcWXBczTUBSFiztsXTccorgTw91h69ri7u7u7h7DiePEPWg8QWJoFO8b7m7nJC/5rfrrS05952vvXm/vVYKOt7qmvkhpLTLpSDeRjgwSRkynuM1jAudepjRVKazx1KzW+LGp6i8NbbYwtKXCjC8XRmIJthdR3OYxnsvgGl771KraON/AD8nKNe2B6vBXZmL5SyO+zDa0WTCf5qNZvJa/sQepw98mK9cKBc3o0bbCii1+MSy+DGbToak0DiZcm9am28MSy4SpLRapaNtgUEPriKdbbRvxuTCZQrN8Cr+FB7zo6QkVqRrthZlYw5B5PWUI0WMWPentDE1H6mKWrsBdzvaFZoV/slxP94bDE95k5IDaAyuVEYY6ATN0sQ90BjQGGgIZ0HAoDSWhsTzvDoc3GGRlgYfUaINwrPaAzpBPx/d3OnQCugLdhi6LdOyonA9D3COA42SApXA8H1KxdMZQx+GOFnqEdSJNATkMvYX+5ZX6CuuDvDlosiMcDLLIVJ4low0znPbe/9NgmJ4lIIBO8noXv+lkkam86V2j84sRiRUeT8vUuJmmwaWtgiwnOFlkKiIZTSHlLXZ/FzmJ1AdhwNAt3rDjnAGLTAXZZTQOzHcBj4KWhIRS36XnaAfP+WQqcuLMdQGbMNkZHkxpG6GhDp5zyfQDWzDZnk/wemiYO9g71Dw3D0a/QoI/4XczobHuofaeXFOhFIxuhgRfl8lkmuvkCvA6MdyLQ0D/4jezoeFer1OQBDJD3v0+f6gKaGybvH6GVwIJmjKnyTy9HnoIQF5oOnYX65XOWcshZXII/4/EdCkdGi4z2VnoIvZPY70BGiq/VDP8PxL5+yxOgiwZzsFSFjQ55GdRwtORegyVVyHgEYlpAQqBlWSUYOnjUeyxQBOFUOyxYLT9i72swZKUpSnLW5EuQHlraYtZKithBotxMSiroBdhC3o0Ax9Y0Od3PEM7wrYkI1sYPMlyYWa1MNzGsawWxgrfwngONmRszF4NqN4tk4oMstGwUdzmMZ4TyeBN23/GRC1/sYTzmAAAAABJRU5ErkJggg==",
         }
     },
@@ -359,13 +372,15 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return}
                 this.data = data.data;
-                document.title = this.data.title + "  详情";
+                document.title = this.data.title;
                 this.userInfo = data.userinfo;
                 if(data.data.recommend_advert){
                     this.ad = data.data.recommend_advert;
                     setTimeout(()=>{this.showAd = true;},2000);
                     setTimeout(()=>{this.showAd = false;},12000);
                 }
+                // 设置 timeIsover 放前面
+                this.getLastTime();
                 // 设置规格
                 if(data.data.spec_content.length){
                     this.buyNum = 1;
@@ -385,13 +400,48 @@ export default {
                         top:0,
                     })
                 }
-                this.getLastTime();
                 this.bgimg = this.data.sales_posterss;
 
                 if(this.data.long && this.data.lat){
                     this.mapPoint = {lat:this.data.lat, lng:this.data.long};
+                    this.getMapName();
                 }
             })
+        },
+        // 地图加载完成
+        mapReady(obj){
+            this.BMap = obj.BMap;
+            this.getMapName();
+        },
+        // 逆解析地址
+        getMapName(){
+            if(!this.BMap || !this.mapPoint){return}
+            let geoc = new this.BMap.Geocoder();
+            let point = new this.BMap.Point(this.mapPoint.lng, this.mapPoint.lat);
+            geoc.getLocation(point, (rs)=>{
+                let addComp = rs.addressComponents;
+                let str = addComp.province + ", " + addComp.city + ", " + addComp.district + (addComp.street?", ":"") + addComp.street + (addComp.streetNumber?", ":"") + addComp.streetNumber;
+                this.myLocationName = str;
+            });
+        },
+        toMap(){
+            let p = this.mapType(this.mapPoint.lat, this.mapPoint.lng);
+            wx.openLocation({
+                latitude: p.lat,
+                longitude: p.lng,
+                name: this.myLocationName,
+                scale: 15,
+            });
+        },
+        mapType($lat,$lng){
+            let $xPi = 3.14159265358979324 * 3000.0 / 180.0;
+            let $x = $lng - 0.0065;
+            let $y = $lat - 0.006;
+            let $z = Math.sqrt($x * $x + $y * $y) - 0.00002 * Math.sin($y * $xPi);
+            let $theta = Math.atan2($y, $x) - 0.000003 * Math.cos($x * $xPi);
+            $lng = $z * Math.cos($theta);
+            $lat = $z * Math.sin($theta);
+            return {lng:$lng, lat:$lat};
         },
         playBgm(){
             if(!this.data.id){setTimeout(this.playBgm,100); return;}
@@ -546,7 +596,7 @@ export default {
             let time = over - now;
             if(time<=0){
                 this.timeIsover = true;
-                this.lastTime = "活动结束";
+                this.lastTime = "";
                 return;
             }
             let d = parseInt(time/86400000);
@@ -792,7 +842,7 @@ export default {
 .details .label{display:inline-block; line-height:0.4rem; margin-right:0.1rem; margin-bottom:0.1rem; padding:2px 0.18rem; border-radius:2px; background:#FFF8EC;}
 .details .yuanjia{padding-left:0.2rem;}
 
-.seller{width:7rem; box-sizing:border-box; margin:0 auto; padding:0 0.32rem; height:1.28rem; border-radius:0.1rem;}
+.seller{width:7rem; box-sizing:border-box; margin:0 auto; padding:0.32rem; border-radius:0.1rem;}
 .seller .icon{width:0.8rem; height:0.8rem; border-radius:50%;}
 .seller .name{padding-left:0.2rem;}
 

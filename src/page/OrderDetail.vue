@@ -18,8 +18,12 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-40">
-                <div class="df df-r ai-c just-c-bet fs_28 c_33">
+            <div class="mt-30">
+                <div v-if="ptList && ptList.length" class="ptdetail df df-r ai-c just-c-bet" @click="showPt=true">
+                    <div class="c_33 fs_30">拼团详情</div>
+                    <van-icon name="arrow" class="c_99 fs_32" />
+                </div>
+                <div class="mt-20 df df-r ai-c just-c-bet fs_28 c_33">
                     <span>订单信息</span>
                     <span>￥{{data.order_amount}}</span>
                 </div>
@@ -145,7 +149,21 @@
                 </div>
             </div>
         </van-popup>
-        
+
+        <van-overlay :show="showPt" class="df df-c ai-c just-c-ct" @click="showPt=false">
+            <div class="overlay" @click.stop>
+                <ul>
+                    <li class="li df df-r ai-c just-c-ct" v-for="(item,index) in ptList" :key="index" >
+                        <div class="f1 df df-r ai-c">
+                            <img :src="item.headpath" class="icon shadow" />
+                            <div class="f1 one-hide fs_28 c_33">{{item.nickname}}</div>
+                        </div>
+                        <div class="time c_99 fs_26">{{getTime(item.addtime)}}</div>
+                    </li>
+                </ul>
+            </div>
+        </van-overlay>
+
         <canvas id="ewm" ref="ewm" class="ewm" style="display:none;"></canvas>
 
         <PageMenu></PageMenu>
@@ -172,6 +190,9 @@ export default {
             showKd: false,
             kdgs: "",
             kddh: "",
+
+            showPt: false,
+            ptList: [],
         }
     },
     created(){
@@ -180,6 +201,7 @@ export default {
     },
     mounted(){
         this.getData();
+        this.pintuan();
     },
     updated(){
         let copy = document.getElementById("excode");
@@ -202,8 +224,16 @@ export default {
                 this.createEwm();
             })
         },
+        pintuan(){
+            axios({
+                url: "/activity/Apiactivity/see_order_list",
+                params: {order_id: this.id}
+            }).then((data)=>{
+                if(data.err!=0 || !data.data || !data.data.id){return}
+                this.ptList = data.data.user;
+            })
+        },
         toEventDetail(){
-            
             this.$router.push({path:"/pay_detail", query:{id:this.data.activity_id, activity_id1:this.data.activity_id}});
         },
         getInfo(type){
@@ -368,4 +398,11 @@ export default {
 .popup .input{padding:10px 2px; border-bottom:1px solid #dddddd;}
 
 .copy{padding:0 4px; border-radius:2px; background:#FFC402;}
+
+.ptdetail{padding:0.2rem 0; border-bottom:1px solid #dddddd;}
+
+.overlay{width:6.9rem; height:7rem; background:#ffffff; overflow-y:auto;}
+.overlay .li{padding:0.16rem; border-bottom:1px solid #dedede;}
+.overlay .li:last-child{border:none;}
+.overlay .icon{width:0.8rem; height:0.8rem; border-radius:50%; margin-right:0.2rem;}
 </style>

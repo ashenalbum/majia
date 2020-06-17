@@ -256,6 +256,7 @@
     </div>
 </template>
 <script>
+import wx from "weixin-js-sdk";
 import {Toast,Dialog} from "vant";
 import {upFile} from "../utils/axios";
 import axios from "../utils/axios";
@@ -350,6 +351,16 @@ export default {
         this.getXieyi();
         this.getTopImg();
         this.getKefu();
+        wx.ready(() => {
+            wx.getLocation({
+                type: 'wgs84',
+                success:(res)=>{
+                    if(this.formData.long && this.formData.lat){return}
+                    this.openCenter = this.wgs84togcj02tobd09(Number(res.longitude),Number(res.latitude));
+                    this.mapPoint = {lng:this.openCenter.lng, lat:this.openCenter.lat};
+                }
+            });
+        })
     },
     mounted(){
         let kefu = new Clipboard("#kefu");

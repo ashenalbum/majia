@@ -28,7 +28,10 @@
                             </div>
                             <span class="fs_26">×{{item.num}}</span>
                         </div>
-                        <div class="mt-40 df df-r just-c-end fs_28">合计：￥{{item.price}}</div>
+                        <div class="mt-40 df df-r just-c-bet fs_28">
+                            <span class="c_o">{{getTypeName(item.type)}}</span>
+                            <span>合计：￥{{item.price}}</span>
+                        </div>
                     </div>
                 </div>
                 <div class="btns mt-10 df df-r ai-c just-c-end">
@@ -91,6 +94,13 @@ export default {
         },
         toPayAfter(item){
             this.$router.push({path:"/pay_after", query:{id: item.activity_id}});
+        },
+        getTypeName(type){
+            switch(type){
+                case 0: return "活动";
+                case 1: return "产品";
+                case 2: return "拼团";
+            }
         },
     },
     components: {PageMenu},

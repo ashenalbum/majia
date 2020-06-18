@@ -20,8 +20,8 @@
         </div>
         <div class="cont-box bg_ff">
             <div class="details">
-                <div class="c_33 fs_32 van-ellipsis">{{data.title}}</div>
-                <div class="mt-20 c_ashen fs_26 van-ellipsis">{{data.subhead}}</div>
+                <div class="c_33 fs_32">{{data.title}}</div>
+                <div class="mt-20 c_ashen fs_26">{{data.subhead}}</div>
                 <div class="mt-30 c_o fs_28">
                     <span v-for="(item,index) in data.spec_content" :key="index" class="label">{{item.name}}</span>
                 </div>
@@ -34,22 +34,27 @@
                         <span class="c_red1 fs_30">￥{{data.special_offer}}</span>
                         <span class="yuanjia fs_26 c_ashen txt-line-t">￥ {{data.price}}</span>
                     </div>
-                    
-                    <!-- <span class="fs_28 c_ashen">销量 {{data.people_buy_num}}</span> -->
+                    <!-- 制作海报 -->
+                    <van-sticky :offset-top="6" >
+                        <div class="haibao-btn fs_28 c_ff" @click="toHaibao">{{data.hb_btn_name}}</div>
+                    </van-sticky>
                 </div>
             </div>
             <div class="seller shadow">
                 <div class="df df-r ai-c just-c-bet" @click="showSeller=true">
                     <div class="df df-r ai-c">
-                        <img :src="userInfo.headpath" class="icon" />
+                        <img :src="userInfo.headpath" class="icon shadow" />
                         <span class="name c_33 fs_30 one-hide">{{userInfo.nickname}}</span>
                     </div>
                     <van-button size="mini" color="#FF9C00">关注</van-button>
                 </div>
                 <baidu-map @ready="mapReady" v-show="false"></baidu-map>
-                <div v-if="myLocationName" class="df df-r ai-c c_66 mt-30 fs_28" @click="toMap">
-                    <van-icon name="location" class="c_red1 fs_40"/>
-                    <span class="ml-10">{{myLocationName}}</span>
+                <div v-if="myLocationName" class="df df-r ai-c c_66 mt-30 fs_28">
+                    <van-icon name="location" class="c_red1 fs_40"  @click="toMap"/>
+                    <div class="ml-10 f1" @click="toMap">{{myLocationName}}</div>
+                    <a v-if="sjInfo.contact_mobile" :href="'tel:'+sjInfo.contact_mobile+'#mp.weixin.qq.com'">
+                        <van-icon name="phone" class="ml-10 fs_40 c_blue" />
+                    </a>
                 </div>
             </div>
             <div class="liulan shadow mt-40">
@@ -87,8 +92,6 @@
                 <span v-if="data.audit_type==1&&showLastTime&&lastTime" class="fs_26">{{lastTime}}</span>
             </div>
         </div>
-        <!-- 制作海报 -->
-        <van-button class="fixed-submit" type="info" @click="toHaibao">{{data.hb_btn_name}}</van-button>
         <!-- 客服 -->
         <div class="fixed-btn df df-r ai-c" @mousedown.stop>
             <transition name="van-slide-right">
@@ -130,9 +133,11 @@
                 <div class="box" @click.stop>
                     <div class="df df-r ai-c just-c-bet">
                         <ul class="ul fs_26">
-                            <li>联系电话：<span ref="copytxt1" :data-clipboard-text="sjInfo.contact_mobile" class="c_o">{{sjInfo.contact_mobile}} <span class="copy c_ff">复制</span></span></li>
-                            <li v-if="sjInfo.service_wx" ref="copytxt2" :data-clipboard-text="sjInfo.service_wx">客服微信：<span ref="copywx">{{sjInfo.service_wx}} <span class="copy c_ff">复制</span></span></li>
-                            <li v-if="sjInfo.service_tel" ref="copytxt3" :data-clipboard-text="sjInfo.service_tel">客服电话：<span class="c_o">{{sjInfo.service_tel}} <span class="copy c_ff">复制</span></span></li>
+                            <!-- <li>联系电话：<span ref="copytxt1" :data-clipboard-text="sjInfo.contact_mobile" class="c_o">{{sjInfo.contact_mobile}} <span class="copy c_ff">复制</span></span></li> -->
+                            <li>联系电话：<a :href="'tel:'+sjInfo.contact_mobile+'#mp.weixin.qq.com'" class="c_o">{{sjInfo.contact_mobile}}</a></li>
+                            <li v-show="sjInfo.service_wx" id="copytxt2" :data-clipboard-text="sjInfo.service_wx">客服微信：<span ref="copywx">{{sjInfo.service_wx}} <span class="copy c_ff">复制</span></span></li>
+                            <!-- <li v-if="sjInfo.service_tel" ref="copytxt3" :data-clipboard-text="sjInfo.service_tel">客服电话：<span class="c_o">{{sjInfo.service_tel}} <span class="copy c_ff">复制</span></span></li> -->
+                            <li v-if="sjInfo.service_tel">客服电话：<a :href="'tel:'+sjInfo.service_tel+'#mp.weixin.qq.com'" class="c_o">{{sjInfo.service_tel}} </a></li>
                         </ul>
                         <img :src="sjInfo.headpath" class="icon" />
                     </div>
@@ -189,7 +194,7 @@
                     />
                 </div>
                 <div class="mt-30 df df-c ai-c">
-                    <van-button type="info" size="small" class="next-btn" @click="buySubmit">{{data.pay_btn}}</van-button>
+                    <van-button type="info" size="small" class="next-btn" @click="buySubmit">确 定</van-button>
                 </div>
             </div>
         </van-popup>
@@ -737,19 +742,9 @@ export default {
         // data(v){if(v.title){document.title = v.title + "  详情";}}
     },
     mounted(){
-        let clipboard1 = new Clipboard(this.$refs.copytxt1);
-        clipboard1.on('success', ()=>{Toast("复制成功");});
-        clipboard1.on('error', ()=>{Toast("复制失败");});
-        if(this.$refs.copytxt2){
-            let clipboard2 = new Clipboard(this.$refs.copytxt2);
-            clipboard2.on('success', ()=>{Toast("复制成功");});
-            clipboard2.on('error', ()=>{Toast("复制失败");});
-        }
-        if(this.$refs.copytxt3){
-            let clipboard3 = new Clipboard(this.$refs.copytxt3);
-            clipboard3.on('success', ()=>{Toast("复制成功");});
-            clipboard3.on('error', ()=>{Toast("复制失败");});
-        }
+        let clipboard2 = new Clipboard(document.getElementById('copytxt2'));
+        clipboard2.on('success', ()=>{Toast("复制成功");});
+        clipboard2.on('error', ()=>{Toast("复制失败");});
 
         // // 弹幕
         // let propTop = 0;
@@ -866,7 +861,7 @@ export default {
 
 .fixed-submit{top:5.45rem; width:auto;}
 
-.fixed-btn{position:fixed; right:0.5rem; top:8.4rem; min-height:1.22rem;}
+.fixed-btn{position:fixed; right:0.5rem; bottom:3.2rem; min-height:1.22rem;}
 .fixed-btn .txt{padding:0.1rem 0.7rem 0.1rem 0.26rem; background:#ffffff; border-radius:0.1rem;}
 .fixed-btn .txt .line{padding:0.1rem 0; line-height:1; border-bottom:1px solid #D7DBE9;}
 .fixed-btn .txt .line:last-child{border:none;}

@@ -217,7 +217,7 @@ export default {
 .top-alert{width:6.7rem; padding-top:0.3rem; margin-left:auto; margin-right:auto;}
 .dib{display:inline-block; white-space: nowrap;}
 .cont-list{width:6.7rem; margin:0 auto 0; padding-top:0;}
-.cont-list .item{margin-bottom:0.4rem;}
+/* .cont-list .item{margin-bottom:0.4rem;} */
 .cont-list .ware{padding:0.2rem 0; border-bottom:1px solid #E2E6F1;}
 .cont-list .ware .img{width:2.66rem; height:1.84rem;}
 .cont-list .ware .detail{margin-left:0.2rem; flex:1;}

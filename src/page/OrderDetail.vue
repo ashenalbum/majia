@@ -184,7 +184,7 @@ export default {
             is_pos: false,
             data: {},
             imgUrl: "",
-            // pay_info: [],
+            pay_info: [],
             form_info: [],
 
             showKd: false,
@@ -256,6 +256,7 @@ export default {
                     if(data.err==1){setTimeout(()=>{window.location.reload();},500)}
                     return;
                 }
+                this.pay_info = data.pay_info;
                 this.wxpay(this.pay_info);
             }).catch(()=>{
                 Toast("pay error");

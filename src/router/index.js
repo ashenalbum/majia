@@ -43,6 +43,16 @@ export default new Router({
         meta: { title: "活动预览"},
         component: (resolve) =>require(['@/page/EventView.vue'],resolve)
     }, {
+        path: '/event_view_n1',
+        name: 'EventViewN1',
+        meta: { title: "活动预览"},
+        component: (resolve) =>require(['@/page/EventViewN1.vue'],resolve)
+    }, {
+        path: '/event_view_n2',
+        name: 'EventViewN2',
+        meta: { title: "活动预览"},
+        component: (resolve) =>require(['@/page/EventViewN2.vue'],resolve)
+    }, {
         path: '/event_mould',
         name: 'EventMould',
         meta: { title: "活动模板"},
@@ -204,5 +214,10 @@ export default new Router({
         name: 'GroupBill',
         meta: {title: "设置海报"},
         component: (resolve) =>require(['@/page/GroupBill.vue'],resolve)
+    },{
+        path: '/prize',
+        name: 'Prize',
+        meta: {title: "领取奖品"},
+        component: (resolve) =>require(['@/page/Prize.vue'],resolve)
     }]
 })

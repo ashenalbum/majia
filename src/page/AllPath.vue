@@ -32,6 +32,41 @@
         <PageMenu></PageMenu>
         
         <div ref="newdanmu" class="new-dm"></div>
+
+        <div class="jiangpin shadow mt-40">
+            <div class="df df-r just-c-ct fs_30 c_33 b">邀好友   拿奖品</div>
+            <div v-for="i in 5" :key="i" class="item mt-30 df df-r ai-c">
+                <div class="img-box">
+                    <img src="~@/assets/test.png" />
+                    <div class="tag c_ff fs_24">奖品</div>
+                </div>
+                <div class="txt f1 df df-c">
+                    <div class="fs_32 c_33">标题标题</div>
+                    <div class="c_ashen fs_28 mt-10">需邀请<span class="c_o">5</span>位好友购买</div>
+                    <div class="c_ashen fs_28">已邀请<span class="c_o">0</span>位好友</div>
+                </div>
+                <div class="jg c_o fs_32 b">￥299</div>
+            </div>
+        </div>
+
+        <van-popup v-model="show" position="bottom">
+            <div class="jiangli-popup">
+                <van-cell class="input" title="图片">
+                    <van-uploader multiple :preview-image="false" :before-read="newJiangpinUpImg">
+                        <img v-if="newJiangpin.thumbImg" :src="newJiangpin.thumbImg" class="img" />
+                        <van-button v-else type="info" size="small">上传</van-button>
+                    </van-uploader>
+                </van-cell>
+                <van-field label="名称" placeholder="请输入名称" class="input" input-align="right" />
+                <van-field label="价格" placeholder="请输入价格" class="input" type="number" input-align="right" />
+                <van-field label="目标人数" placeholder="请输入目标人数" class="input" type="number" input-align="right" />
+                <van-field label="库存" placeholder="请输入库存 " class="input" type="number" input-align="right" />
+                <div class="mt-40 df df-r just-c-ct">
+                    <van-button type="info" block>确定</van-button>
+                </div>
+            </div>
+        </van-popup>
+        <div style="height:50vh"></div>
     </div>
 </template>
 <script>
@@ -43,6 +78,14 @@ export default {
     data(){
         return {
             arrs: [],
+            show: true,
+            newJiangpin:{},
+        //     'price'=>价格,
+        // 'title'=>奖品名称,
+        // 'thumb'=>奖品图片,
+        // 'stock'=>库存,
+        // 'num'=>数量,
+        // 'criteria_num'=>条件人数,
         }
     },
     mounted(){
@@ -73,9 +116,9 @@ export default {
                 }
             },10)
         },2000)
-    },
+    },                                          
     methods: {
-        beforeRead(file){
+        newJiangpinUpImg(file){
             console.log(file);
             let formData = new FormData();
             formData.append("file", file);
@@ -85,7 +128,7 @@ export default {
             }).catch((err)=>{
                 console.log(err);
             })
-        }
+        },
     },
     created(){
         console.log(this.$store.state);
@@ -99,9 +142,20 @@ export default {
 .new-dm>>>.dm .icon{position:relative; width:0.6rem; height:0.6rem; border-radius:50%;}
 .new-dm>>>.dm .txt{background:rgba(0,0,0,0.6); color:#ffffff; margin-left:-0.3rem; font-size:0.28rem; line-height:1; padding:0.1rem 0.2rem 0.1rem 0.4rem; margin-left:-0.3rem; border-radius:0.24rem;} */
 
-.new-dm{width:100%; height:0px; position:fixed; bottom:1.3rem; left:0;}
+.new-dm{width:100%; height:0px; position:fixed; bottom:1.3rem; left:0; z-index:90;}
 .new-dm>>>.dm{position:absolute; bottom:0; left:0; height:0rem; overflow:hidden; transition:all 0.8s;}
 .new-dm>>>.dm .icon{position:relative; width:0.6rem; height:0.6rem; border-radius:50%;}
 .new-dm>>>.dm .txt{background:rgba(0,0,0,0.6); color:#ffffff; margin-left:-0.3rem; font-size:0.28rem; line-height:1; padding:0.1rem 0.2rem 0.1rem 0.4rem; margin-left:-0.3rem; border-radius:0.24rem;}
 
+.jiangpin{box-sizing:border-box; width:7rem; margin-left:auto; margin-right:auto; border-radius:0.1rem; padding:0.2rem;}
+.jiangpin .item{border-radius:0.1rem; overflow:hidden; border:1px solid #DDDDDD;}
+.jiangpin .item .img-box{position:relative; width:1.9rem; height:1.54rem;}
+.jiangpin .item .img-box img{position:absolute; top:0; left:0; width:1.9rem; height:1.54rem;}
+.jiangpin .item .img-box .tag{position:absolute; top:0.16rem; left:0; background:#FF9C00; line-height:1; padding:4px 0.1rem; border-radius:0 0.2rem 0.2rem 0;}
+.jiangpin .item .txt{margin:0 0.16rem;}
+.jiangpin .item .jg{margin-right:0.16rem;}
+
+.jiangli-popup{padding:0.2rem 0.4rem 0.4rem;}
+.jiangli-popup .input{border-bottom:1px solid #dddddd;}
+.jiangli-popup .input .img{width:0.8rem; height:0.8rem;}
 </style>

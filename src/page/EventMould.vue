@@ -27,7 +27,7 @@
                     @load="getList"
                     class="listul"
                 >
-                    <div v-for="(item,index) in dataList" :key="index" class="item shadow" @click="yulan(item.id)">
+                    <div v-for="(item,index) in dataList" :key="index" class="item shadow" @click="yulan(item.id, item.type)">
                         <div class="imgbox">
                             <img class="img" :src="item.head_pic" />
                             <span class="txt c_ff fs_24">{{item.useNum}}人在使用</span>
@@ -117,8 +117,14 @@ export default {
                 this.tabs = data.data;
             });
         },
-        yulan(id){
-            this.$router.push({name:"EventView", query:{id: id}});
+        yulan(id,index){
+            let path = "/event_view";
+            switch(index){
+                case 0:path="/event_view";break;
+                case 1:path="/event_view_n1";break;
+                case 2: path="/event_view_n2";break;
+            }
+            this.$router.push({path:path, query:{id: id}});
         },
         zhizuo(id,index){
             axios({

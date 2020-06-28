@@ -90,7 +90,12 @@ export default {
         },
         // 活动详情
         toEventDetail(item){
-            this.$router.push({path:"/pay_detail", query:{id:item.activity_id, activity_id1:item.activity_id}});
+            let path = "/pay_detail";
+            switch(this.nowItem.type){
+                case 1:path="/pay_detail_n1";break;
+                case 2:path="/pay_detail_n2";break;
+            }
+            this.$router.push({path:path, query:{id:item.activity_id, activity_id1:item.activity_id}});
         },
         toPayAfter(item){
             this.$router.push({path:"/pay_after", query:{id: item.activity_id}});

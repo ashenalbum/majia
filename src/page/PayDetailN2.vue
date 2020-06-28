@@ -60,6 +60,7 @@
                     <img v-for="(item,index) in dmList" :key="index" :src="item.src" class="icon shadow" />
                 </div>
             </div>
+            <!-- <Prize></Prize> -->
             <!-- <div v-if="mapPoint" class="map-box mt-30">
                 <baidu-map :center="mapPoint" :zoom="18" class="map" :scroll-wheel-zoom="true"> 
                     <bm-marker :position="mapPoint" :dragging="false" animation="BMAP_ANIMATION_BOUNCE" :icon="{url:iconImg,size:{width:30,height:30}}"></bm-marker>
@@ -287,6 +288,7 @@ import {upFile} from "../utils/axios";
 import QRCode from "qrcode";
 import html2canvas from 'html2canvas';
 import BaiduMap from 'vue-baidu-map/components/map/Map.vue';
+// import Prize from "../components/Prize";
 // import PageMenu from "../components/PageMenu";
 
 export default {
@@ -692,7 +694,7 @@ export default {
         buySubmit(){
             for(let i in this.buyFormLs){
                 let name = this.buyFormLs[i].name;
-                if(this.buyFormLs[i].is_required!=0){continue;}
+                if(this.buyFormLs[i].is_required!=1){continue;}
                 if(!this.buyFormData[name]){Toast(this.buyFormLs[i].write_explain);return}
                 if(name=="mobile" && !/^1\d{10}$/.test(this.buyFormData[name])){Toast("请输入正确的手机号");return}
             }
@@ -988,7 +990,7 @@ export default {
 .liulan .icons{padding-top:0.2rem; height:2.2rem; overflow-y:auto; border-top:1px solid #DDDDDD;}
 .liulan .icons .icon{width:0.9rem; height:0.9rem; margin:0.2rem 0.1rem 0; border-radius:50%;}
 
-.new-dm{width:100%; height:0px; position:fixed; bottom:1.3rem; left:0;}
+.new-dm{width:100%; height:0px; position:fixed; bottom:1.3rem; left:0; z-index:90;}
 .new-dm>>>.dm{position:absolute; bottom:0; left:0; height:0rem; overflow:hidden; transition:all 0.8s;}
 .new-dm>>>.dm .icon{position:relative; width:0.6rem; height:0.6rem; border-radius:50%;}
 .new-dm>>>.dm .txt{background:rgba(0,0,0,0.6); color:#ffffff; margin-left:-0.3rem; font-size:0.28rem; line-height:1; padding:0.1rem 0.2rem 0.1rem 0.4rem; margin-left:-0.3rem; border-radius:0.24rem;}

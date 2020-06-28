@@ -90,7 +90,7 @@ html,body{height:100%;}
 .lh-1{line-height:1;}
 .shadow{box-shadow: 0px 0px 6px 0px rgba(187, 187, 187, 0.8);}
 
-.df{display:flex;}
+.df{display:flex; flex-direction:row;}
 .df-r{flex-direction: row;}
 .df-c{flex-direction: column;}
 .ai-c{align-items: center;}

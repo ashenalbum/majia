@@ -66,10 +66,11 @@
                     <img v-for="(item,index) in dmList" :key="index" :src="item.src" class="icon shadow" />
                 </div>
             </div>
+            <Prize :id="id"></Prize>
             <div ref="detail" class="words mt-40">
                 <div class="title df ai-c just-c-ct">
                     <div class="line"></div>
-                    <span class="txt fs_36">产品详情</span>
+                    <span class="txt fs_36">活动详情</span>
                 </div>
                 <div class="mt-20"></div>
                 <div class="box">
@@ -267,6 +268,7 @@ import {upFile} from "../utils/axios";
 import QRCode from "qrcode";
 import html2canvas from 'html2canvas';
 import BaiduMap from 'vue-baidu-map/components/map/Map.vue';
+import Prize from "../components/Prize";
 // import PageMenu from "../components/PageMenu";
 
 export default {
@@ -345,6 +347,7 @@ export default {
         this.getOrganizer();
         this.getActivityForm();
         this.getYongjin();
+        this.get_ranking();
     },
     destroyed(){
         if(this.haibaoToast){this.haibaoToast.clear();}
@@ -394,6 +397,12 @@ export default {
                     this.mapPoint = {lat:this.data.lat, lng:this.data.long};
                     this.getMapName();
                 }
+            })
+        },
+        get_ranking(){
+            axios({
+                url: "/activity/Apiactivity/get_ranking",
+                params: {id: this.id}
             })
         },
         // 地图加载完成
@@ -629,7 +638,7 @@ export default {
         buySubmit(){
             for(let i in this.buyFormLs){
                 let name = this.buyFormLs[i].name;
-                if(this.buyFormLs[i].is_required!=0){continue;}
+                if(this.buyFormLs[i].is_required!=1){continue;}
                 if(!this.buyFormData[name]){Toast(this.buyFormLs[i].write_explain);return}
                 if(name=="mobile" && !/^1\d{10}$/.test(this.buyFormData[name])){Toast("请输入正确的手机号");return}
             }
@@ -658,7 +667,7 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return;}
                 if(data.data!==2){return;}
-                this.wxpay(data.content);                    
+                this.wxpay(data.content);
             })
         },
         // 支付
@@ -800,7 +809,7 @@ export default {
         this.getInfo();
         this.playBgm();
     },
-    components:{BaiduMap},
+    components:{BaiduMap,Prize},
 }
 </script>
 <style scoped>
@@ -931,7 +940,9 @@ export default {
 .liulan .icons{padding-top:0.2rem; height:2.2rem; overflow-y:auto; border-top:1px solid #DDDDDD;}
 .liulan .icons .icon{width:0.9rem; height:0.9rem; margin:0.2rem 0.1rem 0; border-radius:50%;}
 
-.new-dm{width:100%; height:0px; position:fixed; bottom:1.3rem; left:0;}
+.jiangpin{box-sizing:border-box; width:7rem; margin-left:auto; margin-right:auto; border-radius:0.1rem; padding:0.2rem;}
+
+.new-dm{width:100%; height:0px; position:fixed; bottom:1.3rem; left:0; z-index:90;}
 .new-dm>>>.dm{position:absolute; bottom:0; left:0; height:0rem; overflow:hidden; transition:all 0.8s;}
 .new-dm>>>.dm .icon{position:relative; width:0.6rem; height:0.6rem; border-radius:50%;}
 .new-dm>>>.dm .txt{ background:rgba(0,0,0,0.6); color:#ffffff; margin-left:-0.3rem; font-size:0.28rem; line-height:1; padding:0.1rem 0.2rem 0.1rem 0.4rem; margin-left:-0.3rem; border-radius:0.24rem;}

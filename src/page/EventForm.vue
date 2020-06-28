@@ -40,18 +40,6 @@
 
             <van-field label="原价" v-model="formData.price" required placeholder="请输入原价" @focus="inputFocusSel" type="number" input-align="right" class="form-input" :border="false"/>
             <van-field label="活动价格" v-model="formData.special_offer" required placeholder="请输入活动价格" @focus="inputFocusSel" type="number" input-align="right" class="form-input" :border="false"/>
-            <!-- <div v-if="formData.type!=0" class="guige">
-                <div class="guige-label df df-r ai-c just-c-bet">
-                    <div class="title fs_32 c_33 fs_14px">产品规格</div>           
-                    <van-button icon="plus" size="mini" color="#FF9B00" @click="showGuige=true"></van-button>
-                </div>
-                <div class="guige-li c_ashen">
-                    <div v-for="(item,index) in formData.spec_content" :key="index" class="li df df-r ai-c">
-                        <div class=" van-ellipsis f1">规格名/{{item.name}}  原价/{{item.price}}  活动价/{{item.offerPic}}  库存/{{item.stock}}</div>
-                        <van-icon name="cross" size="0.2rem" color="#ffffff" class="close" @click="delGuige(index)"/>
-                    </div>
-                </div>
-            </div> -->
             <van-field label="虚拟浏览量" v-model="formData.browse_times" placeholder="请输入数量" @focus="inputFocusSel" type="number" input-align="right" class="form-input pl-4" :border="false"/>
             <van-field label="虚拟购买量" v-model="formData.bought_num" placeholder="请输入数量" @focus="inputFocusSel" type="number" input-align="right" class="form-input pl-4" :border="false"/>
             <van-field label="开始时间" v-model="formData.start_time" placeholder="请选择开始时间" @click="selTime('start_time')" left-icon="question-o" @click-left-icon.stop="leftIcon('starttime')" readonly input-align="right" class="form-input pl-4" :border="false"/>
@@ -79,6 +67,31 @@
                 </template>
                 <van-switch v-model="formData.bullet_sw" :active-value="1" :inactive-value="1" size="0.4rem" />
             </van-cell>
+            
+            <div class="jiangpin">
+                <div class="jiangpin-label df df-r ai-c just-c-bet">
+                    <div class="title fs_32 c_33 fs_14px">阶梯奖励</div>
+                    <van-button icon="plus" size="mini" color="#FF9B00" @click="showAddJiangpin=true"></van-button>
+                </div>
+                <div class="jiangpin-li c_ashen">
+                    <div v-for="(item,index) in stairInfo" :key="index" class="li df df-r ai-c mt-10">
+                        <div class="jiangli-i df df-r ai-c f1">
+                            <div class="img-box shadow">
+                                <img :src="item.thumbImg" class="img" />
+                                <div class="kc c_ff fs_20">库存:{{item.stock}}</div>
+                            </div>
+                            <div class="pl-20 df df-c just-c-bet f1">
+                                <div class="df_28 c_33 one-hide">{{item.title}}</div>
+                                <div class="df df-r just-c-bet fs_26 c_99">
+                                    <span>价格：{{item.price}}</span>
+                                    <span>条件人数：{{item.criteria_num}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <van-icon name="cross" size="0.2rem" color="#ffffff" class="close" @click="delJiangli(index)"/>
+                    </div>
+                </div>
+            </div>
             <div class="title fs_32 c_33 mt-40"><span class="c_red"> *</span>活动详情</div>
             <van-sticky>
                 <div class="add-btn-box">
@@ -252,6 +265,24 @@
                 </div>
             </div>
         </van-overlay>
+        <!-- 添加奖品 -->
+        <van-popup v-model="showAddJiangpin" position="bottom">
+            <div class="jiangli-popup">
+                <van-cell class="input" title="图片">
+                    <van-uploader multiple :preview-image="false" :before-read="newJiangpinUpImg">
+                        <img v-if="newJiangpin.thumbImg" :src="newJiangpin.thumbImg" class="img" />
+                        <van-button v-else type="info" size="small">上传</van-button>
+                    </van-uploader>
+                </van-cell>
+                <van-field v-model="newJiangpin.title" label="名称" placeholder="请输入名称" class="input" input-align="right" />
+                <van-field v-model="newJiangpin.price" label="价格" placeholder="请输入价格" class="input" type="number" input-align="right" />
+                <van-field v-model="newJiangpin.criteria_num" label="目标人数" placeholder="请输入目标人数" class="input" type="number" input-align="right" />
+                <van-field v-model="newJiangpin.stock" label="库存" placeholder="请输入库存 " class="input" type="number" input-align="right" />
+                <div class="mt-40 df df-r just-c-ct">
+                    <van-button type="info" block @click="addJiangpin">添加</van-button>
+                </div>
+            </div>
+        </van-popup>
         <PageMenu></PageMenu>
     </div>
 </template>
@@ -285,6 +316,9 @@ export default {
             // 选择规格
             // showGuige: false,
             // guigeData: { name: "", price: "", offerPic: "", stock: ""},
+            // 奖品
+            showJiangli: false,
+
             // 协议
             showXieyi: false,
             checkXieyi: false,
@@ -330,6 +364,10 @@ export default {
             merchant_help_text: "",
             toId: null,
             kefu: "",
+            // 阶梯奖励
+            showAddJiangpin: false,
+            newJiangpin: {},
+            stairInfo: [],
 
             showLocation: false,
             map: null,
@@ -406,6 +444,7 @@ export default {
                 data: {
                     source_template: this.id,
                     ...this.formData,
+                    stairInfo: this.stairInfo,
                 }
             }).then((data)=>{
                 if(data.err!=0){return}
@@ -443,6 +482,8 @@ export default {
                 this.formData.browse_times = this.formData.browse_num;
                 this.formData.bought_num = this.formData.people_buy_num;
                 this.merchant_help_text = data.data.merchant_help_text;
+
+                if(data.data.stairInfo){this.stairInfo = data.data.stairInfo;}
                 if(!data.data.details){this.formData.details = [];}
 
                 if(data.data.long && data.data.lat){
@@ -473,6 +514,37 @@ export default {
                 this.formData.head_pic_img.splice(this.head_pic_arr_id, 1, {pic_img: o.pic_img});
             }
             this.head_pic_arr_id = null;
+        },
+        // 阶梯奖励 上传图片
+        newJiangpinUpImg(file){
+            Toast("正在上传");
+            let data = new FormData();
+            data.append("file",file);
+            upFile(data).then((data)=>{
+                if(data.data.err!=0){return}
+                Toast("上传成功");
+                this.$set(this.newJiangpin, 'thumb', data.data.content.fileid);
+                this.$set(this.newJiangpin, 'thumbImg', data.data.content.url);
+            })
+        },
+        // 添加阶梯奖励
+        addJiangpin(){
+            if(!this.newJiangpin.thumb){Toast("请上传图片");return}
+            if(!this.newJiangpin.title){Toast("请输入奖品名称");return}
+            if(!this.newJiangpin.price){Toast("请输入奖品价格");return}
+            if(!this.newJiangpin.criteria_num){Toast("请输入条件人");return}
+            if(!this.newJiangpin.stock){Toast("请输入库存");return}
+            this.showAddJiangpin = false;
+            this.stairInfo.push(this.newJiangpin);
+            this.newJiangpin = {};
+        },
+        // 删除奖励
+        delJiangli(id){
+            Dialog.confirm({
+                message: '请确认删除！'
+            }).then(() => {
+                this.stairInfo.splice(id,1);
+            }).catch(() => {});
         },
         // 获取客服
         getKefu(){
@@ -816,11 +888,13 @@ export default {
 .tt-mould .imgbox .img-ul .fl{display:inline-block; padding:0.06rem 0.1rem; margin:0 0.1rem;}
 .tt-mould .imgbox .img-ul .fl.active{background:#FF9C00; color:#ffffff;}
 
-.guige{padding-top:10px; border-bottom:1px solid #E2E6F1;}
-.guige .guige-label{padding: 0 4px;}
-.guige .guige-li{margin-top:10px; font-size:14px;}
-.guige .guige-li .li{padding-bottom:0.3rem;}
-.guige .guige-li .close{padding:0.1rem; background:#D1D6E5; border-radius:50%;}
+.jiangpin{padding-top:10px; border-bottom:1px solid #E2E6F1;}
+.jiangpin .jiangpin-label{padding: 0 4px;}
+.jiangpin .jiangpin-li{margin-top:10px; font-size:14px;}
+.jiangpin .guijiangpinge-li .li{padding-bottom:0.3rem;}
+.jiangpin .jiangpin-li .close{padding:0.1rem; background:#D1D6E5; border-radius:50%;}
+
+.jiangli
 
 .guige-popup{padding:0.2rem 0.5rem 0.5rem;}
 .guige-popup .title{padding-bottom:16px; border-bottom:1px solid #C7CDDF;}
@@ -879,4 +953,15 @@ export default {
 .location-box{width:6.9rem; height:9rem; border-radius:0.2rem; overflow:hidden; position:relative; z-index:99; background:#ffffff;}
 .location-box .map-box{width:100%; height:100%; }
 .location-box .btn-box{width:6.2rem; position:absolute; bottom:0.4rem; left:0; right:0; margin:auto;}
+
+.jiangpin{box-sizing:border-box; margin-left:auto; margin-right:auto; border-radius:0.1rem;}
+.jiangpin .jiangpin-label{padding:0 4px;}
+.jiangpin .jiangpin-li{padding-bottom:0.1rem;}
+.jiangpin .jiangpin-li .jiangli-i .img-box{width:1.2rem; height:1rem; position:relative;}
+.jiangpin .jiangpin-li .jiangli-i .img-box .img{position:absolute; top:0; left:0; width:100%; height:100%;}
+.jiangpin .jiangpin-li .jiangli-i .img-box .kc{position:absolute; left:0; bottom:0; background:rgba(0,0,0,0.7); padding:2px 4px 2px 2px; border-radius:0 2px 0 0;}
+
+.jiangli-popup{padding:0.2rem 0.4rem 0.4rem;}
+.jiangli-popup .input{border-bottom:1px solid #dddddd;}
+.jiangli-popup .input .img{width:1rem; height:0.8rem;}
 </style>

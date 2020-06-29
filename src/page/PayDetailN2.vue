@@ -1,7 +1,7 @@
 <template>
     <div class="cont">
         <div class="top">
-            <van-swipe class="my-swipe" :autoplay="data.video_url?0:3000" indicator-color="white">
+            <van-swipe class="my-swipe" :autoplay="data.video_url?0:3000" indicator-color="white" :style="{height:(data.head_pic_img&&data.head_pic_img.length==1&&!data.video_url)?'auto':'4.6rem'}">
                 <van-swipe-item v-if="data.video_url">
                     <video id="topvideo" class="img" :src="data.video_url" controls autoplay></video>
                 </van-swipe-item>
@@ -861,9 +861,9 @@ export default {
 </script>
 <style scoped>
 .cont{background:#F1EFF2; padding-bottom:1.6rem;}
-.top{position:relative; width:100%; height:4.6rem; overflow: hidden;}
+.top{position:relative; width:100%; overflow: hidden;}
 .cont-box{position:relative;}
-.my-swipe .van-swipe-item{width:100%; height:4.6rem; display:flex; align-items:center; justify-content:center; background:#000000;}
+.my-swipe .van-swipe-item{width:100%; display:flex; align-items:center; justify-content:center; background:#000000;}
 .my-swipe .van-swipe-item .img{max-width:100%; max-height:100%;}
 .top .see{position:absolute; bottom:0; right:0; padding:0.1rem 0.22rem; background:rgba(0,0,0,0.55);}
 .top .box{position:absolute; top:0; left:0; width:100%; height:100%; overflow:hidden;}

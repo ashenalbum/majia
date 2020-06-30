@@ -126,4 +126,12 @@ input::-moz-focus-inner {
     padding: 0;
     border: 0
 }
+
+.before-hb{position:relative; z-index:90; background:#ffffff; padding:0.3rem;}
+.before-hb .bt{height:0.7rem; margin-bottom:0.2rem;}
+.before-hb .active-bt{border:1px solid; border-radius:0.1rem; padding:0 0.3rem; background: rgba(255,156,0,0.1);}
+
+.before-tishi{position:absolute; width:3rem; right:0; top:0.1rem;}
+.before-tishi .img{width:3rem; height:3rem;}
+.before-tishi .txt{margin-left:-0.5rem;}
 </style>

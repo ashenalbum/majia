@@ -109,8 +109,13 @@ export default {
                 this.sales_info = data.data;
                 this.btnTxt = data.poster_btn;
                 this.onswitch = Boolean(data.is_sales);
-                if(!(this.sales_info instanceof Array)){
-                    this.sales_info = [];
+                if(!(this.sales_info instanceof Array) || this.sales_info.length==0){
+                    this.sales_info = [{
+                        type: 0,
+                        level: 1,
+                        typeTxt: this.types[0].name,
+                        number: 0,
+                    }];
                 }else if(this.sales_info.length==2){
                     this.showForm2 = true;
                 }

@@ -17,7 +17,7 @@
                 <div class="c_ashen fs_28 mt-10">需邀请<span class="c_o"> {{item.can_draw_num||"--"}} </span>位好友购买</div>
                 <div class="c_ashen fs_28">已邀请<span class="c_o"> {{criteriaNum||"0"}} </span>位好友</div>
             </div>
-            <div class="jg c_o fs_32 b"><span class="fs_26">价值<span><br/>￥{{item.data[0].price}}</div>
+            <div class="jg c_o fs_32 b"><span class="fs_26">价值</span><br/>￥{{item.data[0].price}}</div>
         </div>
         <van-overlay :show="showLayer" class="df df-c ai-c just-c-ct z-99" @click="showLayer=false">
             <div class="layer df df-c ai-c just-c-ct">

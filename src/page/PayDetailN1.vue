@@ -34,7 +34,7 @@
                     </div>
                     <!-- 制作海报 -->
                     <van-sticky :offset-top="6" >
-                        <div class="haibao-btn fs_28 c_ff" @click="toHaibao">{{data.hb_btn_name}}</div>
+                        <div class="haibao-btn fs_28 c_ff" @click="showBeforeHb=true">{{data.hb_btn_name}}</div>
                     </van-sticky>
                 </div>
             </div>
@@ -142,6 +142,8 @@
             </div>
             <van-icon @click.stop="showAd=false" name="cross" size="0.3rem" color="#FFFFFF" class="close"/>
         </div>
+        <!-- 新弹幕 -->
+        <div ref="newdanmu" class="new-dm"></div>
         <!-- 背景音乐 -->
         <div v-if="bgmSrc" class="bgm-btn" :style="{transform:'rotate('+bgmDeg+'deg)'}" @click="stopBgm">
             <img src="~@/assets/event/bgm.png" alt="" class="img" />
@@ -246,6 +248,20 @@
                 </div>
             </div>
         </van-overlay>
+        
+        <van-overlay :show="showBeforeHb" class="df df-c just-c-end" @click="showBeforeHb=false">
+            <div class="before-tishi">
+                <img src="~@/assets/pay/jt.png" class="img" />
+                <div class="txt c_ff fs_28">请点击右上角“...”进行分享</div>
+            </div>
+            <div class="before-hb" @click.stop>
+                <div class="bt active-bt df df-r ai-c c_o fs_32" @click="toHaibao">
+                    <van-icon name="photo-o" class="c_o fs_40 " />
+                    <span class="ml-10">产品宣传海报</span>
+                </div>
+                <div class="bt c_33 fs_32 df ai-c just-c-ct" @click="showBeforeHb=false">取消</div>
+            </div>
+        </van-overlay>
         <van-overlay :show="showHb" @click="showHb=false" class="df df-c ai-c just-c-bet">
             <div class="hb-title df df-r ai-c just-c-bet fs_26" @click.stop>
                 <div class="df df-r ai-c">
@@ -270,8 +286,6 @@
                 <div class="c_o fs_30 mt-30">关注公众号 即刻发布活动</div>
             </div>
         </van-overlay>
-        <!-- 新弹幕 -->
-        <div ref="newdanmu" class="new-dm"></div>
         <!-- <PageMenu></PageMenu> -->
         <audio ref="bgm" :src="bgmSrc" loop></audio>
     </div>
@@ -319,7 +333,8 @@ export default {
             guigeId: 0, // 规格index
             buyFormLs: [], // 购买表单
             buyFormData: {}, // 表单数据
-
+            
+            showBeforeHb: false,
             autoCreateHb: false,
             showHbDom: false,
             info: {},
@@ -508,8 +523,8 @@ export default {
         },
         // 生成二维码
         createEwm(){
-            if(!localStorage.getItem("share_url")){
-                this.share_url = window.location.href;
+            if(!localStorage.getItem("share_url")){            
+                this.share_url = window.baseUrl + "/dist/";
             }else{
                 this.share_url =localStorage.getItem("share_url");
             }
@@ -523,6 +538,7 @@ export default {
         },
         // 制作海报
         toHaibao(){
+            this.showBeforeHb = false;
             this.showHbDom = true;
             this.haibaoToast = Toast.loading({
                 message: "正在生成海报，请稍候...",
@@ -900,7 +916,7 @@ export default {
 .user-info .input{border-bottom:1px solid #C7CDDF;}
 .user-info .next-btn{width:2.7rem;}
 
-.bill{position:relative;width:6.32rem; height:10.1rem; overflow:hidden; background:#EEF0F5;}
+.bill{position:relative;width:6.32rem; height:10.1rem; overflow:hidden; background:#EEF0F5; z-index:90;}
 .bill .placehold{width:6.32rem; height:10.1rem;}
 .bill .bgimg{position:absolute; width:100%; height:100%; top:0; left:0;}
 .bill .user{position:absolute; left:0.64rem; top:0.64rem;}
@@ -951,7 +967,7 @@ export default {
 .liulan .icons{padding-top:0.2rem; height:2.2rem; overflow-y:auto; border-top:1px solid #DDDDDD;}
 .liulan .icons .icon{width:0.9rem; height:0.9rem; margin:0.2rem 0.1rem 0; border-radius:50%;}
 
-.new-dm{width:100%; height:0px; position:fixed; bottom:1.3rem; left:0; z-index:90;}
+.new-dm{width:100%; height:0px; position:fixed; bottom:1.3rem; left:0;}
 .new-dm>>>.dm{position:absolute; bottom:0; left:0; height:0rem; overflow:hidden; transition:all 0.8s;}
 .new-dm>>>.dm .icon{position:relative; width:0.6rem; height:0.6rem; border-radius:50%;}
 .new-dm>>>.dm .txt{background:rgba(0,0,0,0.6); color:#ffffff; margin-left:-0.3rem; font-size:0.28rem; line-height:1; padding:0.1rem 0.2rem 0.1rem 0.4rem; margin-left:-0.3rem; border-radius:0.24rem;}

@@ -28,12 +28,12 @@
         <router-link to="/exchange"><div>/exchange</div></router-link>
         <router-link to="/giveRecords"><div>/giveRecords</div></router-link>
 
-        <van-uploader :before-read="beforeRead" />
+        <!-- <van-uploader :before-read="beforeRead" /> -->
         <PageMenu></PageMenu>
         
         <div ref="newdanmu" class="new-dm"></div>
 
-        <div class="jiangpin shadow mt-40">
+        <!-- <div class="jiangpin shadow mt-40">
             <div class="df df-r just-c-ct fs_30 c_33 b">邀好友   拿奖品</div>
             <div v-for="i in 5" :key="i" class="item mt-30 df df-r ai-c">
                 <div class="img-box">
@@ -47,7 +47,7 @@
                 </div>
                 <div class="jg c_o fs_32 b">￥299</div>
             </div>
-        </div>
+        </div> -->
 
         <van-popup v-model="show" position="bottom">
             <div class="jiangli-popup">
@@ -67,6 +67,19 @@
             </div>
         </van-popup>
         <div style="height:50vh"></div>
+        <van-overlay show="showBeforeHb" class="df df-c just-c-end">
+            <div class="before-tishi">
+                <img src="~@/assets/pay/jt.png" class="img" />
+                <div class="txt c_ff fs_28">请点击右上角“...”进行分享</div>
+            </div>
+            <div class="before-hb">
+                <div class="bt active-bt df df-r ai-c c_o fs_32">
+                    <van-icon name="photo-o" class="c_o fs_40 " />
+                    <span class="ml-10">产品宣传海报</span>
+                </div>
+                <div class="bt c_33 fs_32 df ai-c just-c-ct">取消</div>
+            </div>
+        </van-overlay>
     </div>
 </template>
 <script>
@@ -77,8 +90,9 @@ import { Toast } from 'vant';
 export default {
     data(){
         return {
+            showBeforeHb: true,
             arrs: [],
-            show: true,
+            show: false,
             newJiangpin:{},
         //     'price'=>价格,
         // 'title'=>奖品名称,
@@ -142,7 +156,7 @@ export default {
 .new-dm>>>.dm .icon{position:relative; width:0.6rem; height:0.6rem; border-radius:50%;}
 .new-dm>>>.dm .txt{background:rgba(0,0,0,0.6); color:#ffffff; margin-left:-0.3rem; font-size:0.28rem; line-height:1; padding:0.1rem 0.2rem 0.1rem 0.4rem; margin-left:-0.3rem; border-radius:0.24rem;} */
 
-.new-dm{width:100%; height:0px; position:fixed; bottom:1.3rem; left:0; z-index:90;}
+.new-dm{width:100%; height:0px; position:fixed; bottom:1.3rem; left:0;}
 .new-dm>>>.dm{position:absolute; bottom:0; left:0; height:0rem; overflow:hidden; transition:all 0.8s;}
 .new-dm>>>.dm .icon{position:relative; width:0.6rem; height:0.6rem; border-radius:50%;}
 .new-dm>>>.dm .txt{background:rgba(0,0,0,0.6); color:#ffffff; margin-left:-0.3rem; font-size:0.28rem; line-height:1; padding:0.1rem 0.2rem 0.1rem 0.4rem; margin-left:-0.3rem; border-radius:0.24rem;}
@@ -158,4 +172,11 @@ export default {
 .jiangli-popup{padding:0.2rem 0.4rem 0.4rem;}
 .jiangli-popup .input{border-bottom:1px solid #dddddd;}
 .jiangli-popup .input .img{width:0.8rem; height:0.8rem;}
+
+.before-hb{position:relative; z-index:90; background:#ffffff; padding:0.3rem;}
+.before-hb .bt{height:0.7rem; margin-bottom:0.2rem;}
+.before-hb .active-bt{border:1px solid; border-radius:0.1rem; padding:0 0.3rem;}
+.before-hb .tishi{position:absolute; width:3rem; right:0; top:0.1rem;}
+.before-hb .tishi .img{width:3rem; height:3rem;}
+.before-hb .tishi .txt{margin-left:-0.5rem;}
 </style>

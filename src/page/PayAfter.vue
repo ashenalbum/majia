@@ -83,7 +83,7 @@ export default {
                 params: {activity_id: this.id}
             }).then((data)=>{
                 if(data.err!=0){return}
-                if(data.data.type == 1){
+                if(data.data.after_pay_type == 1){
                     window.location.href = data.data.after_pay_url;
                 }else{
                     this.data = data.data.after_pay_custom;

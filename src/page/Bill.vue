@@ -9,8 +9,8 @@
             </van-uploader>
             <img v-if="bgimg" :src="bgimg" crossOrigin='anonymous' class="bgimg"  />
 
-            <div ref="name" class="name fs_24 c_99" :style="{left:namePst.left+'rem', top:namePst.top+'rem'}">{{info.nickname}}</div>
-            <div ref="user" class="user" :style="{left:userIconPst.left+'rem', top:userIconPst.top+'rem'}">
+            <div v-show="showName" ref="name" class="name fs_24 c_99" :style="{left:namePst.left+'rem', top:namePst.top+'rem'}">{{info.nickname}}</div>
+            <div v-show="showHead" ref="user" class="user" :style="{left:userIconPst.left+'rem', top:userIconPst.top+'rem'}">
                 <div class="iconbox">
                     <div class="icon-border"></div>
                     <img :src="info.headpath" crossOrigin='anonymous' class="icon" />
@@ -25,6 +25,16 @@
             <van-uploader :preview-image="false" :before-read="beforeRead">
                 <van-button size="small" class="btn" color="#FF9C00">上传(600*960)</van-button>
             </van-uploader>
+        </div>
+        <div class="mt-20">
+            <van-cell class="cell form-input pl-4 pr-4" title="显示头像" :border="false">
+                <van-switch v-model="showHead" :active-value="true" :inactive-value="false" size="0.4rem" />
+            </van-cell>
+        </div>
+        <div class="mt-20">
+            <van-cell class="cell form-input pl-4 pr-4" title="显示名称" :border="false">
+                <van-switch v-model="showName" :active-value="true" :inactive-value="false" size="0.4rem" />
+            </van-cell>
         </div>
         <div class="mt-30 fs_28 c_99 df df-r just-c-ct">拖拽头像或二维码调整位置</div>
         <!-- <div v-else class="btns mt-40">
@@ -105,13 +115,15 @@ export default {
             showTj: false,
             // 拖拽
             namePst: {left:1.64, top:0.995},
-            userIconPst: {left:0.64, top:0.64 },
+            userIconPst: {left:0.84, top:0.765 },//left:0.84rem; top:0.765rem;
             ewmPst: {left:3.92, top:7.9},
             touchRef: "",
             touchRefPst: {left:0, top:0},
             billPst: {left:0, top:0},
             startPst: {left:0, top:0},
             movePst: {left:0, top:0},
+            showName: true,
+            showHead: true,
 
             haibaoToast: null,
         }
@@ -162,6 +174,8 @@ export default {
                 if(pst.headx && pst.heady){
                     this.userIconPst = {left:pst.headx, top:pst.heady};
                 }
+                if(pst.showHead==="false"){this.showHead = false}
+                if(pst.showName==="false"){this.showName = false}
             });
         },
         createEwm(){
@@ -192,6 +206,8 @@ export default {
                     erweiy: this.ewmPst.top,
                     namex: this.namePst.left,
                     namey: this.namePst.top,
+                    showHead: this.showHead,
+                    showName: this.showName,
                 }
             }).then((data)=>{
                 if(data.err!=0){return}
@@ -245,7 +261,7 @@ export default {
                 topRem = topRem>(10.1-cz)?(10.1-cz):topRem;
                 this.userIconPst = {left:leftRem, top:topRem};
             }else if(this.touchRef=="ewmbox"){
-                let cz = 1.76;
+                let cz = 1.4;
                 leftRem = leftRem>(6.32-cz)?(6.32-cz):leftRem;
                 topRem = topRem>(10.1-cz)?(10.1-cz):topRem;
                 this.ewmPst = {left:leftRem, top:topRem};
@@ -276,12 +292,12 @@ export default {
 .bill{position:relative; width:6.32rem; height:10.1rem; background:#EEF0F5; overflow:hidden;}
 .bill .placehold{width:6.32rem; height:10.1rem;}
 .bill .bgimg{position:absolute; width:100%; height:100%; top:0; left:0; background:#ffffff;}
-.bill .user{position:absolute; left:0.64rem; top:0.64rem;}
-.bill .user .iconbox{width:1.15rem; height:1.15rem;}
-.bill .user .iconbox .icon-border{box-sizing:content-box; position:absolute; left:-3px; top:-3px; width:1.15rem; height:1.15rem; padding:3px; background-image:url(~@/assets/bill/iconborder.png); background-size:100% 100%;}
-.bill .user .iconbox .icon{position:absolute; left:0; top:0; width:1.15rem; height:1.15rem; border-radius:50%;}
+.bill .user{position:absolute; left:0.84rem; top:0.765rem;}
+.bill .user .iconbox{width:0.9rem; height:0.9rem;}
+.bill .user .iconbox .icon-border{box-sizing:content-box; position:absolute; left:-3px; top:-3px; width:0.9rem; height:0.9rem; padding:3px; background-image:url(~@/assets/bill/iconborder.png); background-size:100% 100%;}
+.bill .user .iconbox .icon{position:absolute; left:0; top:0; width:0.9rem; height:0.9rem; border-radius:50%;}
 .bill .name{position:absolute; left:1.64rem; top:0.995rem; bottom:0; padding:0 0.2rem 0 0.3rem; height:0.44rem; line-height:0.44rem; background:url(~@/assets/bill/name.png); background-size:100% 100%; white-space:nowrap;}
-.bill .ewmbox{position:absolute; left:3.92rem; bottom:7.9rem; box-sizing:border-box; width:1.76rem; height:1.76rem; padding:0.08rem; background:url(~@/assets/bill/ewmbg.png); background-size:100% 100%;}
+.bill .ewmbox{position:absolute; left:3.92rem; bottom:7.9rem; box-sizing:border-box; width:1.4rem; height:1.4rem; padding:0.08rem; background:url(~@/assets/bill/ewmbg.png); background-size:100% 100%;}
 .bill .ewmbox .ewm{width:100%; height:100%;}
 #qrcode{width:100%; height:100%;}
 #qrcode img{width:100%;height:100%;}
@@ -302,4 +318,9 @@ export default {
 .wrapper .tj-ok{width:5.2rem; padding-bottom:0.3rem; background:#ffffff; overflow:hidden;}
 .wrapper .tj-ok .img{width:100%; height:auto;}
 .wrapper .tj-ok .btn{margin:0.1rem 0;width:4.4rem;}
+
+.cell{width:6.9rem;}
+.cell .van-cell__value{line-height:1;}
+.cell .cell-icon{margin-right:5px;}
+.form-input{border-bottom:1px solid #E2E6F1;}
 </style>

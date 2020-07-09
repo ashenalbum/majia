@@ -45,25 +45,26 @@
             <img src="~@/assets/event/kefu.png" class="icon" />
         </div> -->
         <van-popup v-model="showOperate" round position="bottom">
-            <div class="operate-box">
-                <span v-if="nowItem.audit_type!=1" class="label c_ashen fs_30" @click="operateClick('bianji')">编辑活动</span>
-                <span class="label c_ashen fs_30" @click="operateClick('payafter')">付费后页面设置</span>
-                <span class="label c_ashen fs_30" @click="operateClick('fenxiao')">分销设置</span>
-                <span class="label c_ashen fs_30" @click="operateClick('upbill')">上传海报</span>
-                <span class="label c_ashen fs_30" @click="operateClick('formset')">表单设置</span>
-                <span class="label c_ashen fs_30" @click="operateClick('qudao')">添加渠道</span>
-                <span class="label c_ashen fs_30" @click="operateClick('bgm')">设置背景音乐</span>
+            <div class="operate-box c_ashen fs_30">
+                <span v-if="nowItem.audit_type!=1" class="label" @click="operateClick('bianji')">编辑活动</span>
+                <span class="label" @click="operateClick('payafter')">付费后页面设置</span>
+                <span class="label" @click="operateClick('fenxiao')">分销设置</span>
+                <span class="label" @click="operateClick('upbill')">上传海报</span>
+                <span class="label" @click="operateClick('formset')">表单设置</span>
+                <span class="label" @click="operateClick('qudao')">添加渠道</span>
+                <span class="label" @click="operateClick('bgm')">设置背景音乐</span>
+                <span v-if="nowItem.scene==1" class="label" @click="operateClick('hexiao')">设置核销人员</span>
                 <div class="line"></div>
-                <span class="label c_ashen fs_30" @click="operateClick('createbill',billUrl)">获取海报</span>
-                <span class="label c_ashen fs_30" @click="operateClick('liulan')">浏览记录</span>
-                <span class="label c_ashen fs_30" @click="operateClick('dingdan')">订单列表</span>
-                <span class="label c_ashen fs_30" @click="operateClick('zhutui')">邀请助推</span>
+                <span class="label" @click="operateClick('createbill',billUrl)">获取海报</span>
+                <span class="label" @click="operateClick('liulan')">浏览记录</span>
+                <span class="label" @click="operateClick('dingdan')">订单列表</span>
+                <span class="label" @click="operateClick('zhutui')">邀请助推</span>
                 <div class="line"></div>
-                <span class="label c_ashen fs_30" id="copyurl" :data-clipboard-text="copyUrl">复制活动链接</span>
-                <span class="label c_ashen fs_30" id="copybill" :data-clipboard-text="billUrl">复制海报链接</span>
-                <span class="label c_ashen fs_30" id="duijiang" :data-clipboard-text="dhUrl">复制兑奖链接</span>
-                <!-- <span class="label c_ashen fs_30" @click="operateClick('duijiang')">设置兑奖内容</span> -->
-                <!-- <span class="label c_ashen fs_30" @click="operateClick('datas')">统计数据</span> -->
+                <span class="label" id="copyurl" :data-clipboard-text="copyUrl">复制活动链接</span>
+                <span class="label" id="copybill" :data-clipboard-text="billUrl">复制海报链接</span>
+                <span class="label" id="duijiang" :data-clipboard-text="dhUrl">复制兑奖链接</span>
+                <!-- <span class="label" @click="operateClick('duijiang')">设置兑奖内容</span> -->
+                <!-- <span class="label" @click="operateClick('datas')">统计数据</span> -->
             </div>
         </van-popup>
         <PageMenu></PageMenu>
@@ -170,6 +171,7 @@ export default {
             if(type=="qudao"){this.$router.push({path:"/channel", query:{id:id}}); return}
             if(type=="zhutui"){this.$router.push({path:"/extension", query:{id:id, help_id:id}}); return}
             if(type=="bgm"){this.$router.push({path:"/bgm_set", query:{id:id}});return}
+            if(type=="hexiao"){this.$router.push({path:"/set_hexiao", query:{id:id}});return}
         },
         // 活动时间
         computedTime(item){

@@ -234,7 +234,12 @@ export default {
             })
         },
         toEventDetail(){
-            this.$router.push({path:"/pay_detail", query:{id:this.data.activity_id, activity_id1:this.data.activity_id}});
+            let path = "/pay_detail";
+            switch(this.data.type){
+                case 1:path="/pay_detail_n1";break;
+                case 2:path="/pay_detail_n2";break;
+            }
+            this.$router.push({path:path, query:{id:this.data.activity_id, activity_id1:this.data.activity_id}});
         },
         getInfo(type){
             let location = "";

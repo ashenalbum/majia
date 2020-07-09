@@ -219,5 +219,10 @@ export default new Router({
         name: 'Prize',
         meta: {title: "领取奖品"},
         component: (resolve) =>require(['@/page/Prize.vue'],resolve)
+    },{
+        path: '/set_hexiao',
+        name: 'SetHexiao',
+        meta: {title: "设置核销人员"},
+        component: (resolve) =>require(['@/page/SetHexiao.vue'],resolve)
     }]
 })

@@ -55,6 +55,7 @@ service.interceptors.response.use(
             // Toast(data.content);
             setTimeout(() => {
                 let route = window.location.href.split("#")[1];
+                route = route.replace("?","&");
                 window.location.href = window.baseUrl + '/public/index.php/activity/info/index?file='+route;
             }, 200);
         }else if(data.content){

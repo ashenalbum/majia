@@ -67,16 +67,42 @@
             </div>
         </van-popup>
         
-        <div class="lastTime mt-40">
-            <div class="df df-r">
+        <div class="last-time mt-40">
+            <div class="fs_30 df ai-c just-c-ct">活动结束倒计时</div>
+            <div class="df df-r mt-30">
                 <div class="item f1">
-                    
+                    <div class="num b">0</div>
+                    <div class="fs_28">天</div>
+                </div>
+                <div class="item f1">
+                    <div class="num b">00</div>
+                    <div class="fs_28">时</div>
+                </div>
+                <div class="item f1">
+                    <div class="num b">00</div>
+                    <div class="fs_28">分</div>
+                </div>
+                <div class="item f1">
+                    <div class="num b">00</div>
+                    <div class="fs_28">秒</div>
                 </div>
             </div>
         </div>
-        
+        <div class="paihang shadow mt-40">
+            <div class="fs_36 c_33 df ai-c just-c-ct">数据排行榜</div>
+            <div class="mt-10 c_33 fs_30">
+                <div v-for="i in 10" :key="i" class="li df df-r ai-c">
+                    <div class="f1 df df-r ai-c">
+                        <div class="num fs_32 b">{{i}}</div>
+                        <img src="~@/assets/test.png" class="icon" />
+                        <div class="f1 one-hide">昵称昵称昵称昵称昵称昵称昵称</div>
+                    </div>
+                    <span>14234</span>
+                </div>
+            </div>
+        </div>
         <div style="height:50vh"></div>
-        <van-overlay show="showBeforeHb" class="df df-c just-c-end">
+        <!-- <van-overlay show="showBeforeHb" class="df df-c just-c-end">
             <div class="before-tishi">
                 <img src="~@/assets/pay/jt.png" class="img" />
                 <div class="txt c_ff fs_28">请点击右上角“...”进行分享</div>
@@ -88,7 +114,7 @@
                 </div>
                 <div class="bt c_33 fs_32 df ai-c just-c-ct">取消</div>
             </div>
-        </van-overlay>
+        </van-overlay> -->
     </div>
 </template>
 <script>
@@ -99,7 +125,7 @@ import { Toast } from 'vant';
 export default {
     data(){
         return {
-            showBeforeHb: true,
+            showBeforeHb: false,
             arrs: [],
             show: false,
             newJiangpin:{},
@@ -112,33 +138,33 @@ export default {
         }
     },
     mounted(){
-        let newdm = this.$refs.newdanmu;
-        setInterval(()=>{
-            let div = document.createElement("div");
-            div.setAttribute("class","dm df df-r ai-c");
-            let img = document.createElement("img");
-            img.src = "";
-            img.setAttribute("class","icon");
-            let txt = document.createElement("div");
-            txt.setAttribute("class","txt");
-            txt.innerHTML="哈哈还得分卡萨丁发送";
-            div.appendChild(img);
-            div.appendChild(txt); 
-            newdm.appendChild(div);
-            setTimeout(()=>{
-                div.style.height = "0.6rem";              
-                if(newdm.children.length>3){
-                    newdm.children[0].remove();
-                    newdm.children[1].style.bottom = "1rem";
-                    newdm.children[0].style.bottom = "2rem";
-                }else{
-                    newdm.children[0].style.bottom = newdm.children.length-1+"rem";
-                    if(newdm.children[1]){
-                        newdm.children[1].style.bottom = newdm.children.length-2+"rem";
-                    }
-                }
-            },10)
-        },2000)
+        // let newdm = this.$refs.newdanmu;
+        // setInterval(()=>{
+        //     let div = document.createElement("div");
+        //     div.setAttribute("class","dm df df-r ai-c");
+        //     let img = document.createElement("img");
+        //     img.src = "";
+        //     img.setAttribute("class","icon");
+        //     let txt = document.createElement("div");
+        //     txt.setAttribute("class","txt");
+        //     txt.innerHTML="哈哈还得分卡萨丁发送";
+        //     div.appendChild(img);
+        //     div.appendChild(txt); 
+        //     newdm.appendChild(div);
+        //     setTimeout(()=>{
+        //         div.style.height = "0.6rem";              
+        //         if(newdm.children.length>3){
+        //             newdm.children[0].remove();
+        //             newdm.children[1].style.bottom = "1rem";
+        //             newdm.children[0].style.bottom = "2rem";
+        //         }else{
+        //             newdm.children[0].style.bottom = newdm.children.length-1+"rem";
+        //             if(newdm.children[1]){
+        //                 newdm.children[1].style.bottom = newdm.children.length-2+"rem";
+        //             }
+        //         }
+        //     },10)
+        // },2000)
     },                                          
     methods: {
         newJiangpinUpImg(file){
@@ -160,6 +186,10 @@ export default {
 }
 </script>
 <style scoped>
+.last-time{width:6.9rem; margin-left:auto; margin-right:auto; }
+.last-time .item{text-align:center;}
+.last-time .item .num{font-size:0.6rem;}
+
 /* .new-dm{width:100%; height:0px; position:fixed; bottom:1rem; left:0; border-bottom:1px solid #cccccc;}
 .new-dm>>>.dm{position:absolute; bottom:0; left:0; height:0; overflow:hidden; transition:all 1s;}
 .new-dm>>>.dm .icon{position:relative; width:0.6rem; height:0.6rem; border-radius:50%;}
@@ -188,4 +218,14 @@ export default {
 .before-hb .tishi{position:absolute; width:3rem; right:0; top:0.1rem;}
 .before-hb .tishi .img{width:3rem; height:3rem;}
 .before-hb .tishi .txt{margin-left:-0.5rem;}
+
+.paihang{box-sizing:border-box; width:6.9rem; padding:0.3rem; border-radius:0.1rem; margin-left:auto; margin-right:auto;}
+.paihang .li{padding:0.2rem 0; border-bottom:1px solid #cccccc;}
+.paihang .li:last-child{border-bottom:none;}
+.paihang .li .num{width:0.5rem;}
+.paihang .li:first-child .num{color:#FFa133; font-size:0.42rem;}
+.paihang .li:nth-child(2) .num{color:#999999; font-size:0.38rem;}
+.paihang .li:nth-child(3) .num{color:#E4A65A; font-size:0.34rem;}
+.paihang .li .icon{width:0.6rem; height:0.6rem; border-radius:50%; margin-right:0.2rem;}
+
 </style>

@@ -35,7 +35,7 @@
                         <span class="yuanjia fs_26 c_ashen txt-line-t">￥ {{data.price}}</span>
                     </div>
                     <!-- 制作海报 -->
-                    <van-sticky :offset-top="6" >
+                    <van-sticky :offset-top="hbBtnTop" >
                         <div class="haibao-btn fs_28 c_ff" @click="showBeforeHb=true">{{data.hb_btn_name}}</div>
                     </van-sticky>
                 </div>
@@ -62,6 +62,27 @@
                     
                 </div>
             </div> -->
+            <div v-if="lastTime" class="last-time mt-40">
+                <div class="fs_30 df ai-c just-c-ct">活动结束倒计时</div>
+                <div class="df df-r mt-30">
+                    <div class="item f1">
+                        <div class="num b">{{lastTime.d}}</div>
+                        <div class="fs_28">天</div>
+                    </div>
+                    <div class="item f1">
+                        <div class="num b">{{lastTime.h}}</div>
+                        <div class="fs_28">时</div>
+                    </div>
+                    <div class="item f1">
+                        <div class="num b">{{lastTime.m}}</div>
+                        <div class="fs_28">分</div>
+                    </div>
+                    <div class="item f1">
+                        <div class="num b">{{lastTime.s}}</div>
+                        <div class="fs_28">秒</div>
+                    </div>
+                </div>
+            </div>
             <div class="liulan shadow mt-40">
                 <div class="tab df df-r fs_28">
                     <div class="f1 df ai-c just-c-ct">已购买<span class="c_o">{{data.people_buy_num}}</span>人</div>
@@ -84,6 +105,19 @@
                         <img v-if="item.type==2" class="img" :src="item.content" />
                         <video v-else-if="item.type==3" class="video" :src="item.content" controls></video>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div v-if="paihang&&paihang.length" class="paihang shadow mt-40">
+            <div class="fs_36 c_33 df ai-c just-c-ct">数据排行榜</div>
+            <div class="mt-10 c_33 fs_30">
+                <div v-for="(item,index) in paihang" :key="index" class="li df df-r ai-c">
+                    <div class="f1 df df-r ai-c">
+                        <div class="num fs_32 b">{{index+1}}</div>
+                        <img :src="item.headpath" class="icon" />
+                        <div class="f1 one-hide">{{item.nickname}}</div>
+                    </div>
+                    <span>{{item.rec_num}}</span>
                 </div>
             </div>
         </div>
@@ -331,6 +365,7 @@ export default {
             bgimg: false,
             imgUrl: "",
             disabled: false,
+            hbBtnTop: document.documentElement.clientWidth/75*8+12,
 
             haibaoToast: null,
 
@@ -345,6 +380,7 @@ export default {
             mapPoint: null,
             myLocationName: null,
             iconImg: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAADCklEQVR4AcWXBczTUBSFiztsXTccorgTw91h69ri7u7u7h7DiePEPWg8QWJoFO8b7m7nJC/5rfrrS05952vvXm/vVYKOt7qmvkhpLTLpSDeRjgwSRkynuM1jAudepjRVKazx1KzW+LGp6i8NbbYwtKXCjC8XRmIJthdR3OYxnsvgGl771KraON/AD8nKNe2B6vBXZmL5SyO+zDa0WTCf5qNZvJa/sQepw98mK9cKBc3o0bbCii1+MSy+DGbToak0DiZcm9am28MSy4SpLRapaNtgUEPriKdbbRvxuTCZQrN8Cr+FB7zo6QkVqRrthZlYw5B5PWUI0WMWPentDE1H6mKWrsBdzvaFZoV/slxP94bDE95k5IDaAyuVEYY6ATN0sQ90BjQGGgIZ0HAoDSWhsTzvDoc3GGRlgYfUaINwrPaAzpBPx/d3OnQCugLdhi6LdOyonA9D3COA42SApXA8H1KxdMZQx+GOFnqEdSJNATkMvYX+5ZX6CuuDvDlosiMcDLLIVJ4low0znPbe/9NgmJ4lIIBO8noXv+lkkam86V2j84sRiRUeT8vUuJmmwaWtgiwnOFlkKiIZTSHlLXZ/FzmJ1AdhwNAt3rDjnAGLTAXZZTQOzHcBj4KWhIRS36XnaAfP+WQqcuLMdQGbMNkZHkxpG6GhDp5zyfQDWzDZnk/wemiYO9g71Dw3D0a/QoI/4XczobHuofaeXFOhFIxuhgRfl8lkmuvkCvA6MdyLQ0D/4jezoeFer1OQBDJD3v0+f6gKaGybvH6GVwIJmjKnyTy9HnoIQF5oOnYX65XOWcshZXII/4/EdCkdGi4z2VnoIvZPY70BGiq/VDP8PxL5+yxOgiwZzsFSFjQ55GdRwtORegyVVyHgEYlpAQqBlWSUYOnjUeyxQBOFUOyxYLT9i72swZKUpSnLW5EuQHlraYtZKithBotxMSiroBdhC3o0Ax9Y0Od3PEM7wrYkI1sYPMlyYWa1MNzGsawWxgrfwngONmRszF4NqN4tk4oMstGwUdzmMZ4TyeBN23/GRC1/sYTzmAAAAABJRU5ErkJggg==",
+            paihang: [],
         }
     },
     // beforeRouteUpdate(to,from,next){
@@ -424,7 +460,10 @@ export default {
             axios({
                 url: "/activity/Apiactivity/get_ranking",
                 params: {id: this.id}
-            })
+            }).then((data)=>{
+                if(data.err!=0){return}
+                this.paihang = data.data;
+            });
         },
         // 地图加载完成
         mapReady(obj){
@@ -973,5 +1012,9 @@ export default {
 .new-dm>>>.dm{position:absolute; bottom:0; left:0; height:0rem; overflow:hidden; transition:all 0.8s;}
 .new-dm>>>.dm .icon{position:relative; width:0.6rem; height:0.6rem; border-radius:50%;}
 .new-dm>>>.dm .txt{ background:rgba(0,0,0,0.6); color:#ffffff; margin-left:-0.3rem; font-size:0.28rem; line-height:1; padding:0.1rem 0.2rem 0.1rem 0.4rem; margin-left:-0.3rem; border-radius:0.24rem;}
+
+.last-time{width:6.9rem; margin-left:auto; margin-right:auto; }
+.last-time .item{text-align:center;}
+.last-time .item .num{font-size:0.6rem;}
 
 </style>

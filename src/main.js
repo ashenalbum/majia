@@ -70,6 +70,7 @@ function hideSearch(){
     token = JSON.parse(localStorage.getItem("token"));
     if((!token) || (!token.cowcms_userid)){
         let route = window.location.href.split("#")[1];
+        route = route.replace("?","&");
         window.location.href = window.baseUrl + '/public/index.php/activity/info/index?file='+route;
     }
 
@@ -123,6 +124,11 @@ router.beforeEach(function (to, from, next) {
 
 // 微信config
 function wxConfig(path){
+    
+    var loading = Toast.loading({
+        forbidClick: true,
+        duration: 0,
+    });
     let location = window.location.href;
     axios({
         url: "/wechat/Apiwechat/get_wx_config",
@@ -141,6 +147,7 @@ function wxConfig(path){
                 'chooseWXPay',
                 'scanQRCode',
                 'hideMenuItems',
+                // 'showMenuItems',
                 "getLocation",
                 "openLocation",
             ]
@@ -148,7 +155,9 @@ function wxConfig(path){
         wx.ready(() => {
             wx.hideMenuItems({
                 menuList: [
-                    "menuItem:copyUrl",
+                    // "menuItem:share:appMessage",
+                    // "menuItem:share:timeline",
+                    // "menuItem:copyUrl",
                     "menuItem:share:qq",
                     "menuItem:share:QZone",
                     "menuItem:share:weiboApp",
@@ -170,6 +179,7 @@ function wxConfig(path){
                 url: "/activity/Apiactivity/sharing_getInfo",
                 params: {path:path, ...fqs},
             }).then((data)=>{
+                loading.clear();
                 if(data.err!=0){return;}
                 // alert("分享链接:" + data.data.url);
                 // alert(page_id);
@@ -196,8 +206,8 @@ function wxConfig(path){
                     cancel: ()=>{ console.log('已取消') },
                     fail: ()=>{ console.log('分享失败') }
                 });
-            });
+            }).catch(()=>{ loading.clear() });
         });
-        wx.error((res)=>{ console.log('err', res) });
-    })
+        wx.error(()=>{ loading.clear(); });
+    }).catch(()=>{loading.clear(); })
 }

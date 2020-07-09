@@ -55,7 +55,7 @@ export default {
             }).then((data)=>{
                 if(data.err!=0){return;}
                 this.dataList = data.data.activity_list;
-                window.document.title = data.data.title + "  详情";
+                window.document.title = data.data.title;
             })
         },
         // 活动时间

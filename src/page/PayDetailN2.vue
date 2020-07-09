@@ -29,7 +29,7 @@
                         <span class="yuanjia fs_26 c_ashen txt-line-t">￥ {{data.price}}</span>
                     </div>
                     <!-- 制作海报 -->
-                    <van-sticky :offset-top="6" >
+                    <van-sticky :offset-top="hbBtnTop" >
                         <div class="haibao-btn fs_28 c_ff" @click="showBeforeHb=true">{{data.hb_btn_name}}</div>
                     </van-sticky>
                 </div>
@@ -95,6 +95,20 @@
                         <img v-if="item.type==2" class="img" :src="item.content" />
                         <video v-else-if="item.type==3" class="video" :src="item.content" controls></video>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <div v-if="paihang&&paihang.length" class="paihang shadow mt-40">
+            <div class="fs_36 c_33 df ai-c just-c-ct">数据排行榜</div>
+            <div class="mt-10 c_33 fs_30">
+                <div v-for="(item,index) in paihang" :key="index" class="li df df-r ai-c">
+                    <div class="f1 df df-r ai-c">
+                        <div class="num fs_32 b">{{index+1}}</div>
+                        <img :src="item.headpath" class="icon" />
+                        <div class="f1 one-hide">{{item.nickname}}</div>
+                    </div>
+                    <span>{{item.rec_num}}</span>
                 </div>
             </div>
         </div>
@@ -344,6 +358,7 @@ export default {
             bgimg: false,
             imgUrl: "",
             disabled: false,
+            hbBtnTop: document.documentElement.clientWidth/75*8+12,
 
             haibaoToast: null,
 
@@ -361,6 +376,8 @@ export default {
 
             ptData: [],
             pintuanId: "",
+
+            paihang: [],
         }
     },
     // beforeRouteUpdate(to,from,next){
@@ -384,6 +401,7 @@ export default {
         this.getOrganizer();
         this.getActivityForm();
         this.getYongjin();
+        this.get_ranking();
     },
     destroyed(){
         if(this.haibaoToast){this.haibaoToast.clear();}
@@ -778,6 +796,15 @@ export default {
         // },
         toMycenter(){
             this.$router.push("/my_center");
+        },
+        get_ranking(){
+            axios({
+                url: "/activity/Apiactivity/get_ranking",
+                params: {id: this.id}
+            }).then((data)=>{
+                if(data.err!=0){return}
+                this.paihang = data.data;
+            });
         },
         toDetail(id){
             let url = "/public/index.php/activity/info/index/";

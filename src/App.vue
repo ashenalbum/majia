@@ -134,4 +134,16 @@ input::-moz-focus-inner {
 .before-tishi{position:absolute; width:3rem; right:0; top:0.1rem;}
 .before-tishi .img{width:3rem; height:3rem;}
 .before-tishi .txt{margin-left:-0.5rem;}
+
+.paihang{box-sizing:border-box; width:6.9rem; padding:0.3rem; border-radius:0.1rem; margin-left:auto; margin-right:auto; background:#ffffff;}
+.paihang .li{padding:0.2rem 0; border-bottom:1px solid #cccccc;}
+.paihang .li:last-child{border-bottom:none;}
+.paihang .li .num{width:0.5rem;}
+.paihang .li:first-child .num{color:#FFa133; font-size:0.42rem;}
+.paihang .li:nth-child(2) .num{color:#999999; font-size:0.38rem;}
+.paihang .li:nth-child(3) .num{color:#E4A65A; font-size:0.34rem;}
+.paihang .li .icon{width:0.6rem; height:0.6rem; border-radius:50%; margin-right:0.2rem;}
+
+.van-sticky--fixed{z-index:1!important;}
+
 </style>

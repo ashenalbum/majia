@@ -33,7 +33,7 @@
                         <span class="yuanjia fs_26 c_ashen txt-line-t">￥ {{data.price}}</span>
                     </div>
                     <!-- 制作海报 -->
-                    <van-sticky :offset-top="6" >
+                    <van-sticky :offset-top="hbBtnTop" >
                         <div class="haibao-btn fs_28 c_ff" @click="showBeforeHb=true">{{data.hb_btn_name}}</div>
                     </van-sticky>
                 </div>
@@ -97,6 +97,19 @@
                         <img v-if="item.type==2" class="img" :src="item.content" />
                         <video v-else-if="item.type==3" class="video" :src="item.content" controls></video>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div v-if="paihang&&paihang.length" class="paihang shadow mt-40">
+            <div class="fs_36 c_33 df ai-c just-c-ct">数据排行榜</div>
+            <div class="mt-10 c_33 fs_30">
+                <div v-for="(item,index) in paihang" :key="index" class="li df df-r ai-c">
+                    <div class="f1 df df-r ai-c">
+                        <div class="num fs_32 b">{{index+1}}</div>
+                        <img :src="item.headpath" class="icon" />
+                        <div class="f1 one-hide">{{item.nickname}}</div>
+                    </div>
+                    <span>{{item.rec_num}}</span>
                 </div>
             </div>
         </div>
@@ -343,6 +356,7 @@ export default {
             bgimg: false,
             imgUrl: "",
             disabled: false,
+            hbBtnTop: document.documentElement.clientWidth/75*8+12,
 
             haibaoToast: null,
 
@@ -357,6 +371,8 @@ export default {
             mapPoint: null,
             myLocationName: null,
             iconImg: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAADCklEQVR4AcWXBczTUBSFiztsXTccorgTw91h69ri7u7u7h7DiePEPWg8QWJoFO8b7m7nJC/5rfrrS05952vvXm/vVYKOt7qmvkhpLTLpSDeRjgwSRkynuM1jAudepjRVKazx1KzW+LGp6i8NbbYwtKXCjC8XRmIJthdR3OYxnsvgGl771KraON/AD8nKNe2B6vBXZmL5SyO+zDa0WTCf5qNZvJa/sQepw98mK9cKBc3o0bbCii1+MSy+DGbToak0DiZcm9am28MSy4SpLRapaNtgUEPriKdbbRvxuTCZQrN8Cr+FB7zo6QkVqRrthZlYw5B5PWUI0WMWPentDE1H6mKWrsBdzvaFZoV/slxP94bDE95k5IDaAyuVEYY6ATN0sQ90BjQGGgIZ0HAoDSWhsTzvDoc3GGRlgYfUaINwrPaAzpBPx/d3OnQCugLdhi6LdOyonA9D3COA42SApXA8H1KxdMZQx+GOFnqEdSJNATkMvYX+5ZX6CuuDvDlosiMcDLLIVJ4low0znPbe/9NgmJ4lIIBO8noXv+lkkam86V2j84sRiRUeT8vUuJmmwaWtgiwnOFlkKiIZTSHlLXZ/FzmJ1AdhwNAt3rDjnAGLTAXZZTQOzHcBj4KWhIRS36XnaAfP+WQqcuLMdQGbMNkZHkxpG6GhDp5zyfQDWzDZnk/wemiYO9g71Dw3D0a/QoI/4XczobHuofaeXFOhFIxuhgRfl8lkmuvkCvA6MdyLQ0D/4jezoeFer1OQBDJD3v0+f6gKaGybvH6GVwIJmjKnyTy9HnoIQF5oOnYX65XOWcshZXII/4/EdCkdGi4z2VnoIvZPY70BGiq/VDP8PxL5+yxOgiwZzsFSFjQ55GdRwtORegyVVyHgEYlpAQqBlWSUYOnjUeyxQBOFUOyxYLT9i72swZKUpSnLW5EuQHlraYtZKithBotxMSiroBdhC3o0Ax9Y0Od3PEM7wrYkI1sYPMlyYWa1MNzGsawWxgrfwngONmRszF4NqN4tk4oMstGwUdzmMZ4TyeBN23/GRC1/sYTzmAAAAABJRU5ErkJggg==",
+            
+            paihang: [],
         }
     },
     // beforeRouteUpdate(to,from,next){
@@ -380,6 +396,7 @@ export default {
         this.getOrganizer();
         this.getActivityForm();
         this.getYongjin();
+        this.get_ranking();
     },
     destroyed(){
         if(this.haibaoToast){this.haibaoToast.clear();}
@@ -510,6 +527,15 @@ export default {
                 if(data.err!=0){return}
                 this.sjInfo = data.content;
             })
+        },
+        get_ranking(){
+            axios({
+                url: "/activity/Apiactivity/get_ranking",
+                params: {id: this.id}
+            }).then((data)=>{
+                if(data.err!=0){return}
+                this.paihang = data.data;
+            });
         },
         // 海报信息
         getInfo(){

@@ -91,7 +91,7 @@ export default {
         // 活动详情
         toEventDetail(item){
             let path = "/pay_detail";
-            switch(this.nowItem.type){
+            switch(item.activity_type){
                 case 1:path="/pay_detail_n1";break;
                 case 2:path="/pay_detail_n2";break;
             }

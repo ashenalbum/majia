@@ -62,7 +62,7 @@ export default {
     data(){
         return {
             tabs: {},
-            types: {"0":"普通活动","1":"产品活动","2":"拼团活动"},
+            types: {"0":"阶梯奖励","1":"产品活动","2":"拼团活动"},
             search: {
                 type: "all",
                 keyword: "",
@@ -80,7 +80,7 @@ export default {
             showKefu: false,
 
             showSelType: false,
-            eventTypes: ["普通活动","产品活动","拼团活动"],
+            eventTypes: ["阶梯奖励","产品活动","拼团活动"],
 
         }
     },
@@ -142,7 +142,7 @@ export default {
                         this.$router.push({name:"Auth",query:{id: id}});
                         return;
                     }
-                    let path = "event_form";
+                    let path = "/event_form";
                     switch(index){
                         case 0:path="/event_form";break;
                         case 1:path="/event_form_n1";break;

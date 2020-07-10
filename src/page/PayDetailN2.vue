@@ -83,6 +83,19 @@
                     </ul>
                 </div>
             </div>
+            <div v-if="paihang&&paihang.length" class="paihang shadow mt-40">
+                <div class="fs_36 c_33 df ai-c just-c-ct">数据排行榜</div>
+                <div class="mt-10 c_33 fs_30">
+                    <div v-for="(item,index) in paihang" :key="index" class="li df df-r ai-c">
+                        <div class="f1 df df-r ai-c">
+                            <div class="num fs_32 b">{{index+1}}</div>
+                            <img :src="item.headpath" class="icon" />
+                            <div class="f1 one-hide">{{item.nickname}}</div>
+                        </div>
+                        <span>{{item.rebate_amount}}</span>
+                    </div>
+                </div>
+            </div>
             <div ref="detail" class="words mt-40">
                 <div class="title df ai-c just-c-ct">
                     <div class="line"></div>
@@ -99,19 +112,6 @@
             </div>
         </div>
         
-        <div v-if="paihang&&paihang.length" class="paihang shadow mt-40">
-            <div class="fs_36 c_33 df ai-c just-c-ct">数据排行榜</div>
-            <div class="mt-10 c_33 fs_30">
-                <div v-for="(item,index) in paihang" :key="index" class="li df df-r ai-c">
-                    <div class="f1 df df-r ai-c">
-                        <div class="num fs_32 b">{{index+1}}</div>
-                        <img :src="item.headpath" class="icon" />
-                        <div class="f1 one-hide">{{item.nickname}}</div>
-                    </div>
-                    <span>{{item.rec_num}}</span>
-                </div>
-            </div>
-        </div>
         <div class="help fs_22 c_88">
             <div class="fs_30">购买须知：</div>
             <div v-html="data.instructions"></div>
@@ -135,6 +135,10 @@
                         <img src="~@/assets/pay/wode.png" class="icon" />
                         <span>个人中心</span>
                     </div>
+                    <!-- <div class="line df df-r ai-c" @click="toPayList">
+                        <img src="~@/assets/pay/index.png" class="icon" />
+                        <span>活动广场</span>
+                    </div> -->
                     <div class="line df df-r ai-c" @click="showSeller=true">
                         <img src="~@/assets/pay/kefu.png" class="icon" />
                         <span>联系客服</span>
@@ -827,6 +831,7 @@ export default {
             if(!video){return}
             video.pause();
         },
+        toPayList(){this.$router.push("/pay_list")},
         testIsTrue(name){
             if(!this.data){return false;}
             if(!this.data.sales_posterss_coords){return false;}

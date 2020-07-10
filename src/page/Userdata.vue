@@ -256,7 +256,7 @@ export default {
     pre_btn(){
         Toast('导出成功');
         let token = JSON.parse(localStorage.getItem("token"));
-        window.location.href = '/activity/Apiactivity/out?activity_id='+this.Page_id+'&appid='+token.appid+'&cowcms_userid='+token.cowcms_userid;
+        window.location.href = '/public/index.php/activity/Apiactivity/out?activity_id='+this.Page_id+'&appid='+token.appid+'&cowcms_userid='+token.cowcms_userid;
     },
     getMyExcelData() {
         // document.querySelector('.updata').click();

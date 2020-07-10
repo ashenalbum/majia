@@ -128,7 +128,7 @@ export default {
         },
         getTypeName(type){
             switch(type){
-                case 0: return "活动";
+                case 0: return "阶梯";
                 case 1: return "产品";
                 case 2: return "拼团";
             }

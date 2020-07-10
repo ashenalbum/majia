@@ -157,7 +157,7 @@ function wxConfig(path){
                 menuList: [
                     // "menuItem:share:appMessage",
                     // "menuItem:share:timeline",
-                    // "menuItem:copyUrl",
+                    "menuItem:copyUrl",
                     "menuItem:share:qq",
                     "menuItem:share:QZone",
                     "menuItem:share:weiboApp",

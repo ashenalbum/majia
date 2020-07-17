@@ -90,13 +90,11 @@ function hideSearch(){
         setTimeout(()=>{
             window.location.href = url;
         },200);
-        return;
     }
-
-    wxConfig();
 }
 // url
 hideSearch();
+wxConfig();
 
 // localStorage 储存 vuex
 store.commit("setToken",JSON.parse(window.localStorage.getItem("token")));
